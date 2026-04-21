@@ -177,18 +177,18 @@ export function ShipmentModal({
 
   if (!isOpen) return null
 
-  const lbl = { fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.4rem', display: 'block' }
-  const inp = { background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 12, padding: '0.75rem', color: '#fff', fontSize: '0.9rem', width: '100%', outline: 'none' }
+  const lbl = { fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.4rem', display: 'block' }
+  const inp = { background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.75rem', color: '#0F172A', fontSize: '0.9rem', width: '100%', outline: 'none' }
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5, 8, 15, 0.9)', backdropFilter: 'blur(8px)', padding: '1.5rem' }}>
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-        style={{ background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 24, width: '100%', maxWidth: '1100px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+        style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, width: '100%', maxWidth: '1100px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', boxShadow: '0 25px 50px rgba(0,0,0,0.05)' }}
       >
         {/* Header */}
-        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid rgba(6,182,212,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#0B1120', zIndex: 10 }}>
+        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: '#FFFFFF', zIndex: 10 }}>
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <Calculator color="#06B6D4" size={28} />
               {initialData ? 'تعديل رسالة استيرادية' : 'إنشاء رسالة استيرادية جديدة'}
             </h2>
@@ -238,7 +238,7 @@ export function ShipmentModal({
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: 'rgba(255,255,255,0.03)', color: '#64748B', fontSize: '0.7rem' }}>
+                <tr style={{ background: '#F8FAFC', color: '#64748B', fontSize: '0.7rem' }}>
                   <th style={{ padding: '0.75rem', textAlign: 'right' }}>المنتج</th>
                   <th style={{ padding: '0.75rem', textAlign: 'center' }}>الكمية</th>
                   <th style={{ padding: '0.75rem', textAlign: 'center' }}>سعر الوحدة ({form.currency})</th>
@@ -249,7 +249,7 @@ export function ShipmentModal({
               </thead>
               <tbody>
                 {form.items.map((item, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid rgba(6,182,212,0.05)' }}>
+                  <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <td style={{ padding: '0.75rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
                         <select style={{...inp, flex: 1}} value={item.productId} onChange={e => {
@@ -258,7 +258,7 @@ export function ShipmentModal({
                           <option value="">اختر منتج...</option>
                           {localProducts.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
                         </select>
-                        <button title="إضافة منتج سريع (Quick Add)" onClick={() => setQuickAddIndex(idx)} style={{ background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 10, padding: '0 0.8rem', cursor: 'pointer', fontWeight: 900, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                        <button title="إضافة منتج سريع (Quick Add)" onClick={() => setQuickAddIndex(idx)} style={{ background: 'rgba(6,182,212,0.05)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 10, padding: '0 0.8rem', cursor: 'pointer', fontWeight: 900, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
                       </div>
                     </td>
                     <td style={{ padding: '0.75rem' }}>
@@ -271,7 +271,7 @@ export function ShipmentModal({
                         const newItems = [...form.items]; newItems[idx].unitCostForeign = Number(e.target.value); setForm({ ...form, items: newItems })
                       }} />
                     </td>
-                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 700, color: '#94A3B8' }}>
+                    <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 700, color: '#64748B' }}>
                       {(item.quantity * item.unitCostForeign).toLocaleString()}
                     </td>
                     <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: 900, color: '#06B6D4' }}>
@@ -316,26 +316,26 @@ export function ShipmentModal({
             </div>
 
             {/* Bloomberg Summary Panel */}
-            <div style={{ background: 'rgba(6,182,212,0.05)', borderRadius: 24, border: '1px solid rgba(6,182,212,0.2)', padding: '2rem' }}>
+            <div style={{ background: '#F8FAFC', borderRadius: 24, border: '1px solid #E2E8F0', padding: '2rem' }}>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 900, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart3 size={20} color="#06B6D4" /> ملخص مالي CFO Summary</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem' }}>
-                  <span style={{ color: '#94A3B8', fontWeight: 600 }}>إجمالي الفاتورة ({form.currency})</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
+                  <span style={{ color: '#64748B', fontWeight: 600 }}>إجمالي الفاتورة ({form.currency})</span>
                   <span style={{ fontWeight: 900, direction: 'ltr' }}>{totals.totalForeignVal.toLocaleString()} {form.currency}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem' }}>
-                  <span style={{ color: '#94A3B8', fontWeight: 600 }}>إجمالي المصاريف (ج.م)</span>
-                  <span style={{ fontWeight: 900, direction: 'ltr' }}>{totals.totalExpensesEGP.toLocaleString()} EGP</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
+                  <span style={{ color: '#64748B', fontWeight: 600 }}>إجمالي المصاريف (ج.م)</span>
+                  <span style={{ fontWeight: 900, direction: 'ltr', color: '#0F172A' }}>{totals.totalExpensesEGP.toLocaleString()} EGP</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem' }}>
-                  <span style={{ color: '#94A3B8', fontWeight: 600 }}>سعر التحويل المطبق</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #F1F5F9', paddingBottom: '0.75rem' }}>
+                  <span style={{ color: '#64748B', fontWeight: 600 }}>سعر التحويل المطبق</span>
                   <span style={{ fontWeight: 900, color: '#06B6D4' }}>{form.exchangeRate.toFixed(3)}</span>
                 </div>
                 
-                <div style={{ marginTop: '1rem', background: '#0B1120', padding: '1.5rem', borderRadius: 16, border: '1px solid rgba(6,182,212,0.4)', textAlign: 'center' }}>
+                <div style={{ marginTop: '1rem', background: '#FFFFFF', padding: '1.5rem', borderRadius: 16, border: '1px solid #CBD5E1', textAlign: 'center' }}>
                   <p style={{ color: '#06B6D4', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem' }}>التكلفة الإجمالية المقدرة (EGP)</p>
-                  <p style={{ fontSize: '2rem', fontWeight: 950, color: '#fff', margin: 0 }}>{totals.totalLandedEGP.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span style={{ fontSize: '1rem', color: '#64748B' }}>ج.م</span></p>
+                  <p style={{ fontSize: '2rem', fontWeight: 950, color: '#0F172A', margin: 0 }}>{totals.totalLandedEGP.toLocaleString(undefined, { maximumFractionDigits: 0 })} <span style={{ fontSize: '1rem', color: '#64748B' }}>ج.م</span></p>
                 </div>
               </div>
             </div>
@@ -343,7 +343,7 @@ export function ShipmentModal({
         </div>
 
         {/* Footer Actions */}
-        <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid rgba(6,182,212,0.1)', display: 'flex', justifyContent: 'flex-end', gap: '1rem', background: 'rgba(5, 8, 15, 0.5)', position: 'sticky', bottom: 0 }}>
+        <div style={{ padding: '1.5rem 2rem', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'flex-end', gap: '1rem', background: 'rgba(255, 255, 255, 0.8)', position: 'sticky', bottom: 0 }}>
           <button 
             onClick={() => handleSubmit('Draft')} 
             disabled={saving}
@@ -378,24 +378,24 @@ export function ShipmentModal({
           {quickAddIndex !== null && (
             <div style={{ position: 'fixed', inset: 0, zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)' }}>
               <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                style={{ background: '#0B1120', padding: '2rem', borderRadius: 24, width: '100%', maxWidth: 450, border: '1px solid rgba(168,85,247,0.3)', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}
+                style={{ background: '#FFFFFF', padding: '2rem', borderRadius: 24, width: '100%', maxWidth: 450, border: '1px solid #E2E8F0', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
                 onClick={(e) => e.stopPropagation()} // Prevent bubbling since it's nested
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#A855F7', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Plus size={22} /> إضافة منتج سريع
                   </h3>
-                  <button onClick={(e) => { e.preventDefault(); setQuickAddIndex(null); }} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer' }}><X size={20} /></button>
+                  <button onClick={(e) => { e.preventDefault(); setQuickAddIndex(null); }} style={{ background: '#F8FAFC', color: '#64748B', border: '1px solid #E2E8F0', borderRadius: 50, padding: '0.4rem', cursor: 'pointer' }}><X size={20} /></button>
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.4rem', display: 'block' }}>اسم المنتج *</label>
-                    <input style={{ background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 12, padding: '0.75rem', color: '#fff', fontSize: '0.9rem', width: '100%', outline: 'none' }} autoFocus placeholder="مثال: سكرين حماية آيفون 15" value={quickForm.name} onChange={e => setQuickForm({ ...quickForm, name: e.target.value })} />
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.4rem', display: 'block' }}>اسم المنتج *</label>
+                    <input style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.75rem', color: '#0F172A', fontSize: '0.9rem', width: '100%', outline: 'none' }} autoFocus placeholder="مثال: سكرين حماية آيفون 15" value={quickForm.name} onChange={e => setQuickForm({ ...quickForm, name: e.target.value })} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.4rem', display: 'block' }}>القسم</label>
-                    <select style={{ background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 12, padding: '0.75rem', color: '#fff', fontSize: '0.9rem', width: '100%', outline: 'none' }} value={quickForm.category} onChange={e => setQuickForm({ ...quickForm, category: e.target.value })}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.4rem', display: 'block' }}>القسم</label>
+                    <select style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.75rem', color: '#0F172A', fontSize: '0.9rem', width: '100%', outline: 'none' }} value={quickForm.category} onChange={e => setQuickForm({ ...quickForm, category: e.target.value })}>
                       {categories.length > 0 ? categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>) : <option value="إكسسوارات">إكسسوارات</option>}
                     </select>
                   </div>
@@ -403,7 +403,7 @@ export function ShipmentModal({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: 'rgba(168,85,247,0.05)', padding: '1rem', borderRadius: 12, border: '1px solid rgba(168,85,247,0.15)' }}>
                     <label style={{ position: 'relative', display: 'inline-block', width: '40px', height: '22px', flexShrink: 0 }}>
                       <input type="checkbox" style={{ opacity: 0, width: 0, height: 0, position: 'absolute' }} checked={quickForm.isSerialized} onChange={e => setQuickForm({...quickForm, isSerialized: e.target.checked})} />
-                      <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: quickForm.isSerialized ? '#06B6D4' : 'rgba(255,255,255,0.1)', transition: '.3s', borderRadius: '24px' }}>
+                      <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: quickForm.isSerialized ? '#06B6D4' : '#E2E8F0', transition: '.3s', borderRadius: '24px' }}>
                         <span style={{ position: 'absolute', height: '14px', width: '14px', left: quickForm.isSerialized ? '22px' : '4px', bottom: '4px', backgroundColor: 'white', transition: '.3s', borderRadius: '50%' }} />
                       </span>
                     </label>

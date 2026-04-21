@@ -36,11 +36,11 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: '#0B1120',
-        color: '#FFFFFF',
+        background: '#F9FAFB',
+        color: '#0F172A',
         padding: '6rem 2rem 3rem',
         direction: 'rtl',
-        borderTop: '1px solid rgba(6,182,212,0.1)'
+        borderTop: '1px solid rgba(0,0,0,0.06)'
       }}
     >
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -65,13 +65,13 @@ export default function Footer() {
                 }}
               >
                 <span style={{ fontWeight: 900, color: '#06B6D4' }}>ORCA</span>
-                <span style={{ fontWeight: 300, color: '#94A3B8', letterSpacing: '0.25em', marginLeft: '2px' }}>ERP</span>
+                <span style={{ fontWeight: 300, color: '#64748B', letterSpacing: '0.25em', marginLeft: '2px' }}>ERP</span>
               </div>
             </div>
             <p
               style={{
                 fontSize: '1rem',
-                color: '#94A3B8',
+                color: '#475569',
                 lineHeight: 1.8,
                 maxWidth: 400,
                 fontWeight: 500
@@ -87,7 +87,7 @@ export default function Footer() {
               style={{
                 fontSize: '1.1rem',
                 fontWeight: 900,
-                color: '#FFFFFF',
+                color: '#0F172A',
                 marginBottom: '1.5rem',
                 borderBottom: '3px solid #06B6D4',
                 paddingBottom: '0.5rem',
@@ -106,7 +106,7 @@ export default function Footer() {
                   <Link
                     href={l.href}
                     style={{
-                      color: 'rgba(255,255,255,0.6)',
+                      color: '#475569',
                       textDecoration: 'none',
                       fontSize: '1rem',
                       fontWeight: 600,
@@ -116,7 +116,7 @@ export default function Footer() {
                       ((e.currentTarget as HTMLAnchorElement).style.color = '#06B6D4')
                     }
                     onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.6)')
+                      ((e.currentTarget as HTMLAnchorElement).style.color = '#475569')
                     }
                   >
                     {l.label}
@@ -144,13 +144,13 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <MapPin size={20} color="#06B6D4" strokeWidth={2.5} />
-                <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1rem', fontWeight: 700 }}>
+                <span style={{ color: '#0F172A', fontSize: '1rem', fontWeight: 700 }}>
                   {contact.address}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <Phone size={20} color="#06B6D4" strokeWidth={2.5} />
-                <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1rem', fontWeight: 700, direction: 'ltr' }}>
+                <span style={{ color: '#0F172A', fontSize: '1rem', fontWeight: 700, direction: 'ltr' }}>
                   هاتف: {contact.phone}
                 </span>
               </div>

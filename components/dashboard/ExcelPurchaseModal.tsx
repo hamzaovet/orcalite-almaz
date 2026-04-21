@@ -39,7 +39,7 @@ export function ExcelPurchaseModal({
   const [step, setStep] = useState<1 | 2>(1)
   const [previewItems, setPreviewItems] = useState<any[]>([])
   
-  const card = { background: 'rgba(6,182,212,0.03)', borderRadius: 16, border: '1px solid rgba(6,182,212,0.15)', padding: '1.5rem' }
+  const card = { background: '#F8FAFC', borderRadius: 16, border: '1px solid #E2E8F0', padding: '1.5rem' }
 
   async function handleAnalyze() {
     if (!selectedFile) return
@@ -129,16 +129,16 @@ export function ExcelPurchaseModal({
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(8,12,20,0.85)', backdropFilter: 'blur(10px)' }}>
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#0B1120', borderRadius: 28, border: '1px solid rgba(6,182,212,0.2)', width: '100%', maxWidth: 850, padding: '2rem', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', position: 'relative' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)' }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#FFFFFF', borderRadius: 28, border: '1px solid #E2E8F0', width: '100%', maxWidth: 850, padding: '2rem', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px rgba(0,0,0,0.05)', position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 950, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <Database color="#06B6D4" size={26} /> إدراج فاتورة من منصة الإكسيل
             </h2>
-            <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginTop: '0.3rem' }}>قم برفع ملف الإكسيل لاستخراج الأصناف والخصائص (سريال، بطارية، حالة) بدقة.</p>
+            <p style={{ color: '#475569', fontSize: '0.9rem', marginTop: '0.3rem' }}>قم برفع ملف الإكسيل لاستخراج الأصناف والخصائص (سريال، بطارية، حالة) بدقة.</p>
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: '50%', padding: '0.6rem', cursor: 'pointer' }}><X size={20} /></button>
+          <button onClick={onClose} style={{ background: '#F1F5F9', color: '#64748B', border: 'none', borderRadius: '50%', padding: '0.6rem', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         {step === 1 && (
@@ -159,12 +159,12 @@ export function ExcelPurchaseModal({
               }}
             >
               <input type="file" ref={fileInputRef} hidden accept=".xlsx,.xls,.csv" onChange={e => { if (e.target.files) setSelectedFile(e.target.files[0]) }} />
-              <div style={{ background: 'rgba(6,182,212,0.1)', width: 80, height: 80, borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+              <div style={{ background: 'rgba(6,182,212,0.05)', width: 80, height: 80, borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                 <UploadCloud size={40} color="#06B6D4" />
               </div>
-              <h3 style={{ fontWeight: 900, fontSize: '1.2rem', color: '#fff', marginBottom: '0.5rem' }}>قم بسحب وإفلات ملف Excel هنا</h3>
-              <p style={{ color: '#94A3B8', fontSize: '0.85rem', marginBottom: '0.5rem' }}>أو اضغط لاختيار الملف من جهازك</p>
-              <p style={{ color: '#475569', fontSize: '0.78rem' }}>الأعمدة المتوقعة: التصنيف، اسم المنتج، السيريال، المساحة، البطارية، اللون، سعر الشراء، سعر البيع، حالة الجهاز</p>
+              <h3 style={{ fontWeight: 900, fontSize: '1.2rem', color: '#0F172A', marginBottom: '0.5rem' }}>قم بسحب وإفلات ملف Excel هنا</h3>
+              <p style={{ color: '#475569', fontSize: '0.85rem', marginBottom: '0.5rem' }}>أو اضغط لاختيار الملف من جهازك</p>
+              <p style={{ color: '#64748B', fontSize: '0.78rem' }}>الأعمدة المتوقعة: التصنيف، اسم المنتج، السيريال، المساحة، البطارية، اللون، سعر الشراء، سعر البيع، حالة الجهاز</p>
 
               {selectedFile && (
                 <div style={{ marginTop: '2rem', padding: '0.8rem 1.2rem', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: '0.75rem', color: '#10B981', fontWeight: 800 }}>
@@ -193,23 +193,23 @@ export function ExcelPurchaseModal({
               <button onClick={() => setStep(1)} style={{ padding: '0.5rem 1rem', borderRadius: 10, background: 'rgba(255,255,255,0.05)', color: '#94A3B8', border: 'none', fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem' }}>تراجع</button>
             </div>
 
-            <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid rgba(6,182,212,0.15)' }}>
+            <div style={{ overflowX: 'auto', borderRadius: 16, border: '1px solid #E2E8F0' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.82rem' }}>
                 <thead>
-                  <tr style={{ background: 'rgba(6,182,212,0.1)', borderBottom: '1px solid rgba(6,182,212,0.2)' }}>
+                  <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
                     {['اسم المنتج', 'السيريال', 'المساحة', 'البطارية', 'اللون', 'سعر الشراء', 'سعر البيع', 'الحالة', 'الكمية'].map(h => (
-                      <th key={h} style={{ padding: '0.75rem 1rem', color: '#94A3B8', fontWeight: 800, whiteSpace: 'nowrap' }}>{h}</th>
+                      <th key={h} style={{ padding: '0.75rem 1rem', color: '#475569', fontWeight: 800, whiteSpace: 'nowrap' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                    {previewItems.map((it, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
-                      <td style={{ padding: '0.6rem 1rem', color: '#fff', fontWeight: 700 }}>{it.productName}</td>
+                    <tr key={i} style={{ borderBottom: '1px solid #F1F5F9', background: i % 2 === 0 ? '#F8FAFC' : 'transparent' }}>
+                      <td style={{ padding: '0.6rem 1rem', color: '#0F172A', fontWeight: 700 }}>{it.productName}</td>
                       <td style={{ padding: '0.6rem 1rem', color: '#06B6D4', fontFamily: 'monospace', fontSize: '0.75rem', opacity: it.serial === 'لا يوجد' ? 0.3 : 1 }}>{it.serial}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#94A3B8', opacity: it.serial === 'لا يوجد' ? 0.3 : 1 }}>{it.storage}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#94A3B8', opacity: it.serial === 'لا يوجد' ? 0.3 : 1 }}>{it.battery}</td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#94A3B8' }}>{it.color}</td>
+                      <td style={{ padding: '0.6rem 1rem', color: '#64748B', opacity: it.serial === 'لا يوجد' ? 0.3 : 1 }}>{it.storage}</td>
+                      <td style={{ padding: '0.6rem 1rem', color: '#64748B', opacity: it.serial === 'لا يوجد' ? 0.3 : 1 }}>{it.battery}</td>
+                      <td style={{ padding: '0.6rem 1rem', color: '#64748B' }}>{it.color}</td>
                       <td style={{ padding: '0.6rem 1rem', color: '#F59E0B', fontWeight: 700 }}>{it.unitCost.toLocaleString()}</td>
                       <td style={{ padding: '0.6rem 1rem', color: '#10B981', fontWeight: 700 }}>{it.salePrice.toLocaleString()}</td>
                       <td style={{ padding: '0.6rem 1rem' }}>
@@ -217,7 +217,7 @@ export function ExcelPurchaseModal({
                           {it.condition === 'Used' ? 'مستعمل' : 'جديد'}
                         </span>
                       </td>
-                      <td style={{ padding: '0.6rem 1rem', color: '#fff', fontWeight: 900, textAlign: 'center' }}>{it.qty}</td>
+                      <td style={{ padding: '0.6rem 1rem', color: '#0F172A', fontWeight: 900, textAlign: 'center' }}>{it.qty}</td>
                     </tr>
                   ))}
                 </tbody>

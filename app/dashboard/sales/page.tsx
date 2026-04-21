@@ -303,19 +303,19 @@ export default function SalesPage() {
 
   /* ── Styles ── */
   const card: React.CSSProperties = {
-    background: 'rgba(6,182,212,0.03)', borderRadius: 20, border: '1px solid rgba(6,182,212,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+    background: '#FFFFFF', borderRadius: 20, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
   }
   const inp: React.CSSProperties = {
-    width: '100%', padding: '0.8rem 1rem', border: '1px solid rgba(6,182,212,0.15)',
-    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#FFFFFF',
-    outline: 'none', background: 'rgba(6,182,212,0.05)', boxSizing: 'border-box'
+    width: '100%', padding: '0.8rem 1rem', border: '1px solid #E2E8F0',
+    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#0F172A',
+    outline: 'none', background: '#FFFFFF', boxSizing: 'border-box'
   }
   const lbl: React.CSSProperties = {
-    fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8', display: 'block', marginBottom: '0.4rem'
+    fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.4rem'
   }
 
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1240, margin: '0 auto', color: '#0F172A' }}>
       <div className="no-print">
 
       
@@ -329,7 +329,7 @@ export default function SalesPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>البيع والفوترة المباشرة</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>نظام المبيعات</h1>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>نظام المبيعات</h1>
         </div>
         <button onClick={() => setShowScanner(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.25)', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
           <Scan size={20} /> مسح IMEI الذكي
@@ -381,7 +381,7 @@ export default function SalesPage() {
                     {currentStock} وحدة
                   </span>
                 </div>
-                <p style={{ fontWeight: 800, fontSize: '0.88rem', color: '#FFFFFF', marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</p>
+                <p style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0F172A', marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</p>
                 <p style={{ fontWeight: 900, fontSize: '1.1rem', color: '#06B6D4', direction: 'ltr', textAlign: 'right' }}>{fmt(p.price)} <small style={{ fontSize: '0.6rem' }}>ج.م</small></p>
               </motion.div>
             )})}
@@ -398,10 +398,10 @@ export default function SalesPage() {
 
             <div style={{ maxHeight: 350, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {cart.map(item => (
-                <div key={item.product._id} style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 14, padding: '0.85rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div key={item.product._id} style={{ background: '#F8FAFC', borderRadius: 14, padding: '0.85rem', border: '1px solid #E2E8F0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                     <div>
-                      <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#fff' }}>{item.product.name}</p>
+                      <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0F172A' }}>{item.product.name}</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.2rem' }}>
                         {item.serialNumber && (
                            <span style={{ fontSize: '0.65rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', padding: '0.1rem 0.4rem', borderRadius: 4, fontWeight: 700 }}>IMEI: {item.serialNumber}</span>
@@ -425,12 +425,12 @@ export default function SalesPage() {
             </div>
 
             {cart.length > 0 && (
-              <div style={{ background: 'rgba(6,182,212,0.1)', borderRadius: 16, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF' }}><span>الإجمالي</span><span style={{ direction: 'ltr' }}>{fmt(totalSale)} ج.م</span></div>
+              <div style={{ background: 'rgba(6,182,212,0.05)', borderRadius: 16, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.4rem', fontWeight: 900, color: '#0F172A' }}><span>الإجمالي</span><span style={{ direction: 'ltr' }}>{fmt(totalSale)} ج.م</span></div>
                 {totalDiscount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FB923C', fontWeight: 800, fontSize: '0.85rem' }}><span>الخصم</span><span style={{ direction: 'ltr' }}>- {fmt(totalDiscount)} ج.م</span></div>}
                 <div style={{ height: '1px', background: 'rgba(6,182,212,0.1)', margin: '0.25rem 0' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94A3B8' }}>صافي الربح المتوقع</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569' }}>صافي الربح المتوقع</span>
                   <span style={{ background: 'rgba(34,197,94,0.15)', color: '#22C55E', padding: '0.2rem 0.6rem', borderRadius: 10, fontSize: '0.95rem', fontWeight: 950 }}>{fmt(totalProfit)} ج.م +</span>
                 </div>
               </div>
@@ -446,9 +446,9 @@ export default function SalesPage() {
       {/* Checkout Modal */}
       <AnimatePresence>
         {checkoutModal && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0, 0, 0, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#0B1120', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#FFFFFF', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid #E2E8F0', boxShadow: '0 32px 100px rgba(0,0,0,0.1)' }}
             >
               <h2 style={{ fontWeight: 900, fontSize: '1.5rem', marginBottom: '2rem' }}>بيانات العميل والدفع</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -462,7 +462,7 @@ export default function SalesPage() {
                   <label style={lbl}>طريقة الدفع *</label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     {Object.entries(PAYMENT_META).map(([m, meta]) => (
-                      <button key={m} onClick={() => setPaymentMethod(m as any)} style={{ padding: '0.85rem', borderRadius: 12, fontWeight: 800, cursor: 'pointer', border: paymentMethod===m ? `2px solid ${meta.color}` : '2px solid rgba(255,255,255,0.05)', background: paymentMethod===m ? `${meta.color}15` : 'rgba(255,255,255,0.03)', color: paymentMethod===m ? meta.color : '#64748B' }}>{meta.label}</button>
+                      <button key={m} onClick={() => setPaymentMethod(m as any)} style={{ padding: '0.85rem', borderRadius: 12, fontWeight: 800, cursor: 'pointer', border: paymentMethod===m ? `2px solid ${meta.color}` : '2px solid #E2E8F0', background: paymentMethod===m ? `${meta.color}08` : '#F8FAFC', color: paymentMethod===m ? meta.color : '#64748B' }}>{meta.label}</button>
                     ))}
                   </div>
                 </div>
@@ -479,18 +479,18 @@ export default function SalesPage() {
       {/* Success Modal */}
       <AnimatePresence>
         {successModal && completedSale && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(8, 12, 20, 0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(16px)' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(16px)' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-              style={{ ...card, maxWidth: 450, textAlign: 'center', padding: '3rem' }}
+              style={{ ...card, maxWidth: 450, textAlign: 'center', padding: '3rem', background: '#FFFFFF', border: '1px solid #E2E8F0' }}
             >
               <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(34,197,94,0.1)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}><CheckCircle2 size={40} color="#22C55E" /></div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem' }}>تمت العملية بنجاح</h2>
-              <p style={{ color: '#94A3B8', marginBottom: '2rem' }}>رقم الفاتورة: #{completedSale.invoiceNumber}</p>
+              <p style={{ color: '#475569', marginBottom: '2rem' }}>رقم الفاتورة: #{completedSale.invoiceNumber}</p>
               
               <div style={{ display: 'grid', gap: '1rem' }}>
                 <button onClick={() => triggerNativePrint(completedSale.invoiceNumber)} style={{ padding: '1rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Download size={18} /> طباعة الفاتورة | Print Invoice</button>
                 <button onClick={() => openWhatsApp(completedSale.phone || '', completedSale)} style={{ padding: '1rem', background: '#22C55E', color: '#fff', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><MessageCircle size={18} /> إرسال عبر واتساب</button>
-                <button onClick={() => {setSuccessModal(false); setCompletedSale(null)}} style={{ padding: '0.8rem', background: 'transparent', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق</button>
+                <button onClick={() => {setSuccessModal(false); setCompletedSale(null)}} style={{ padding: '0.8rem', background: 'transparent', color: '#64748B', border: '1px solid #E2E8F0', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق</button>
               </div>
             </motion.div>
           </div>
