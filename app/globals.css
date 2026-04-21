@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+/* ── Free Zone Premium Semantic Design Tokens ───────────────────────────── */
+:root {
+  --bg-primary:    #0B1120;
+  --bg-surface:    #0B1120;
+  --bg-surface-hover: rgba(6, 182, 212, 0.05);
+  --bg-card:       #0B1120;
+  --text-primary:  #F8FAFC;
+  --text-secondary:#94A3B8;
+  --text-tertiary: #64748B;
+  --accent-cyan:   #06B6D4;
+  --accent-azure:  #3B82F6;
+  --accent-cyan-dim:   #0891B2;
+  --border-light:  rgba(6, 182, 212, 0.15);
+  --border-strong: rgba(6, 182, 212, 0.25);
+  --danger-red:    #EF4444;
+  --success-green: #06B6D4;
+  --warning-orange:#F59E0B;
+  --glass:         rgba(8, 12, 20, 0.8);
+}
+
+@theme inline {
+  --color-bg-primary:    var(--bg-primary);
+  --color-bg-surface:    var(--bg-surface);
+  --color-text-primary:  var(--text-primary);
+  --color-text-secondary:var(--text-secondary);
+  --color-accent-cyan:   var(--accent-cyan);
+  --color-accent-azure:  var(--accent-azure);
+  --font-arabic:         var(--font-tajawal);
+  --font-sans:           var(--font-inter);
+}
+
+/* ── Base Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  direction: rtl;
+  scroll-behavior: smooth;
+  color-scheme: dark !important;
+}
+
+body {
+  font-family: var(--font-tajawal), var(--font-sans), system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* ── Forms & AutoFill ──────────────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+  -webkit-box-shadow: 0 0 0 5000px #0a0a0a inset !important;
+  -webkit-text-fill-color: #ededed !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ── UI Helpers ──────────────────────────────────────── */
+.glow-cyan {
+  text-shadow: 0 0 16px rgba(14, 165, 233, 0.5), 0 0 35px rgba(14, 165, 233, 0.2);
+}
+
+/* ── Glass Card ────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--border-light);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ── Sonar Ring Keyframes ──────────────────────────────────── */
+@keyframes sonar-ring {
+  0%   { transform: scale(0.4); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes sonar-sweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Print Media Query ──────────────────────────────────────── */
+@media print {
+  /* Set exact white background and black text for crisp printing */
+  html, body {
+    background: white !important;
+    color: black !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  /* Hide navigation, sidebar, and non-printable elements */
+  aside, 
+  nav,
+  header:not(.print-header),
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Allow main content container to take full width and avoid scrolling constraints */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    flex: none !important;
+    width: 100% !important;
+    display: block !important;
+  }
+
+  /* Ensure the report container has no max-width boundaries and clean backgrounds */
+  #printable-report, 
+  #printable-report * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    border-color: #e5e7eb !important;
+  }
+
+  /* Make tables display correctly with page-break controls */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    page-break-inside: auto !important;
+  }
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+  th, td {
+    border: 1px solid #d1d5db !important;
+    padding: 8px !important;
+    color: black !important;
+    background: transparent !important;
+  }
+  th {
+    background: #f3f4f6 !important;
+    color: black !important;
+    font-weight: bold !important;
+  }
+
+  /* KPI Cards printing fixes */
+  .kpi-card {
+    border: 1px solid #d1d5db !important;
+    break-inside: avoid !important;
+  }
+
+  .print-only { 
+    display: block !important; 
+    position: absolute !important; 
+    left: 0 !important; 
+    top: 0 !important; 
+    width: 100% !important; 
+    margin: 0 !important; 
+    padding: 0 !important;
+  }
+}
+
+.print-only { display: none; }
+
+/* ── Global Dropdown Fix (The Ghost Purge) ─────────────────── */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 2.5rem 0.75rem 1rem !important;
+  cursor: pointer !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2306B6D4' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: left 0.75rem center !important;
+  background-size: 1rem !important;
+  font-family: inherit !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+select:focus {
+  outline: none !important;
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1) !important;
+}
+
+option {
+  background-color: var(--bg-primary) !important;
+  color: white !important;
+  padding: 10px !important;
+}
+
+/* ── Global Calendar Fix (Phase 2.1) ────────────────────────── */
+input[type="date"] {
+  background: rgba(6, 182, 212, 0.05) !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
+  border-radius: 12px !important;
+  color: #F8FAFC !important;
+  padding: 0.7rem 1rem !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+input[type="date"]:focus {
+  border-color: #06B6D4 !important;
+  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1) !important;
+}
+
+::-webkit-calendar-picker-indicator {
+  cursor: pointer !important;
+  filter: invert(0.8) sepia(100%) saturate(500%) hue-rotate(150deg) brightness(1.1) !important; /* Electric Cyan Color */
+}
