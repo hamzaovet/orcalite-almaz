@@ -523,7 +523,7 @@ export default function GodfatherCalcPage() {
                 )}
 
                 {/* Separator */}
-                <div style={{ borderTop: '1px dashed '#F1F5F9'', margin: '0.25rem 0' }} />
+                <div style={{ borderTop: '1px dashed #F1F5F9', margin: '0.25rem 0' }} />
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
                   <span style={{ color: '#475569' }}>رسوم التأسيس:</span>
