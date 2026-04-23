@@ -70,7 +70,7 @@ function InvoiceContent() {
             </div>
             <div className="text-left">
                <h2 className="text-xl font-bold text-cyan-800">{settings?.storeName || 'مؤسسة أركا'}</h2>
-               <p className="text-sm text-gray-400">فرع: {searchParams.get('branchName') || purchase.branchName || purchase.branchId?.name || 'المركز الرئيسي'}</p>
+               <p className="text-sm text-gray-600">فرع: {searchParams.get('branchName') || purchase.branchName || purchase.branchId?.name || 'المركز الرئيسي'}</p>
             </div>
           </div>
 
@@ -88,7 +88,7 @@ function InvoiceContent() {
             <h2 className="text-lg font-bold text-cyan-800 mb-4 px-3 border-r-4 border-cyan-500">الأصناف الموردة:</h2>
             <table className="w-full text-right border-collapse rounded-xl overflow-hidden border border-gray-200">
               <thead>
-                <tr className="bg-cyan-900 text-white">
+                <tr className="bg-cyan-600 text-slate-900">
                   <th className="border-b p-4">المنتج والمواصفات</th>
                   <th className="border-b p-4 text-center">الكمية</th>
                   <th className="border-b p-4 text-center">التكلفة</th>
@@ -115,7 +115,7 @@ function InvoiceContent() {
                         </div>
                       )}
                       {item.imeis && item.imeis.length > 0 && (
-                        <div className="text-xs text-gray-400 mt-1 font-mono leading-relaxed">{item.imeis.join(' / ')}</div>
+                        <div className="text-xs text-gray-600 mt-1 font-mono leading-relaxed">{item.imeis.join(' / ')}</div>
                       )}
                     </td>
                     <td className="p-4 border-b text-center font-bold">{item.qty}</td>
@@ -143,11 +143,11 @@ function InvoiceContent() {
           </div>
 
           <div className="absolute bottom-10 left-10 right-10 flex justify-between items-end border-t border-gray-100 pt-6">
-             <div className="text-xs text-gray-400 italic">
+             <div className="text-xs text-gray-600 italic">
                صدرت آلياً بواسطة ORCA ERP - {new Date().toLocaleString('ar-EG')}
              </div>
              <div className="text-center">
-               <div className="mb-10 text-gray-400 text-sm italic">ختم الشركة / المستلم</div>
+               <div className="mb-10 text-gray-600 text-sm italic">ختم الشركة / المستلم</div>
                <div className="w-40 h-1 bg-cyan-900"></div>
              </div>
           </div>

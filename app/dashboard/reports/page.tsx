@@ -174,29 +174,29 @@ export default function ReportsPage() {
   }
 
   const cardStyle: React.CSSProperties = {
-    background: 'rgba(6,182,212,0.03)', borderRadius: 20, padding: '1.75rem',
-    border: '1px solid rgba(6,182,212,0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+    background: '#FFFFFF', borderRadius: 20, padding: '1.75rem',
+    border: '1px solid #E2E8F0', boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
   }
 
   if (!mounted) return null
 
   // ============================ UNIFIED CORPORATE VIEW ============================
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#1E293B' }}>
       <PrintHeader title="التقرير المالي والتحليل الاستراتيجي" subtitle={startDate && endDate ? `الفترة من ${startDate} إلى ${endDate}` : undefined} />
       
       {/* Header with Close Period Button */}
       <div className="no-print" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>ميزانية و مركز مالي موحد</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>التحليل المالي الموحد</h1>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>التحليل المالي الموحد</h1>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button onClick={() => setShowCloseModal(true)} disabled={closing} style={{ background: 'rgba(234,179,8,0.1)', color: '#EAB308', border: '1px solid rgba(234,179,8,0.3)', borderRadius: 12, padding: '0.75rem 1.25rem', fontWeight: 800, cursor: 'pointer' }}>
              {closing ? <Loader2 className="animate-spin" size={18} /> : <Calendar size={18} />} إغلاق الفترة (Snapshot)
           </button>
-          <button onClick={fetchAll} style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '0.75rem 1.25rem', fontWeight: 700, cursor: 'pointer' }}><RefreshCw size={18} className={loading?'animate-spin':''} /></button>
-          <button onClick={handlePrint} style={{ background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(6,182,212,0.35)' }}><Printer size={20} /> طباعة الميزانية</button>
+          <button onClick={fetchAll} style={{ background: '#F8FAFC', color: '#0F172A', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.75rem 1.25rem', fontWeight: 700, cursor: 'pointer' }}><RefreshCw size={18} className={loading?'animate-spin':''} /></button>
+          <button onClick={handlePrint} style={{ background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(6,182,212,0.35)' }}><Printer size={20} /> طباعة الميزانية</button>
         </div>
       </div>
 
@@ -209,8 +209,8 @@ export default function ReportsPage() {
             onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
          >
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#22C55E', textTransform: 'uppercase' }}>إجمالي الأصول (Total Assets)</span>
-            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#fff' }}>{(reportData?.assets?.total ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color:'#94A3B8'}}>ج.م</small></p>
-            <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94A3B8' }}>Liquidity + Units + Receivables (Click to view)</div>
+            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#0F172A' }}>{(reportData?.assets?.total ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color: '#475569'}}>ج.م</small></p>
+            <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#475569' }}>Liquidity + Units + Receivables (Click to view)</div>
          </div>
          <div 
             onClick={() => setActiveDetail('LIABILITIES')}
@@ -219,13 +219,13 @@ export default function ReportsPage() {
             onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
          >
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#EF4444', textTransform: 'uppercase' }}>إجمالي الالتزامات (Total Liabilities)</span>
-            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#fff' }}>{(reportData?.liabilities?.total ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color:'#94A3B8'}}>ج.م</small></p>
-            <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#94A3B8' }}>Total Supplier Debts (Payables) (Click to view)</div>
+            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#0F172A' }}>{(reportData?.liabilities?.total ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color: '#475569'}}>ج.م</small></p>
+            <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#475569' }}>Total Supplier Debts (Payables) (Click to view)</div>
          </div>
          <div style={{ ...cardStyle, background: 'linear-gradient(135deg, rgba(6,182,212,0.1), transparent)', border: '1px solid rgba(6,182,212,0.2)' }}>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#06B6D4', textTransform: 'uppercase' }}>رأس المال العامل (Working Capital)</span>
-            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#fff' }}>{(reportData?.capital?.workingCapital ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color:'#94A3B8'}}>ج.م</small></p>
-            <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#94A3B8' }}>Assets - Liabilities</div>
+            <p style={{ fontSize: '2.2rem', fontWeight: 950, color: '#0F172A' }}>{(reportData?.capital?.workingCapital ?? 0).toLocaleString('ar-EG')} <small style={{fontSize:'1rem', color: '#475569'}}>ج.م</small></p>
+            <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#475569' }}>Assets - Liabilities</div>
          </div>
       </div>
 
@@ -238,29 +238,29 @@ export default function ReportsPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                style={{ background: '#0B1120', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '2.5rem', width: '100%', maxWidth: 500, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
+                style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 24, padding: '2.5rem', width: '100%', maxWidth: 500, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A' }}>
                       {activeDetail === 'ASSETS' ? 'تفاصيل إجمالي الأصول' : 'تفاصيل الالتزامات'}
                     </h3>
-                    <button onClick={() => setActiveDetail(null)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 12, padding: '0.5rem', cursor: 'pointer', color: '#fff' }}>×</button>
+                    <button onClick={() => setActiveDetail(null)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 12, padding: '0.5rem', cursor: 'pointer', color: '#0F172A' }}>×</button>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     {activeDetail === 'ASSETS' ? (
                       <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ color: '#94A3B8', fontWeight: 700 }}>سيولة الخزينة (Treasury)</span>
-                            <span style={{ fontWeight: 900, color: '#fff' }}>{(reportData?.assets?.treasury ?? 0).toLocaleString('ar-EG')} ج.م</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #F1F5F9' }}>
+                            <span style={{ color: '#475569', fontWeight: 700 }}>سيولة الخزينة (Treasury)</span>
+                            <span style={{ fontWeight: 900, color: '#0F172A' }}>{(reportData?.assets?.treasury ?? 0).toLocaleString('ar-EG')} ج.م</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ color: '#94A3B8', fontWeight: 700 }}>قيمة المخزن الفعلي (Inventory)</span>
-                            <span style={{ fontWeight: 900, color: '#fff' }}>{(reportData?.assets?.inventory ?? 0).toLocaleString('ar-EG')} ج.م</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #F1F5F9' }}>
+                            <span style={{ color: '#475569', fontWeight: 700 }}>قيمة المخزن الفعلي (Inventory)</span>
+                            <span style={{ fontWeight: 900, color: '#0F172A' }}>{(reportData?.assets?.inventory ?? 0).toLocaleString('ar-EG')} ج.م</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ color: '#94A3B8', fontWeight: 700 }}>ديون العملاء (Receivables)</span>
-                            <span style={{ fontWeight: 900, color: '#fff' }}>{(reportData?.assets?.customers ?? 0).toLocaleString('ar-EG')} ج.م</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #F1F5F9' }}>
+                            <span style={{ color: '#475569', fontWeight: 700 }}>ديون العملاء (Receivables)</span>
+                            <span style={{ fontWeight: 900, color: '#0F172A' }}>{(reportData?.assets?.customers ?? 0).toLocaleString('ar-EG')} ج.م</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '1rem', marginTop: '0.5rem' }}>
                             <span style={{ color: '#22C55E', fontWeight: 900, fontSize: '1.1rem' }}>الإجمالي (Total Assets)</span>
@@ -269,9 +269,9 @@ export default function ReportsPage() {
                       </>
                     ) : (
                       <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                            <span style={{ color: '#94A3B8', fontWeight: 700 }}>ديون الموردين (Payables)</span>
-                            <span style={{ fontWeight: 900, color: '#fff' }}>{(reportData?.liabilities?.suppliers ?? 0).toLocaleString('ar-EG')} ج.م</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '1rem', borderBottom: '1px solid #F1F5F9' }}>
+                            <span style={{ color: '#475569', fontWeight: 700 }}>ديون الموردين (Payables)</span>
+                            <span style={{ fontWeight: 900, color: '#0F172A' }}>{(reportData?.liabilities?.suppliers ?? 0).toLocaleString('ar-EG')} ج.م</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '1rem', marginTop: '0.5rem' }}>
                             <span style={{ color: '#EF4444', fontWeight: 900, fontSize: '1.1rem' }}>إجمالي الالتزامات</span>
@@ -281,7 +281,7 @@ export default function ReportsPage() {
                     )}
                 </div>
 
-                <button onClick={() => setActiveDetail(null)} style={{ width: '100%', marginTop: '2.5rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 12, padding: '1rem', fontWeight: 800, cursor: 'pointer' }}>
+                <button onClick={() => setActiveDetail(null)} style={{ width: '100%', marginTop: '2.5rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 12, padding: '1rem', fontWeight: 800, cursor: 'pointer' }}>
                     إغلاق النافذة
                 </button>
               </motion.div>
@@ -296,13 +296,13 @@ export default function ReportsPage() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 30 }}
                 onClick={(e) => e.stopPropagation()}
-                style={{ background: '#0B1120', border: '2px solid rgba(234,179,8,0.3)', borderRadius: 32, padding: '3rem', width: '100%', maxWidth: 500, boxShadow: '0 25px 60px -12px rgba(0,0,0,0.7)', textAlign: 'center' }}
+                style={{ background: '#F8FAFC', border: '2px solid rgba(234,179,8,0.3)', borderRadius: 32, padding: '3rem', width: '100%', maxWidth: 500, boxShadow: '0 25px 60px -12px rgba(0,0,0,0.7)', textAlign: 'center' }}
               >
                 <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(234,179,8,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                     <ShieldAlert size={40} color="#EAB308" />
                 </div>
-                <h3 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>إغلاق الفترة المالية</h3>
-                <p style={{ color: '#94A3B8', fontSize: '1rem', lineHeight: 1.6, marginBottom: '2.5rem' }}>
+                <h3 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0F172A', marginBottom: '1rem' }}>إغلاق الفترة المالية</h3>
+                <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.6, marginBottom: '2.5rem' }}>
                     هل أنت متأكد من حفظ قيمة المخزون الحالي؟ <br/>
                     <span style={{ color: '#EAB308', fontWeight: 700 }}>سيتم استخدام هذه القيمة كمخزون "أول المدة" للفترة القادمة.</span>
                 </p>
@@ -310,7 +310,7 @@ export default function ReportsPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <button 
                       onClick={() => setShowCloseModal(false)}
-                      style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 16, padding: '1.2rem', fontWeight: 800, cursor: 'pointer' }}
+                      style={{ background: '#F8FAFC', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.2rem', fontWeight: 800, cursor: 'pointer' }}
                     >
                       إلغاء
                     </button>
@@ -328,18 +328,18 @@ export default function ReportsPage() {
       </AnimatePresence>
 
       {/* Date & Branch Filters */}
-      <div className="no-print" style={{ ...cardStyle, background: 'rgba(6,182,212,0.05)', marginBottom: '2.5rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-end', padding: '1.5rem' }}>
+      <div className="no-print" style={{ ...cardStyle, background: '#ECFEFF', marginBottom: '2.5rem', display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-end', padding: '1.5rem' }}>
         <div style={{ flex: 1, minWidth: 200 }}>
-          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>من تاريخ</label>
-          <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} style={{ width: '100%', background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 12, padding: '0.75rem', color: '#fff', outline: 'none' }} />
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>من تاريخ</label>
+          <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.75rem', color: '#0F172A', outline: 'none' }} />
         </div>
         <div style={{ flex: 1, minWidth: 200 }}>
-          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>إلى تاريخ</label>
-          <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} style={{ width: '100%', background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 12, padding: '0.75rem', color: '#fff', outline: 'none' }} />
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>إلى تاريخ</label>
+          <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.75rem', color: '#0F172A', outline: 'none' }} />
         </div>
         <div style={{ flex: 1.5, minWidth: 250 }}>
-          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>تصفية حسب الموقع / الفرع</label>
-          <select value={selectedBranch} onChange={e=>setSelectedBranch(e.target.value)} style={{ width: '100%', background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 12, padding: '0.75rem', color: '#fff', outline: 'none' }}>
+          <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>تصفية حسب الموقع / الفرع</label>
+          <select value={selectedBranch} onChange={e=>setSelectedBranch(e.target.value)} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.75rem', color: '#0F172A', outline: 'none' }}>
             <option value="all">كل الفروع والمستودعات</option>
             {branches.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
           </select>
@@ -354,16 +354,16 @@ export default function ReportsPage() {
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-           <div style={{ background: '#0B1120', padding: '1.2rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 800 }}>مخزون أول المدة</span>
+           <div style={{ background: '#F8FAFC', padding: '1.2rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
+              <span style={{ fontSize: '0.7rem', color: '#475569', fontWeight: 800 }}>مخزون أول المدة</span>
               <p style={{ fontSize: '1.4rem', fontWeight: 900 }}>{(reportData?.pnl?.openingStock ?? 0).toLocaleString('ar-EG')}</p>
            </div>
-           <div style={{ background: '#0B1120', padding: '1.2rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 800 }}>إجمالي المشتريات (الفترة)</span>
+           <div style={{ background: '#F8FAFC', padding: '1.2rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
+              <span style={{ fontSize: '0.7rem', color: '#475569', fontWeight: 800 }}>إجمالي المشتريات (الفترة)</span>
               <p style={{ fontSize: '1.4rem', fontWeight: 900 }}>{(reportData?.pnl?.purchases ?? 0).toLocaleString('ar-EG')}</p>
            </div>
-           <div style={{ background: '#0B1120', padding: '1.2rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 800 }}>مخزون آخر المدة (Units)</span>
+           <div style={{ background: '#F8FAFC', padding: '1.2rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
+              <span style={{ fontSize: '0.7rem', color: '#475569', fontWeight: 800 }}>مخزون آخر المدة (Units)</span>
               <p style={{ fontSize: '1.4rem', fontWeight: 900 }}>{(reportData?.assets?.inventory ?? 0).toLocaleString('ar-EG')}</p>
            </div>
            <div style={{ background: 'rgba(239,68,68,0.1)', padding: '1.2rem', borderRadius: 16, border: '1px solid rgba(239,68,68,0.2)' }}>
@@ -376,7 +376,7 @@ export default function ReportsPage() {
            </div>
            <div style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.2), transparent)', padding: '1.2rem', borderRadius: 16, border: '1px solid rgba(234,179,8,0.4)' }}>
               <span style={{ fontSize: '0.75rem', color: '#EAB308', fontWeight: 950 }}>مجمل الربح (Gross Profit)</span>
-              <p style={{ fontSize: '1.8rem', fontWeight: 950, color: '#fff' }}>{(reportData?.pnl?.grossProfit ?? 0).toLocaleString('ar-EG')}</p>
+              <p style={{ fontSize: '1.8rem', fontWeight: 950, color: '#0F172A' }}>{(reportData?.pnl?.grossProfit ?? 0).toLocaleString('ar-EG')}</p>
            </div>
         </div>
       </div>
@@ -391,7 +391,7 @@ export default function ReportsPage() {
           return (
             <div key={i} style={cardStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8' }}>{s.label}</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#475569' }}>{s.label}</span>
                 <div style={{ padding: '0.5rem', background: `${s.color}15`, borderRadius: 10, border: `1px solid ${s.color}20` }}><Icon size={18} color={s.color} /></div>
               </div>
               <p style={{ fontSize: '1.8rem', fontWeight: 900, color: s.color, direction: 'ltr' }}>{s.value.toLocaleString('ar-EG')} <small style={{fontSize:'0.8rem'}}>ج.م</small></p>
@@ -403,21 +403,21 @@ export default function ReportsPage() {
       {/* Tables Section */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
         <section>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1.5rem', borderRight: '4px solid #06B6D4', paddingRight: '1rem' }}>سجل المبيعات التفصيلي</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0F172A', marginBottom: '1.5rem', borderRight: '4px solid #06B6D4', paddingRight: '1rem' }}>سجل المبيعات التفصيلي</h2>
           <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
             <table style={{ width: '100%', textAlign: 'right', fontSize: '0.9rem' }}>
               <thead>
-                <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid rgba(6,182,212,0.15)' }}>
-                  {['التاريخ', 'الفاتورة', 'العميل', 'المبلغ', 'الربح'].map(h => <th key={h} style={{ padding: '1.1rem', fontWeight: 800, color: '#94A3B8', fontSize: '0.75rem' }}>{h}</th>)}
+                <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
+                  {['التاريخ', 'الفاتورة', 'العميل', 'المبلغ', 'الربح'].map(h => <th key={h} style={{ padding: '1.1rem', fontWeight: 800, color: '#475569', fontSize: '0.75rem' }}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {filteredSales.map(s => (
-                  <tr key={s._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                  <tr key={s._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <td style={{ padding: '1.1rem' }}>{new Date(s.date).toLocaleDateString('ar-EG')}</td>
                     <td style={{ padding: '1.1rem', fontWeight: 800, color: '#06B6D4' }}>#{s._id.slice(-6).toUpperCase()}</td>
                     <td style={{ padding: '1.1rem' }}>{s.customer || '—'}</td>
-                    <td style={{ padding: '1.1rem', fontWeight: 900, color: '#FFFFFF', direction: 'ltr' }}>{(s.totalSalePrice ?? 0).toLocaleString('ar-EG')}</td>
+                    <td style={{ padding: '1.1rem', fontWeight: 900, color: '#0F172A', direction: 'ltr' }}>{(s.totalSalePrice ?? 0).toLocaleString('ar-EG')}</td>
                     <td style={{ padding: '1.1rem', fontWeight: 900, color: '#22C55E' }}>{(s.profit ?? 0).toLocaleString('ar-EG')}</td>
                   </tr>
                 ))}
@@ -427,17 +427,17 @@ export default function ReportsPage() {
         </section>
 
         <section>
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1.5rem', borderRight: '4px solid #EF4444', paddingRight: '1rem' }}>سجل المصروفات العام</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0F172A', marginBottom: '1.5rem', borderRight: '4px solid #EF4444', paddingRight: '1rem' }}>سجل المصروفات العام</h2>
           <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
             <table style={{ width: '100%', textAlign: 'right', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ background: 'rgba(239,68,68,0.06)', borderBottom: '1px solid rgba(239,68,68,0.15)' }}>
-                  {['التاريخ', 'البند', 'الفئة', 'المبلغ'].map(h => <th key={h} style={{ padding: '1.1rem', fontWeight: 800, color: '#94A3B8', fontSize: '0.75rem' }}>{h}</th>)}
+                  {['التاريخ', 'البند', 'الفئة', 'المبلغ'].map(h => <th key={h} style={{ padding: '1.1rem', fontWeight: 800, color: '#475569', fontSize: '0.75rem' }}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {filteredExpenses.map(e => (
-                  <tr key={e._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                  <tr key={e._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <td style={{ padding: '1.1rem' }}>{new Date(e.date).toLocaleDateString('ar-EG')}</td>
                     <td style={{ padding: '1.1rem', fontWeight: 800 }}>{e.title}</td>
                     <td style={{ padding: '1.1rem' }}>{e.category || 'عام'}</td>

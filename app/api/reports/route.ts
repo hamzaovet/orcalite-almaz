@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/db';
 import { StoreSettings } from '@/models/StoreSettings';
 import Transaction from '@/models/Transaction';
 import InventoryUnit from '@/models/InventoryUnit';
+import Product from '@/models/Product';
 import Supplier from '@/models/Supplier';
 import Customer from '@/models/Customer';
 import Purchase from '@/models/Purchase';
@@ -51,16 +52,20 @@ export async function GET(request: NextRequest) {
     // --- AGGREGATIONS ---
 
     // A. Treasury Balance (Current Liquidity)
+    // IMPORTANT: exclude SupplierLedger entries — those are accounting-only, not real cash
     const treasuryAgg = await Transaction.aggregate([
-        { $match: treasuryMatch },
+        { $match: { ...treasuryMatch, entityType: { $nin: ['SupplierLedger', 'System_Forex_Adjustment'] } } },
         { $group: { _id: null, totalIn: { $sum: { $cond: [{ $eq: ["$type", "IN"] }, "$amount", 0] } }, totalOut: { $sum: { $cond: [{ $eq: ["$type", "OUT"] }, "$amount", 0] } } } }
     ]);
     const treasuryBalance = (treasuryAgg[0]?.totalIn || 0) - (treasuryAgg[0]?.totalOut || 0);
 
-    // B. Ending Inventory Value (Atomic Units)
-    const inventoryAgg = await InventoryUnit.aggregate([
-        { $match: invMatch },
-        { $group: { _id: null, totalValue: { $sum: { $multiply: ["$quantity", { $ifNull: ["$landedCostEGP", 0] }] } } } }
+    // B. Ending Inventory Value — computed from Product.stock × costPrice
+    // (InventoryUnit is only for serialized/shipment items, not regular stock purchases)
+    const productInvMatch: any = { stock: { $gt: 0 } };
+    if (isValidBranch) productInvMatch.branchId = new mongoose.Types.ObjectId(branchId);
+    const inventoryAgg = await Product.aggregate([
+        { $match: productInvMatch },
+        { $group: { _id: null, totalValue: { $sum: { $multiply: ['$stock', { $ifNull: ['$costPrice', 0] }] } } } }
     ]);
     const endingInventoryValue = inventoryAgg[0]?.totalValue || 0;
 

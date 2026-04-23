@@ -36,11 +36,11 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: '#F9FAFB',
-        color: '#0F172A',
+        background: '#F0F9FF',
+        color: '#1E293B',
         padding: '6rem 2rem 3rem',
         direction: 'rtl',
-        borderTop: '1px solid rgba(0,0,0,0.06)'
+        borderTop: '1px solid #BAE6FD'
       }}
     >
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -132,7 +132,7 @@ export default function Footer() {
               style={{
                 fontSize: '1.1rem',
                 fontWeight: 900,
-                color: '#FFFFFF',
+                color: '#0F172A',
                 marginBottom: '1.5rem',
                 borderBottom: '3px solid #06B6D4',
                 paddingBottom: '0.5rem',
@@ -144,13 +144,13 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <MapPin size={20} color="#06B6D4" strokeWidth={2.5} />
-                <span style={{ color: '#0F172A', fontSize: '1rem', fontWeight: 700 }}>
+                <span style={{ color: '#1E293B', fontSize: '1rem', fontWeight: 700 }}>
                   {contact.address}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <Phone size={20} color="#06B6D4" strokeWidth={2.5} />
-                <span style={{ color: '#0F172A', fontSize: '1rem', fontWeight: 700, direction: 'ltr' }}>
+                <span style={{ color: '#1E293B', fontSize: '1rem', fontWeight: 700, direction: 'ltr' }}>
                   هاتف: {contact.phone}
                 </span>
               </div>

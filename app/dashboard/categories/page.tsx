@@ -140,24 +140,24 @@ export default function CategoriesPage() {
   /* ── Styles ───────────────────────────────────────────────── */
   const inp: React.CSSProperties = {
     width: '100%', padding: '0.8rem 1rem', border: '1px solid rgba(6, 182, 212, 0.2)',
-    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#FFFFFF',
+    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#0F172A',
     outline: 'none', background: 'rgba(6, 182, 212, 0.05)',
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
       
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.2em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>أقسام الكتالوج</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>الأقسام الرئيسية</h1>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>الأقسام الرئيسية</h1>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           {categories.length === 0 && businessType === 'B2C_RETAIL' && !loading && (
             <button
               onClick={handleSeedDefaults}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'linear-gradient(135deg, #A855F7 0%, #06B6D4 100%)', color: '#fff', border: 'none', borderRadius: 12, padding: '0.8rem 1.6rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(168,85,247,0.3)', transition: 'transform 0.2s' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'linear-gradient(135deg, #A855F7 0%, #06B6D4 100%)', color: '#0F172A', border: 'none', borderRadius: 12, padding: '0.8rem 1.6rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(168,85,247,0.3)', transition: 'transform 0.2s' }}
               onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'}
               onMouseLeave={(e)=>e.currentTarget.style.transform='scale(1)'}
             >
@@ -167,7 +167,7 @@ export default function CategoriesPage() {
 
           <button
             onClick={openNew}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 12, padding: '0.8rem 1.6rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.35)', transition: 'transform 0.2s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 12, padding: '0.8rem 1.6rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.35)', transition: 'transform 0.2s' }}
             onMouseEnter={(e)=>e.currentTarget.style.transform='scale(1.05)'}
             onMouseLeave={(e)=>e.currentTarget.style.transform='scale(1)'}
           >
@@ -193,7 +193,7 @@ export default function CategoriesPage() {
       ) : categories.length === 0 ? (
         <div style={{ background: 'rgba(6, 182, 212, 0.03)', borderRadius: 24, border: '1px solid rgba(6, 182, 212, 0.15)', textAlign: 'center', padding: '6rem 2rem' }}>
           <FolderOpen size={64} color="rgba(6,182,212,0.3)" style={{ margin: '0 auto 1.5rem' }} />
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.5rem' }}>لا توجد أقسام مسجلة</h3>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>لا توجد أقسام مسجلة</h3>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1.1rem', maxWidth: 400, margin: '0 auto' }}>يمكنك إضافة الأقسام يدوياً أو استخدام التأسيس التلقائي إذا كنت تاجر تجزئة.</p>
         </div>
       ) : (
@@ -230,19 +230,19 @@ export default function CategoriesPage() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
-                <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(6,182,212,0.05) 100%)', border: '1px solid rgba(6,182,212,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(6,182,212,0.05) 100%)', border: '1px solid #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <DynamicIcon name={cat.icon || 'Tag'} size={32} color="#06B6D4" />
                 </div>
                 
                 {/* Discrete Actions */}
                 <div style={{ display: 'flex', gap: '0.4rem', opacity: 0.8 }}>
-                  <button onClick={(e) => { e.stopPropagation(); openEdit(cat); }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#06B6D4', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(6,182,212,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='rgba(255,255,255,0.05)'}><Pencil size={18} /></button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDelete(cat._id); }} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#EF4444', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(239,68,68,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='rgba(255,255,255,0.05)'}><Trash2 size={18} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); openEdit(cat); }} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#06B6D4', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(6,182,212,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='#F8FAFC'}><Pencil size={18} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDelete(cat._id); }} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#EF4444', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(239,68,68,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='#F8FAFC'}><Trash2 size={18} /></button>
                 </div>
               </div>
               
               <div style={{ position: 'relative', zIndex: 1 }}>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.4rem' }}>{cat.name}</h3>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.4rem' }}>{cat.name}</h3>
                 <p style={{ fontSize: '0.9rem', color: 'rgba(6,182,212,0.7)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>{cat.slug}</p>
               </div>
             </motion.div>
@@ -258,16 +258,16 @@ export default function CategoriesPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              style={{ background: '#0B1120', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 80px rgba(0,0,0,0.5)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 80px rgba(0,0,0,0.5)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                <h2 style={{ fontWeight: 900, fontSize: '1.6rem', color: '#FFFFFF' }}>{isEditing ? 'تعديل القسم' : 'إضافة قسم جديد'}</h2>
-                <button onClick={() => setModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#fff' }}><X size={24} /></button>
+                <h2 style={{ fontWeight: 900, fontSize: '1.6rem', color: '#0F172A' }}>{isEditing ? 'تعديل القسم' : 'إضافة قسم جديد'}</h2>
+                <button onClick={() => setModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#0F172A' }}><X size={24} /></button>
               </div>
 
               <form onSubmit={handleSave} style={{ display: 'grid', gap: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#94A3B8', fontWeight: 700 }}>اسم القسم</label>
+                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 700 }}>اسم القسم</label>
                   <input
                     autoFocus
                     value={form.name}
@@ -285,7 +285,7 @@ export default function CategoriesPage() {
                 </div>
                 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#94A3B8', fontWeight: 700 }}>
+                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 700 }}>
                     المعرف (Slug)
                   </label>
                   <input
@@ -301,7 +301,7 @@ export default function CategoriesPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#94A3B8', fontWeight: 700 }}>الأيقونة</label>
+                  <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 700 }}>الأيقونة</label>
                   <div style={{ display: 'flex', gap: '0.8rem', overflowX: 'auto', padding: '0.5rem 0', scrollbarWidth: 'thin' }}>
                     {Object.keys(ICON_MAP).map(iconName => {
                        const isSelected = form.icon === iconName;
@@ -313,7 +313,7 @@ export default function CategoriesPage() {
                              padding: '0.8rem',
                              borderRadius: 16,
                              cursor: 'pointer',
-                             border: `2px solid ${isSelected ? '#06B6D4' : 'rgba(255,255,255,0.05)'}`,
+                             border: `2px solid ${isSelected ? '#06B6D4' : '#F8FAFC'}`,
                              background: isSelected ? 'rgba(6,182,212,0.1)' : '#111827',
                              flexShrink: 0,
                              transition: 'all 0.2s'
@@ -329,7 +329,7 @@ export default function CategoriesPage() {
                 <div style={{ paddingTop: '1rem' }}>
                   <button
                     type="submit" disabled={saving}
-                    style={{ width: '100%', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, padding: '1.25rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.3)' }}
+                    style={{ width: '100%', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.25rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.3)' }}
                   >
                     {saving ? <Loader2 className="animate-spin" size={24} style={{ margin: '0 auto' }} /> : (isEditing ? 'حفظ التغييرات' : 'إضافة القسم للحساب')}
                   </button>

@@ -44,7 +44,7 @@ export default function BillingBanner() {
         fontWeight: 700,
         fontSize: '0.88rem',
         background: isWarning ? '#F59E0B' : '#EA580C',
-        color: '#fff',
+        color: '#0F172A',
         zIndex: 50,
         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
         direction: 'rtl',

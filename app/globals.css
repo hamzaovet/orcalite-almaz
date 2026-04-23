@@ -2,9 +2,21 @@
 
 /* ── Free Zone Premium Semantic Design Tokens ───────────────────────────── */
 :root {
-  --bg-primary:    #F9FAFB;
+  /* Almaz Light Theme Base */
+  --background: 240 20% 98%; /* Very light gray/white */
+  --foreground: 222.2 84% 4.9%; /* Very dark navy/slate for text */
+  
+  /* Almaz Primary (Cyan/Light Blue from the images) */
+  --primary: 189 94% 43%; /* Tailwind Cyan-500 equivalent */
+  --primary-foreground: 210 40% 98%; /* White text on primary buttons */
+  
+  /* Surfaces (Cards, Modals) */
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --bg-primary:    #F8FAFC;
   --bg-surface:    #FFFFFF;
-  --bg-surface-hover: rgba(6, 182, 212, 0.04);
+  --bg-surface-hover: rgba(6, 182, 212, 0.05);
   --bg-card:       #FFFFFF;
   --text-primary:  #0F172A;
   --text-secondary:#475569;
@@ -12,15 +24,31 @@
   --accent-cyan:   #06B6D4;
   --accent-azure:  #3B82F6;
   --accent-cyan-dim:   #0891B2;
-  --border-light:  #E2E8F0;
-  --border-strong: #CBD5E1;
+  --border-light:  rgba(6, 182, 212, 0.15);
+  --border-strong: rgba(6, 182, 212, 0.25);
   --danger-red:    #EF4444;
   --success-green: #06B6D4;
   --warning-orange:#F59E0B;
   --glass:         rgba(255, 255, 255, 0.8);
 }
 
+.dark {
+  /* If you still want a dark mode toggle inside the dashboard */
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --primary: 189 94% 43%; /* Keep the Cyan pop in dark mode */
+  --primary-foreground: 222.2 47.4% 11.2%;
+}
+
 @theme inline {
+  --color-background:    hsl(var(--background));
+  --color-foreground:    hsl(var(--foreground));
+  --color-primary:       hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-card:          hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-almaz:         #06b6d4;
+
   --color-bg-primary:    var(--bg-primary);
   --color-bg-surface:    var(--bg-surface);
   --color-text-primary:  var(--text-primary);
@@ -43,7 +71,7 @@ html {
   color: var(--text-primary);
   direction: rtl;
   scroll-behavior: smooth;
-  color-scheme: light !important;
+  color-scheme: dark !important;
 }
 
 body {
@@ -67,8 +95,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
 input:-webkit-autofill:active{
-  -webkit-box-shadow: 0 0 0 5000px #ffffff inset !important;
-  -webkit-text-fill-color: #0F172A !important;
+  -webkit-box-shadow: 0 0 0 5000px #0a0a0a inset !important;
+  -webkit-text-fill-color: #ededed !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -83,7 +111,7 @@ input:-webkit-autofill:active{
   border: 1px solid var(--border-light);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 /* ── Sonar Ring Keyframes ──────────────────────────────────── */
@@ -205,8 +233,8 @@ select:focus {
 }
 
 option {
-  background-color: var(--bg-surface) !important;
-  color: var(--text-primary) !important;
+  background-color: var(--bg-primary) !important;
+  color: white !important;
   padding: 10px !important;
 }
 
@@ -229,5 +257,5 @@ input[type="date"]:focus {
 
 ::-webkit-calendar-picker-indicator {
   cursor: pointer !important;
-  filter: invert(0.2) sepia(50%) saturate(500%) hue-rotate(180deg) brightness(0.8) !important;
+  filter: invert(0.8) sepia(100%) saturate(500%) hue-rotate(150deg) brightness(1.1) !important; /* Electric Cyan Color */
 }

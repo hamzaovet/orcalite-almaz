@@ -72,33 +72,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         }
     }
 
-    // Fetch chronologically to correctly compute running balance
+    // Fetch chronologically to correctly compute running balance (oldest first)
     const transactions = await Transaction.find(match)
       .sort({ date: 1, createdAt: 1 }) // Chronological ascending
       .lean()
 
-    let runningBalance = account.initialBalance || 0
-
-    const enrichedTransactions = transactions.map(tx => {
-      if (tx.type === 'IN') {
-        runningBalance += tx.amount
-      } else {
-        runningBalance -= tx.amount
-      }
-      return {
-        ...tx,
-        runningBalance
-      }
-    })
-
-    // Now return descending so newest is at the top
-    enrichedTransactions.reverse()
-
-    return NextResponse.json({ 
-      success: true, 
-      account,
-      ledger: enrichedTransactions
-    })
+    return NextResponse.json({ success: true, account, transactions })
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 })
   }

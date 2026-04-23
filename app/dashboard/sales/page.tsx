@@ -303,24 +303,24 @@ export default function SalesPage() {
 
   /* ── Styles ── */
   const card: React.CSSProperties = {
-    background: '#FFFFFF', borderRadius: 20, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+    background: '#FFFFFF', borderRadius: 20, border: '1px solid #E2E8F0', boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
   }
   const inp: React.CSSProperties = {
     width: '100%', padding: '0.8rem 1rem', border: '1px solid #E2E8F0',
     borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#0F172A',
-    outline: 'none', background: '#FFFFFF', boxSizing: 'border-box'
+    outline: 'none', background: '#ECFEFF', boxSizing: 'border-box'
   }
   const lbl: React.CSSProperties = {
     fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.4rem'
   }
 
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', color: '#0F172A' }}>
+    <div style={{ maxWidth: 1240, margin: '0 auto', color: '#1E293B' }}>
       <div className="no-print">
 
       
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
           {toast.msg}
         </div>
       )}
@@ -331,7 +331,7 @@ export default function SalesPage() {
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>البيع والفوترة المباشرة</p>
           <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>نظام المبيعات</h1>
         </div>
-        <button onClick={() => setShowScanner(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.25)', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
+        <button onClick={() => setShowScanner(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#ECFEFF', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.25)', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit' }}>
           <Scan size={20} /> مسح IMEI الذكي
         </button>
       </div>
@@ -375,9 +375,9 @@ export default function SalesPage() {
               <motion.div key={p._id} whileHover={{ y: -5 }} onClick={() => addToCart(p)}
                 style={{ ...card, padding: '1rem', cursor: 'pointer', borderColor: cart.some(c=>c.product._id===p._id) ? '#06B6D4' : 'rgba(6,182,212,0.15)' }}
               >
-                <div style={{ height: 100, background: 'rgba(6,182,212,0.1)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', position: 'relative' }}>
+                <div style={{ height: 100, background: '#ECFEFF', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', position: 'relative' }}>
                   {p.imageUrl ? <img src={p.imageUrl} style={{ maxHeight: '80%', objectFit: 'contain' }} /> : <Package size={32} color="#06B6D4" />}
-                  <span style={{ position: 'absolute', top: 8, left: 8, background: '#06B6D4', color: '#fff', fontSize: '0.65rem', fontWeight: 900, padding: '0.2rem 0.5rem', borderRadius: 50 }}>
+                  <span style={{ position: 'absolute', top: 8, left: 8, background: '#06B6D4', color: '#0F172A', fontSize: '0.65rem', fontWeight: 900, padding: '0.2rem 0.5rem', borderRadius: 50 }}>
                     {currentStock} وحدة
                   </span>
                 </div>
@@ -391,7 +391,7 @@ export default function SalesPage() {
         {/* Cart Section */}
         <div style={{ position: 'sticky', top: '2rem' }}>
           <div style={{ ...card, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid rgba(6,182,212,0.15)', paddingBottom: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '1rem' }}>
               <ShoppingCart size={24} color="#06B6D4" />
               <h2 style={{ fontWeight: 900, fontSize: '1.2rem' }}>تفاصيل الطلب</h2>
             </div>
@@ -404,10 +404,10 @@ export default function SalesPage() {
                       <p style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0F172A' }}>{item.product.name}</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.2rem' }}>
                         {item.serialNumber && (
-                           <span style={{ fontSize: '0.65rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', padding: '0.1rem 0.4rem', borderRadius: 4, fontWeight: 700 }}>IMEI: {item.serialNumber}</span>
+                           <span style={{ fontSize: '0.65rem', background: '#ECFEFF', color: '#06B6D4', padding: '0.1rem 0.4rem', borderRadius: 4, fontWeight: 700 }}>IMEI: {item.serialNumber}</span>
                         )}
                         {(item.product.storage || item.product.color) && (
-                           <span style={{ fontSize: '0.65rem', color: '#64748B' }}>
+                           <span style={{ fontSize: '0.65rem', color: '#475569' }}>
                              {[item.product.storage, item.product.color].filter(Boolean).join(' | ')}
                            </span>
                         )}
@@ -421,14 +421,14 @@ export default function SalesPage() {
                   </div>
                 </div>
               ))}
-              {cart.length === 0 && <p style={{ textAlign: 'center', color: '#64748B', padding: '2rem' }}>السلة فارغة</p>}
+              {cart.length === 0 && <p style={{ textAlign: 'center', color: '#475569', padding: '2rem' }}>السلة فارغة</p>}
             </div>
 
             {cart.length > 0 && (
-              <div style={{ background: 'rgba(6,182,212,0.05)', borderRadius: 16, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ background: '#ECFEFF', borderRadius: 16, padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.4rem', fontWeight: 900, color: '#0F172A' }}><span>الإجمالي</span><span style={{ direction: 'ltr' }}>{fmt(totalSale)} ج.م</span></div>
                 {totalDiscount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FB923C', fontWeight: 800, fontSize: '0.85rem' }}><span>الخصم</span><span style={{ direction: 'ltr' }}>- {fmt(totalDiscount)} ج.م</span></div>}
-                <div style={{ height: '1px', background: 'rgba(6,182,212,0.1)', margin: '0.25rem 0' }} />
+                <div style={{ height: '1px', background: '#ECFEFF', margin: '0.25rem 0' }} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#475569' }}>صافي الربح المتوقع</span>
                   <span style={{ background: 'rgba(34,197,94,0.15)', color: '#22C55E', padding: '0.2rem 0.6rem', borderRadius: 10, fontSize: '0.95rem', fontWeight: 950 }}>{fmt(totalProfit)} ج.م +</span>
@@ -437,7 +437,7 @@ export default function SalesPage() {
             )}
 
             <button onClick={() => setCheckoutModal(true)} disabled={cart.length === 0}
-              style={{ padding: '1.1rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', fontSize: '1.1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)', opacity: cart.length===0?0.5:1 }}
+              style={{ padding: '1.1rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', fontSize: '1.1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)', opacity: cart.length===0?0.5:1 }}
             >إتمام العملية</button>
           </div>
         </div>
@@ -446,9 +446,9 @@ export default function SalesPage() {
       {/* Checkout Modal */}
       <AnimatePresence>
         {checkoutModal && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0, 0, 0, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#FFFFFF', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid #E2E8F0', boxShadow: '0 32px 100px rgba(0,0,0,0.1)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.15)' }}
             >
               <h2 style={{ fontWeight: 900, fontSize: '1.5rem', marginBottom: '2rem' }}>بيانات العميل والدفع</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -462,12 +462,12 @@ export default function SalesPage() {
                   <label style={lbl}>طريقة الدفع *</label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                     {Object.entries(PAYMENT_META).map(([m, meta]) => (
-                      <button key={m} onClick={() => setPaymentMethod(m as any)} style={{ padding: '0.85rem', borderRadius: 12, fontWeight: 800, cursor: 'pointer', border: paymentMethod===m ? `2px solid ${meta.color}` : '2px solid #E2E8F0', background: paymentMethod===m ? `${meta.color}08` : '#F8FAFC', color: paymentMethod===m ? meta.color : '#64748B' }}>{meta.label}</button>
+                      <button key={m} onClick={() => setPaymentMethod(m as any)} style={{ padding: '0.85rem', borderRadius: 12, fontWeight: 800, cursor: 'pointer', border: paymentMethod===m ? `2px solid ${meta.color}` : '2px solid #F8FAFC', background: paymentMethod===m ? `${meta.color}15` : '#F1F5F9', color: paymentMethod===m ? meta.color : '#64748B' }}>{meta.label}</button>
                     ))}
                   </div>
                 </div>
 
-                <button onClick={handleCheckout} disabled={submitting} style={{ background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, cursor: 'pointer', marginTop: '1rem' }}>
+                <button onClick={handleCheckout} disabled={submitting} style={{ background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, cursor: 'pointer', marginTop: '1rem' }}>
                   {submitting ? <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto' }} /> : 'تأكيد وحفظ الفاتورة'}
                 </button>
               </div>
@@ -479,18 +479,18 @@ export default function SalesPage() {
       {/* Success Modal */}
       <AnimatePresence>
         {successModal && completedSale && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(0, 0, 0, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(16px)' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(8, 12, 20, 0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(16px)' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-              style={{ ...card, maxWidth: 450, textAlign: 'center', padding: '3rem', background: '#FFFFFF', border: '1px solid #E2E8F0' }}
+              style={{ ...card, maxWidth: 450, textAlign: 'center', padding: '3rem' }}
             >
               <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(34,197,94,0.1)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}><CheckCircle2 size={40} color="#22C55E" /></div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem' }}>تمت العملية بنجاح</h2>
               <p style={{ color: '#475569', marginBottom: '2rem' }}>رقم الفاتورة: #{completedSale.invoiceNumber}</p>
               
               <div style={{ display: 'grid', gap: '1rem' }}>
-                <button onClick={() => triggerNativePrint(completedSale.invoiceNumber)} style={{ padding: '1rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Download size={18} /> طباعة الفاتورة | Print Invoice</button>
-                <button onClick={() => openWhatsApp(completedSale.phone || '', completedSale)} style={{ padding: '1rem', background: '#22C55E', color: '#fff', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><MessageCircle size={18} /> إرسال عبر واتساب</button>
-                <button onClick={() => {setSuccessModal(false); setCompletedSale(null)}} style={{ padding: '0.8rem', background: 'transparent', color: '#64748B', border: '1px solid #E2E8F0', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق</button>
+                <button onClick={() => triggerNativePrint(completedSale.invoiceNumber)} style={{ padding: '1rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><Download size={18} /> طباعة الفاتورة | Print Invoice</button>
+                <button onClick={() => openWhatsApp(completedSale.phone || '', completedSale)} style={{ padding: '1rem', background: '#22C55E', color: '#0F172A', border: 'none', borderRadius: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}><MessageCircle size={18} /> إرسال عبر واتساب</button>
+                <button onClick={() => {setSuccessModal(false); setCompletedSale(null)}} style={{ padding: '0.8rem', background: 'transparent', color: '#475569', border: '1px solid #E2E8F0', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق</button>
               </div>
             </motion.div>
           </div>

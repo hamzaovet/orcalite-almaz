@@ -67,13 +67,14 @@ export default function Navbar() {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: scrolled ? 'rgba(255,255,255,0.95)' : '#FFFFFF',
+        background: scrolled ? 'rgba(255,255,255,0.97)' : '#FFFFFF',
         backdropFilter: scrolled ? 'blur(18px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
         borderBottom: scrolled
-          ? '1px solid rgba(0,0,0,0.06)'
-          : '1px solid transparent',
+          ? '1px solid rgba(6,182,212,0.25)'
+          : '1px solid #E2E8F0',
         transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
+        boxShadow: scrolled ? '0 4px 24px rgba(6,182,212,0.08)' : '0 1px 3px rgba(0,0,0,0.06)',
       }}
     >
       {/*
@@ -111,7 +112,7 @@ export default function Navbar() {
                 style={{
                   fontSize: '1rem',
                   fontWeight: 600,
-                  color: '#0F172A',
+                  color: '#1E293B',
                   textDecoration: 'none',
                   transition: 'color 0.2s',
                   whiteSpace: 'nowrap',
@@ -120,7 +121,7 @@ export default function Navbar() {
                   ;(e.currentTarget as HTMLAnchorElement).style.color = '#06B6D4'
                 }}
                 onMouseLeave={(e) => {
-                  ;(e.currentTarget as HTMLAnchorElement).style.color = '#0F172A'
+                  ;(e.currentTarget as HTMLAnchorElement).style.color = '#1E293B'
                 }}
               >
                 {l.label}
@@ -161,7 +162,7 @@ export default function Navbar() {
             }}
           >
             <span style={{ fontWeight: 900, color: '#06B6D4' }}>ORCA</span>
-            <span style={{ fontWeight: 200, color: '#64748B', letterSpacing: '0.25em', marginLeft: '2px' }}>ERP</span>
+            <span style={{ fontWeight: 200, color: '#94A3B8', letterSpacing: '0.25em', marginLeft: '2px' }}>ERP</span>
           </div>
         </div>
 
@@ -219,7 +220,7 @@ export default function Navbar() {
               background: 'transparent',
               border: 'none',
               cursor: 'pointer',
-              color: '#0F172A',
+              color: '#1E293B',
               display: 'none',
               padding: 4,
             }}
@@ -234,8 +235,9 @@ export default function Navbar() {
         <div
           style={{
             background: '#FFFFFF',
-            borderTop: '1px solid rgba(0,0,0,0.06)',
+            borderTop: '1px solid #E2E8F0',
             padding: '1.25rem 2rem 1.5rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
           }}
         >
           {[...navLinks].reverse().map((l) => (
@@ -248,9 +250,9 @@ export default function Navbar() {
                 padding: '0.7rem 0',
                 fontSize: '1.05rem',
                 fontWeight: 600,
-                color: '#0F172A',
+                color: '#1E293B',
                 textDecoration: 'none',
-                borderBottom: '1px solid rgba(0,0,0,0.05)',
+                borderBottom: '1px solid #F1F5F9',
               }}
             >
               {l.label}

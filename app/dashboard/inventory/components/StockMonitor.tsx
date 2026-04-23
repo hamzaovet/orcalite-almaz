@@ -34,24 +34,24 @@ export function StockMonitor({ shipments, selectedShipment, onShipmentSelect, sh
   }, [])
 
   return (
-    <div style={{ background: 'rgba(6,182,212,0.02)', borderLeft: '1px solid rgba(6,182,212,0.1)', height: '100%', padding: '2rem' }}>
+    <div style={{ background: '#F8FAFC', borderLeft: '1px solid rgba(6,182,212,0.1)', height: '100%', padding: '2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
         <Activity color="#06B6D4" size={20} />
-        <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#FFFFFF' }}>مراقب الشحنة الحية</h3>
+        <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0F172A' }}>مراقب الشحنة الحية</h3>
       </div>
 
       <div style={{ marginBottom: '1.5rem' }}>
-        <p style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B', textTransform: 'uppercase', marginBottom: '0.4rem' }}>رقم الشحنة</p>
+        <p style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', marginBottom: '0.4rem' }}>رقم الشحنة</p>
         
         {shipments && onShipmentSelect ? (
           <select 
             value={selectedShipment || ''} 
             onChange={(e) => onShipmentSelect(e.target.value)}
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 12, padding: '0.75rem', color: '#06B6D4', width: '100%', outline: 'none', fontWeight: 900, cursor: 'pointer' }}
+            style={{ background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.75rem', color: '#06B6D4', width: '100%', outline: 'none', fontWeight: 900, cursor: 'pointer' }}
           >
             <option value="">-- اختر رسالة لاستلامها --</option>
             {shipments.map((s: any) => (
-                <option key={s.value || s._id} value={s.value || s._id} style={{ background: '#0B1120', color: '#fff' }}>
+                <option key={s.value || s._id} value={s.value || s._id} style={{ background: '#F8FAFC', color: '#0F172A' }}>
                   {s.label || s.shipmentNumber}
                 </option>
             ))}
@@ -80,20 +80,20 @@ export function StockMonitor({ shipments, selectedShipment, onShipmentSelect, sh
           const pct = total > 0 ? (scanned / total) * 100 : 0
 
           return (
-            <div key={pid} style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div key={pid} style={{ background: '#F1F5F9', padding: '1rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#F8FAFC' }}>{pName}</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>{pName}</span>
                 {scanned === total && total > 0 ? (
                   <CheckCircle2 size={16} color="#10B981" />
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem', fontWeight: 900, color: '#64748B' }}>
-                    <span dir="ltr" style={{ color: '#F8FAFC' }}>{scanned}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.75rem', fontWeight: 900, color: '#475569' }}>
+                    <span dir="ltr" style={{ color: '#1E293B' }}>{scanned}</span>
                     <span style={{ fontSize: '0.65rem', color: '#475569' }}>من</span>
                     <span dir="ltr">{total}</span>
                   </div>
                 )}
               </div>
-              <div style={{ height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 10, overflow: 'hidden' }}>
+              <div style={{ height: 6, background: '#F8FAFC', borderRadius: 10, overflow: 'hidden' }}>
                 <motion.div 
                    initial={{ width: 0 }} 
                    animate={{ width: `${pct}%` }}

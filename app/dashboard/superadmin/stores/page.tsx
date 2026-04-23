@@ -95,8 +95,8 @@ export default function SuperAdminStoresPage() {
     <div style={{ direction: 'rtl', fontFamily: 'Inter, system-ui, sans-serif' }}>
       <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff' }}>لوحة تحكم SaaS (العراب)</h1>
-          <p style={{ color: '#94A3B8', marginTop: '0.4rem' }}>إدارة اشتراكات العملاء ومراقبة الحالة التقنية والمالية</p>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#0F172A' }}>لوحة تحكم SaaS (العراب)</h1>
+          <p style={{ color: '#475569', marginTop: '0.4rem' }}>إدارة اشتراكات العملاء ومراقبة الحالة التقنية والمالية</p>
         </div>
         <div style={{ position: 'relative', width: '300px' }}>
           <Search size={18} color="#64748B" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
@@ -106,22 +106,22 @@ export default function SuperAdminStoresPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              width: '100%', padding: '0.75rem 3rem 0.75rem 1rem', background: '#0B1120',
-              border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', color: '#fff', outline: 'none'
+              width: '100%', padding: '0.75rem 3rem 0.75rem 1rem', background: '#F8FAFC',
+              border: '1px solid #F1F5F9', borderRadius: '12px', color: '#0F172A', outline: 'none'
             }}
           />
         </div>
       </header>
 
-      <div style={{ background: '#0B1120', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+      <div style={{ background: '#F8FAFC', borderRadius: '24px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
           <thead>
-            <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <th style={{ padding: '1.25rem', color: '#64748B', fontWeight: 700, fontSize: '0.85rem' }}>المتجر / العميل</th>
-              <th style={{ padding: '1.25rem', color: '#64748B', fontWeight: 700, fontSize: '0.85rem' }}>الحالة</th>
-              <th style={{ padding: '1.25rem', color: '#64748B', fontWeight: 700, fontSize: '0.85rem' }}>التجديد</th>
-              <th style={{ padding: '1.25rem', color: '#64748B', fontWeight: 700, fontSize: '0.85rem' }}>التراخيص</th>
-              <th style={{ padding: '1.25rem', color: '#64748B', fontWeight: 700, fontSize: '0.85rem' }}>الإجراءات</th>
+            <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
+              <th style={{ padding: '1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.85rem' }}>المتجر / العميل</th>
+              <th style={{ padding: '1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.85rem' }}>الحالة</th>
+              <th style={{ padding: '1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.85rem' }}>التجديد</th>
+              <th style={{ padding: '1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.85rem' }}>التراخيص</th>
+              <th style={{ padding: '1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.85rem' }}>الإجراءات</th>
             </tr>
           </thead>
           <tbody>
@@ -132,18 +132,18 @@ export default function SuperAdminStoresPage() {
                   <motion.tr 
                     key={store._id}
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }}
+                    style={{ borderBottom: '1px solid #F1F5F9', transition: 'background 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(6,182,212,0.02)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   >
                     <td style={{ padding: '1.25rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(6,182,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '10px', background: '#ECFEFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Building2 size={20} color="#06B6D4" />
                         </div>
                         <div>
-                          <p style={{ fontWeight: 800, color: '#fff', fontSize: '1rem' }}>{store.name}</p>
-                          <p style={{ color: '#64748B', fontSize: '0.8rem' }}>{store.clientName}</p>
+                          <p style={{ fontWeight: 800, color: '#0F172A', fontSize: '1rem' }}>{store.name}</p>
+                          <p style={{ color: '#475569', fontSize: '0.8rem' }}>{store.clientName}</p>
                         </div>
                       </div>
                     </td>
@@ -163,7 +163,7 @@ export default function SuperAdminStoresPage() {
                         <Calendar size={14} color="#64748B" />
                         {new Date(store.renewalDate).toLocaleDateString('ar-EG')}
                       </div>
-                      <p style={{ fontSize: '0.7rem', color: '#64748B', marginTop: '0.2rem' }}>الباقة: {store.subscriptionType === 'Annual' ? 'سنوية' : 'شهرية'}</p>
+                      <p style={{ fontSize: '0.7rem', color: '#475569', marginTop: '0.2rem' }}>الباقة: {store.subscriptionType === 'Annual' ? 'سنوية' : 'شهرية'}</p>
                     </td>
                     <td style={{ padding: '1.25rem' }}>
                       <div style={{ display: 'flex', gap: '1rem' }}>
@@ -193,7 +193,7 @@ export default function SuperAdminStoresPage() {
                           >
                             {updatingId === store._id ? <RefreshCcw size={14} className="animate-spin" /> : (store.isSuspended ? 'إلغاء التعليق' : 'تعليق النظام')}
                           </button>
-                          <button style={{ background: 'none', border: 'none', color: '#64748B', cursor: 'pointer' }}><MoreVertical size={18} /></button>
+                          <button style={{ background: 'none', border: 'none', color: '#475569', cursor: 'pointer' }}><MoreVertical size={18} /></button>
                       </div>
                     </td>
                   </motion.tr>
@@ -204,7 +204,7 @@ export default function SuperAdminStoresPage() {
         </table>
 
         {filteredStores.length === 0 && (
-          <div style={{ padding: '4rem', textAlign: 'center', color: '#64748B' }}>
+          <div style={{ padding: '4rem', textAlign: 'center', color: '#475569' }}>
             <Building2 size={48} style={{ margin: '0 auto 1rem', opacity: 0.2 }} />
             <p>لا توجد متاجر مفعلة حالياً.</p>
           </div>

@@ -5,16 +5,18 @@ export interface IInternalAccount extends Document {
   type: 'Bank' | 'Wallet' | 'Clearing' | 'Safe'
   initialBalance: number
   currentBalance: number
+  branchId?: mongoose.Types.ObjectId | string
   createdAt: Date
   updatedAt: Date
 }
 
 const InternalAccountSchema = new Schema<IInternalAccount>(
   {
-    name: { type: String, required: true, trim: true, unique: true },
+    name: { type: String, required: true, trim: true },
     type: { type: String, enum: ['Bank', 'Wallet', 'Clearing', 'Safe'], required: true },
     initialBalance: { type: Number, default: 0 },
     currentBalance: { type: Number, default: 0 },
+    branchId: { type: Schema.Types.ObjectId, ref: 'Branch', default: null },
   },
   { timestamps: true }
 )

@@ -153,7 +153,7 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
     <>
       <div className="print:hidden" style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8, 12, 20, 0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(20px)' }}>
       <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 50, opacity: 0 }}
-        style={{ background: '#0B1120', borderRadius: 32, width: '100%', maxWidth: 750, padding: '3rem', border: `1px solid ${color}40`, boxShadow: `0 32px 100px rgba(0,0,0,0.6)` }}
+        style={{ background: '#F8FAFC', borderRadius: 32, width: '100%', maxWidth: 750, padding: '3rem', border: `1px solid ${color}40`, boxShadow: `0 32px 100px rgba(0,0,0,0.6)` }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -165,7 +165,7 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
                  <p style={{ color, fontWeight: 800 }}>الوجهة: {branch.name}</p>
               </div>
            </div>
-           <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.6rem', cursor: 'pointer', color: '#fff' }}><X size={24} /></button>
+           <button onClick={onClose} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.6rem', cursor: 'pointer', color: '#0F172A' }}><X size={24} /></button>
         </div>
 
         <AnimatePresence mode="wait">
@@ -174,24 +174,24 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
                 <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(34,197,94,0.1)', border: '2px solid #22C55E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                   <CheckCircle2 size={40} color="#22C55E" />
                 </div>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem', color: '#fff' }}>تم التحويل بنجاح ✓</h2>
-                <p style={{ color: '#94A3B8', marginBottom: '2.5rem', fontSize: '1.1rem' }}>رقم الإذن: {completedTransfer.orderNumber}</p>
+                <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem', color: '#0F172A' }}>تم التحويل بنجاح ✓</h2>
+                <p style={{ color: '#475569', marginBottom: '2.5rem', fontSize: '1.1rem' }}>رقم الإذن: {completedTransfer.orderNumber}</p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-                   <button onClick={() => handlePrint(completedTransfer)} style={{ padding: '1.1rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+                   <button onClick={() => handlePrint(completedTransfer)} style={{ padding: '1.1rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
                      <CheckCircle2 size={18} /> {completedTransfer.mode === 'Out' ? 'طباعة إذن الصرف' : 'طباعة إذن الاستلام'}
                    </button>
-                   <button onClick={() => openTransferWhatsApp('', completedTransfer)} style={{ padding: '1.1rem', background: '#22C55E', color: '#fff', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
+                   <button onClick={() => openTransferWhatsApp('', completedTransfer)} style={{ padding: '1.1rem', background: '#22C55E', color: '#0F172A', border: 'none', borderRadius: 16, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
                      <Smartphone size={18} /> مشاركة واتساب
                    </button>
                 </div>
 
-                <button onClick={() => { onSuccess(); onClose(); }} style={{ padding: '0.8rem', width: '100%', background: 'rgba(255,255,255,0.05)', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق النافذة</button>
+                <button onClick={() => { onSuccess(); onClose(); }} style={{ padding: '0.8rem', width: '100%', background: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0', borderRadius: 14, fontWeight: 700, cursor: 'pointer' }}>إغلاق النافذة</button>
             </motion.div>
           ) : (
             <motion.div key="scanner-screen">
         {/* Mode Toggle */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem', padding: '0.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem', padding: '0.5rem', background: '#F8FAFC', borderRadius: 20 }}>
            <button onClick={() => {setMode('Out'); setStagedItems([]); setError('')}} style={{ padding: '0.85rem', borderRadius: 16, border: 'none', background: mode === 'Out' ? '#06B6D4' : 'transparent', color: mode === 'Out' ? '#fff' : '#64748B', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}><Truck size={18} /> صرف للفرع</button>
            <button onClick={() => {setMode('In'); setStagedItems([]); setError('')}} style={{ padding: '0.85rem', borderRadius: 16, border: 'none', background: mode === 'In' ? '#FB923C' : 'transparent', color: mode === 'In' ? '#fff' : '#64748B', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}><RotateCcw size={18} /> إرجاع للمخزن</button>
         </div>
@@ -215,7 +215,7 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
         {successMsg && <div style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', padding: '0.85rem', borderRadius: 12, marginBottom: '1.5rem', fontSize: '1.1rem', fontWeight: 900, textAlign: 'center' }}><CheckCircle2 size={18} style={{ display: 'inline', marginLeft: '0.5rem' }} /> {successMsg}</div>}
 
         {/* Staged Items List */}
-        <div style={{ height: 200, overflowY: 'auto', background: 'rgba(0,0,0,0.2)', borderRadius: 20, padding: '1rem', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+        <div style={{ height: 200, overflowY: 'auto', background: 'rgba(0,0,0,0.2)', borderRadius: 20, padding: '1rem', border: '1px solid #E2E8F0', marginBottom: '2rem' }}>
            {stagedItems.length === 0 ? (
              <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.2 }}>
                 <Scan size={48} />
@@ -224,13 +224,13 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 {stagedItems.map((item, idx) => (
                   <motion.div key={idx} initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
-                    style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem 1rem', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    style={{ background: '#F1F5F9', padding: '0.75rem 1rem', borderRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
                   >
                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                         <Smartphone size={16} color={color} />
                         <div>
                            <div style={{ fontSize: '0.9rem', fontWeight: 800 }}>{item.productId?.name}</div>
-                           <div style={{ fontSize: '0.75rem', color: '#64748B', fontFamily: 'monospace' }}>{item.serialNumber}</div>
+                           <div style={{ fontSize: '0.75rem', color: '#475569', fontFamily: 'monospace' }}>{item.serialNumber}</div>
                         </div>
                      </div>
                      <button onClick={() => setStagedItems(stagedItems.filter((_, i) => i !== idx))} style={{ background: 'transparent', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '0.4rem' }}><Trash2 size={16} /></button>
@@ -241,13 +241,13 @@ export function TransferModal({ branch, onClose, onSuccess }: TransferModalProps
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 800 }}>إجمالي الأجهزة</div>
+              <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 800 }}>إجمالي الأجهزة</div>
               <div style={{ fontSize: '1.4rem', fontWeight: 950, color }}>{stagedItems.length}</div>
            </div>
            <button 
              onClick={handleCommit}
              disabled={stagedItems.length === 0 || loading || !!successMsg}
-             style={{ flex: 3, padding: '1.25rem', borderRadius: 18, background: color, color: '#fff', border: 'none', fontWeight: 950, fontSize: '1.1rem', cursor: 'pointer', boxShadow: `0 8px 32px ${color}40`, opacity: stagedItems.length === 0 || loading ? 0.5 : 1 }}
+             style={{ flex: 3, padding: '1.25rem', borderRadius: 18, background: color, color: '#0F172A', border: 'none', fontWeight: 950, fontSize: '1.1rem', cursor: 'pointer', boxShadow: `0 8px 32px ${color}40`, opacity: stagedItems.length === 0 || loading ? 0.5 : 1 }}
            >
               {loading ? <Loader2 className="animate-spin" style={{ margin: '0 auto' }} /> : 'تأكيد النقل والتشفير ✓'}
            </button>

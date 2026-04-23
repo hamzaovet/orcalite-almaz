@@ -81,8 +81,8 @@ export function MagicImportScannerModal({
   const [parsedData, setParsedData] = useState<ParsedImport | null>(null)
   const [finalSupplierId, setFinalSupplierId] = useState('')
 
-  const card = { background: '#F8FAFC', borderRadius: 20, border: '1px solid #E2E8F0', padding: '1.5rem' }
-  const inp = { width: '100%', padding: '0.8rem', border: '1px solid #E2E8F0', borderRadius: 12, fontSize: '0.9rem', color: '#0F172A', outline: 'none', background: '#FFFFFF', boxSizing: 'border-box' as const }
+  const card = { background: '#FFFFFF', borderRadius: 20, border: '1px solid #E2E8F0', padding: '1.5rem' }
+  const inp = { width: '100%', padding: '0.8rem', border: '1px solid #E2E8F0', borderRadius: 12, fontSize: '0.9rem', color: '#0F172A', outline: 'none', background: '#ECFEFF', boxSizing: 'border-box' as const }
   const lbl = { fontSize: '0.75rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.4rem' }
 
   async function handleAnalyze() {
@@ -115,15 +115,15 @@ export function MagicImportScannerModal({
   const itemEstimates = calculatedLandedCosts()
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(12px)' }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#FFFFFF', borderRadius: 32, border: '1px solid #E2E8F0', width: '100%', maxWidth: 1000, padding: '2.5rem', maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 30px 60px rgba(0,0,0,0.1)' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#F8FAFC', borderRadius: 32, border: '1px solid rgba(6,182,212,0.25)', width: '100%', maxWidth: 1000, padding: '2.5rem', maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.6)' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
           <div>
             <h2 style={{ fontSize: '1.8rem', fontWeight: 950, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <Globe color="#06B6D4" size={30} /> Smart Import Scanner (Procurement AI)
             </h2>
-            <p style={{ color: '#64748B', fontSize: '1rem', marginTop: '0.4rem' }}>تحليل فواتير الاستيراد (Commercial Invoices) وحساب التكلفة النهائية تلقائياً.</p>
+            <p style={{ color: '#475569', fontSize: '1rem', marginTop: '0.4rem' }}>تحليل فواتير الاستيراد (Commercial Invoices) وحساب التكلفة النهائية تلقائياً.</p>
           </div>
           <button onClick={onClose} style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444', border: 'none', borderRadius: 14, padding: '0.6rem', cursor: 'pointer' }}><X size={24} /></button>
         </div>
@@ -142,7 +142,7 @@ export function MagicImportScannerModal({
             <button 
               onClick={handleAnalyze} 
               disabled={parsing}
-              style={{ padding: '1.4rem', borderRadius: 20, background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', color: '#fff', border: 'none', fontWeight: 900, fontSize: '1.2rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.8rem', boxShadow: '0 12px 32px rgba(6,182,212,0.3)' }}
+              style={{ padding: '1.4rem', borderRadius: 20, background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', color: '#0F172A', border: 'none', fontWeight: 900, fontSize: '1.2rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.8rem', boxShadow: '0 12px 32px rgba(6,182,212,0.3)' }}
             >
               {parsing ? <Loader2 className="animate-spin" /> : <Sparkles />} تحليل الرسالة الاستيرادية (Scan)
             </button>
@@ -175,23 +175,23 @@ export function MagicImportScannerModal({
             </div>
 
             {/* Verification Table */}
-            <div style={{ ...card, padding: 0, overflow: 'hidden', background: '#FFFFFF' }}>
-              <div style={{ padding: '1.5rem 1.5rem', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                 <h3 style={{ fontSize: '1rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A' }}><Package size={18} color="#06B6D4" /> مراجعة الأصناف وتوزيع التكاليف</h3>
+            <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+              <div style={{ padding: '1rem 1.5rem', background: 'rgba(6,182,212,0.08)', borderBottom: '1px solid rgba(6,182,212,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                 <h3 style={{ fontSize: '1rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Package size={18} color="#06B6D4" /> مراجعة الأصناف وتوزيع التكاليف</h3>
                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#22C55E', background: 'rgba(34,197,94,0.1)', padding: '0.3rem 0.7rem', borderRadius: 8 }}>توزيع نسبي (Pro-rata by Value)</span>
               </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
-                <thead style={{ background: '#F8FAFC' }}>
+                <thead style={{ background: 'rgba(0,0,0,0.2)' }}>
                   <tr>
-                    <th style={{ padding: '1rem', color: '#64748B', fontWeight: 800, fontSize: '0.75rem' }}>المنتج</th>
-                    <th style={{ padding: '1rem', color: '#64748B', fontWeight: 800, fontSize: '0.75rem' }}>الكمية</th>
-                    <th style={{ padding: '1rem', color: '#64748B', fontWeight: 800, fontSize: '0.75rem' }}>سعر الوحدة ({parsedData.currency})</th>
-                    <th style={{ padding: '1rem', color: '#64748B', fontWeight: 800, fontSize: '0.75rem' }}>التكلفة النهائية (EGP)</th>
+                    <th style={{ padding: '1rem', color: '#475569', fontWeight: 800, fontSize: '0.75rem' }}>المنتج</th>
+                    <th style={{ padding: '1rem', color: '#475569', fontWeight: 800, fontSize: '0.75rem' }}>الكمية</th>
+                    <th style={{ padding: '1rem', color: '#475569', fontWeight: 800, fontSize: '0.75rem' }}>سعر الوحدة ({parsedData.currency})</th>
+                    <th style={{ padding: '1rem', color: '#475569', fontWeight: 800, fontSize: '0.75rem' }}>التكلفة النهائية (EGP)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {parsedData.items.map((it, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                    <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
                       <td style={{ padding: '0.8rem' }}>
                         <select style={inp} value={it.productId} onChange={(e) => {
                           const newItems = [...parsedData.items]; newItems[idx].productId = e.target.value; setParsedData({...parsedData, items: newItems})
@@ -217,10 +217,10 @@ export function MagicImportScannerModal({
 
             {/* Expenses Verification */}
             <div style={card}>
-               <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '1.2rem', color: '#64748B' }}>مصاريف النولون والجمارك المستخرجة</h3>
+               <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '1.2rem', color: '#475569' }}>مصاريف النولون والجمارك المستخرجة</h3>
                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                   {parsedData.expenses.map((ex, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div key={idx} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', background: '#F8FAFC', padding: '0.75rem', borderRadius: 12, border: '1px solid #E2E8F0' }}>
                        <input style={{ ...inp, flex: 2, background: 'transparent', border: 'none' }} value={ex.type} readOnly />
                        <input type="number" style={{ ...inp, flex: 1, border: '1px solid rgba(6,182,212,0.2)' }} value={ex.amountEGP} onChange={e => {
                          const newExp = [...parsedData.expenses]; newExp[idx].amountEGP = Number(e.target.value); setParsedData({...parsedData, expenses: newExp})
@@ -233,7 +233,7 @@ export function MagicImportScannerModal({
             <div style={{ display: 'flex', gap: '1.5rem', marginTop: '1rem' }}>
               <button 
                 onClick={() => setStep(1)} 
-                style={{ flex: 1, padding: '1.2rem', borderRadius: 16, border: '1px solid #E2E8F0', background: '#F8FAFC', color: '#64748B', fontWeight: 800, cursor: 'pointer' }}
+                style={{ flex: 1, padding: '1.2rem', borderRadius: 16, border: '1px solid #E2E8F0', background: 'transparent', color: '#475569', fontWeight: 800, cursor: 'pointer' }}
               >
                 إعادة التحليل
               </button>
@@ -245,7 +245,7 @@ export function MagicImportScannerModal({
                     supplierId: finalSupplierId
                   })
                 }} 
-                style={{ flex: 2, padding: '1.2rem', borderRadius: 16, background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', color: '#fff', border: 'none', fontWeight: 950, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.7rem', boxShadow: '0 12px 32px rgba(16,185,129,0.3)' }}
+                style={{ flex: 2, padding: '1.2rem', borderRadius: 16, background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', color: '#0F172A', border: 'none', fontWeight: 950, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.7rem', boxShadow: '0 12px 32px rgba(16,185,129,0.3)' }}
               >
                 <Save size={22} /> اعتماد ونقل لمحرك الـ CFO
               </button>

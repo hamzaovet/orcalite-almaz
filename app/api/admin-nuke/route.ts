@@ -36,6 +36,14 @@ export async function POST(req: Request) {
     await Expense.deleteMany({})
     await Sale.deleteMany({})
 
+    // Zero out persistent entities instead of deleting them
+    const mongoose = require('mongoose')
+    const InternalAccount = mongoose.models.InternalAccount || require('@/models/InternalAccount').default
+    const Supplier = mongoose.models.Supplier || require('@/models/Supplier').default
+    
+    if (InternalAccount) await InternalAccount.updateMany({}, { $set: { balance: 0, currentBalance: 0, initialBalance: 0 } })
+    if (Supplier) await Supplier.updateMany({}, { $set: { balance: 0, initialBalance: 0 } })
+
     return NextResponse.json({ 
       success: true, 
       message: 'تم تصفير النظام التام بنجاح. تم مسح كافة المعاملات والمخزون.'

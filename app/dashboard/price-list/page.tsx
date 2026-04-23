@@ -219,19 +219,19 @@ export default function PriceListPage() {
   const cardStyle = {
     background: 'rgba(5, 8, 15, 0.6)', 
     borderRadius: 24, 
-    border: '1px solid rgba(6,182,212,0.15)',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+    border: '1px solid #E2E8F0',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
   }
 
   const inpStyle = {
-    background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)', color: '#fff',
+    background: '#F8FAFC', border: '1px solid rgba(6,182,212,0.2)', color: '#0F172A',
     borderRadius: 12, padding: '0.8rem 1rem', width: '100%', outline: 'none'
   }
 
   return (
-    <div style={{ maxWidth: 1300, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1300, margin: '0 auto', color: '#1E293B' }}>
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
           {toast.msg}
         </div>
       )}
@@ -239,7 +239,7 @@ export default function PriceListPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>ORCA CRM & Broadcast</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>محرك قوائم الأسعار</h1>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>محرك قوائم الأسعار</h1>
         </div>
       </div>
 
@@ -249,15 +249,15 @@ export default function PriceListPage() {
         <div style={{ ...cardStyle, padding: '2rem' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1.5rem' }}>
-             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff' }}>
+             <h2 style={{ fontSize: '1.3rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#0F172A' }}>
                 <LayoutList color="#06B6D4" /> البضاعة ({displayedItems.length} سطر)
              </h2>
 
              {/* Filter Bar */}
-             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)' }}>
+             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', background: '#F1F5F9', padding: '0.8rem 1rem', borderRadius: 16, border: '1px solid #F1F5F9' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                    <Filter size={16} color="#94A3B8" />
-                   <select value={selectedCategory} onChange={e=>setSelectedCategory(e.target.value)} style={{ background: 'transparent', border: 'none', color: '#fff', outline: 'none', fontWeight: 700, fontSize: '0.85rem' }}>
+                   <select value={selectedCategory} onChange={e=>setSelectedCategory(e.target.value)} style={{ background: 'transparent', border: 'none', color: '#0F172A', outline: 'none', fontWeight: 700, fontSize: '0.85rem' }}>
                       <option value="All">كل الأقسام</option>
                       {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                    </select>
@@ -266,7 +266,7 @@ export default function PriceListPage() {
                 <div style={{ width: 1, background: 'rgba(255,255,255,0.1)', height: 24 }}></div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                   <select value={selectedBrand} onChange={e=>setSelectedBrand(e.target.value)} style={{ background: 'transparent', border: 'none', color: '#fff', outline: 'none', fontWeight: 700, fontSize: '0.85rem' }}>
+                   <select value={selectedBrand} onChange={e=>setSelectedBrand(e.target.value)} style={{ background: 'transparent', border: 'none', color: '#0F172A', outline: 'none', fontWeight: 700, fontSize: '0.85rem' }}>
                       <option value="All">كل الأصناف</option>
                       {availableCategoryNames.map(n => <option key={n} value={n}>{n}</option>)}
                    </select>
@@ -274,7 +274,7 @@ export default function PriceListPage() {
 
                 <div style={{ width: 1, background: 'rgba(255,255,255,0.1)', height: 24 }}></div>
                 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: '#CBD5E1', cursor: 'pointer', fontWeight: 700 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>
                    <input type="checkbox" checked={groupSerialized} onChange={e=>setGroupSerialized(e.target.checked)} style={{ accentColor: '#06B6D4' }} />
                    تجميع هواتف نفس المواصفات
                 </label>
@@ -294,7 +294,7 @@ export default function PriceListPage() {
              ) : (
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(6,182,212,0.15)', color: '#94A3B8' }}>
+                    <tr style={{ borderBottom: '1px solid #E2E8F0', color: '#475569' }}>
                       <th style={{ padding: '1rem', textAlign: 'right' }}>اسم الجهاز (Device Name)</th>
                       <th style={{ padding: '1rem', textAlign: 'center' }}>السيريال/الكمية (Serial/Qty)</th>
                       <th style={{ padding: '1rem', textAlign: 'center' }}>المساحة (Storage)</th>
@@ -309,35 +309,35 @@ export default function PriceListPage() {
                     {displayedItems.map((u, i) => {
                       const rawPrice = u.productId?.sellingPrice || u.productId?.wholesalePriceEGP || u.productId?.price
                       return (
-                        <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', background: u.isBulk ? 'rgba(34,197,94,0.03)' : u.isGrouped ? 'rgba(168,85,247,0.03)' : 'transparent' }}>
-                          <td style={{ padding: '1rem', color: '#fff', fontWeight: 800 }}>
+                        <tr key={i} style={{ borderBottom: '1px solid #F8FAFC', background: u.isBulk ? 'rgba(34,197,94,0.03)' : u.isGrouped ? 'rgba(168,85,247,0.03)' : 'transparent' }}>
+                          <td style={{ padding: '1rem', color: '#0F172A', fontWeight: 800 }}>
                              {u.productId?.name || '—'}
                           </td>
                           <td style={{ padding: '1rem', textAlign: 'center', color: u.isBulk || u.isGrouped ? '#06B6D4' : '#94A3B8', fontWeight: 900, direction: 'ltr' }}>
                              {u.isBulk || u.isGrouped ? `الكمية: ${u.quantity}` : (u.serialNumber || '—')}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', color: '#CBD5E1', direction: 'ltr' }}>
+                          <td style={{ padding: '1rem', textAlign: 'center', color: '#475569', direction: 'ltr' }}>
                              {u.isBulk ? '-' : (u.attributes?.storage || '-')}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', color: '#CBD5E1' }}>
+                          <td style={{ padding: '1rem', textAlign: 'center', color: '#475569' }}>
                              {u.isBulk ? '-' : (u.attributes?.color || '-')}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', color: '#CBD5E1', direction: 'ltr' }}>
+                          <td style={{ padding: '1rem', textAlign: 'center', color: '#475569', direction: 'ltr' }}>
                              {u.isBulk ? '-' : (u.attributes?.batteryHealth ? u.attributes.batteryHealth + '%' : '-')}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'center', color: '#CBD5E1' }}>
+                          <td style={{ padding: '1rem', textAlign: 'center', color: '#475569' }}>
                              {u.isBulk ? '-' : (u.attributes?.condition || '-')}
                           </td>
                           <td style={{ padding: '1rem', textAlign: 'left', color: '#22C55E', fontWeight: 900, direction: 'ltr' }}>
                             {rawPrice ? `${rawPrice.toLocaleString()} ج.م` : '—'}
                           </td>
-                          <td style={{ padding: '1rem', textAlign: 'left', color: '#64748B', whiteSpace: 'nowrap' }}>
+                          <td style={{ padding: '1rem', textAlign: 'left', color: '#475569', whiteSpace: 'nowrap' }}>
                             {new Date(u.createdAt).toLocaleDateString('ar-EG')}
                           </td>
                         </tr>
                       )
                     })}
-                    {displayedItems.length === 0 && <tr><td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#64748B' }}>لا توجد بيانات مطابقة</td></tr>}
+                    {displayedItems.length === 0 && <tr><td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#475569' }}>لا توجد بيانات مطابقة</td></tr>}
                   </tbody>
                 </table>
              )}
@@ -353,7 +353,7 @@ export default function PriceListPage() {
               </h2>
               
               <div style={{ marginBottom: '1.5rem' }}>
-                 <label style={{ display: 'block', fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700, marginBottom: '0.5rem' }}>الجمهور المستهدف (العملاء / التجار)</label>
+                 <label style={{ display: 'block', fontSize: '0.8rem', color: '#475569', fontWeight: 700, marginBottom: '0.5rem' }}>الجمهور المستهدف (العملاء / التجار)</label>
                  <select value={targetAudience} onChange={e=>setTargetAudience(e.target.value as any)} style={inpStyle}>
                    <option value="All">الجميع ({contacts.length} جهة)</option>
                    <option value="Wholesale">التجار والجملة ({contacts.filter(c=>c.type==='Wholesale').length})</option>
@@ -361,14 +361,14 @@ export default function PriceListPage() {
                  </select>
               </div>
 
-              <div style={{ padding: '1rem', background: '#0B1120', borderRadius: 16, marginBottom: '1.5rem', textAlign: 'center', border: '1px solid rgba(6,182,212,0.1)' }}>
+              <div style={{ padding: '1rem', background: '#F8FAFC', borderRadius: 16, marginBottom: '1.5rem', textAlign: 'center', border: '1px solid #F1F5F9' }}>
                 <p style={{ color: '#06B6D4', fontWeight: 800, fontSize: '1.5rem' }}>{filteredContacts.length}</p>
-                <p style={{ color: '#94A3B8', fontSize: '0.75rem', fontWeight: 700 }}>جهة اتصال مستهدفة</p>
+                <p style={{ color: '#475569', fontSize: '0.75rem', fontWeight: 700 }}>جهة اتصال مستهدفة</p>
               </div>
 
               <button 
                 onClick={handleBroadcast} disabled={isBroadcasting}
-                style={{ width: '100%', padding: '1.1rem', background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)', color: '#fff', border: 'none', borderRadius: 14, fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', boxShadow: '0 8px 24px rgba(34,197,94,0.3)' }}
+                style={{ width: '100%', padding: '1.1rem', background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)', color: '#0F172A', border: 'none', borderRadius: 14, fontWeight: 900, fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', boxShadow: '0 8px 24px rgba(34,197,94,0.3)' }}
               >
                 {isBroadcasting ? <Loader2 className="animate-spin" size={20} /> : <><Send size={20} /> بث ({displayedItems.length} سطر)</>}
               </button>
@@ -376,30 +376,30 @@ export default function PriceListPage() {
 
            <div style={{ ...cardStyle, padding: '1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                 <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                 <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                    <Users size={18} color="#06B6D4" /> قاعدة البيانات
                  </h2>
-                 <button onClick={() => setShowCRM(!showCRM)} style={{ background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: 'none', borderRadius: 8, padding: '0.4rem 0.6rem', cursor: 'pointer' }}><Plus size={16} /></button>
+                 <button onClick={() => setShowCRM(!showCRM)} style={{ background: '#ECFEFF', color: '#06B6D4', border: 'none', borderRadius: 8, padding: '0.4rem 0.6rem', cursor: 'pointer' }}><Plus size={16} /></button>
               </div>
 
               {showCRM && (
-                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '1.5rem', paddingBottom: '1.5rem', borderBottom: '1px solid #F1F5F9' }}>
                     <input type="text" placeholder="الاسم" value={crmForm.name} onChange={e=>setCrmForm({...crmForm, name: e.target.value})} style={{...inpStyle, padding: '0.6rem'}} />
                     <input type="text" placeholder="الهاتف (+20...)" value={crmForm.phone} onChange={e=>setCrmForm({...crmForm, phone: e.target.value})} style={{...inpStyle, direction: 'ltr', padding: '0.6rem'}} />
                     <select value={crmForm.type} onChange={e=>setCrmForm({...crmForm, type: e.target.value})} style={{...inpStyle, padding: '0.6rem'}}>
                       <option value="Wholesale">تاجر بالجملة</option>
                       <option value="Retail">عميل تجزئة</option>
                     </select>
-                    <button onClick={saveContact} disabled={savingCrm} style={{ background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 10, padding: '0.6rem', fontWeight: 800, cursor: 'pointer' }}>حفظ وإضافة</button>
+                    <button onClick={saveContact} disabled={savingCrm} style={{ background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 10, padding: '0.6rem', fontWeight: 800, cursor: 'pointer' }}>حفظ وإضافة</button>
                  </motion.div>
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: 250, overflowY: 'auto', paddingRight: '0.4rem' }}>
                  {contacts.map((c, i) => (
-                   <div key={c._id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.7rem', borderRadius: 10 }}>
+                   <div key={c._id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC', padding: '0.7rem', borderRadius: 10 }}>
                      <div>
-                       <p style={{ fontWeight: 800, fontSize: '0.85rem', color: '#fff' }}>{c.name}</p>
-                       <p style={{ fontSize: '0.7rem', color: '#94A3B8', direction: 'ltr' }}>{c.phone}</p>
+                       <p style={{ fontWeight: 800, fontSize: '0.85rem', color: '#0F172A' }}>{c.name}</p>
+                       <p style={{ fontSize: '0.7rem', color: '#475569', direction: 'ltr' }}>{c.phone}</p>
                      </div>
                      <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '0.2rem 0.5rem', borderRadius: 50, background: c.type === 'Wholesale' ? 'rgba(168,85,247,0.1)' : 'rgba(6,182,212,0.1)', color: c.type === 'Wholesale' ? '#A855F7' : '#06B6D4' }}>{c.type}</span>
                    </div>

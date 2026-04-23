@@ -325,15 +325,15 @@ export default function DataCenterPage() {
     setItems(newItems)
   }
 
-  const cardStyle = { background: 'rgba(6,182,212,0.03)', borderRadius: 24, border: '1px solid rgba(6,182,212,0.15)', padding: '2rem' }
-  const inpStyle = { width: '100%', padding: '1rem', border: '1px solid rgba(6,182,212,0.15)', borderRadius: 14, fontSize: '0.95rem', color: '#FFFFFF', outline: 'none', background: 'rgba(6,182,212,0.05)', boxSizing: 'border-box' as const }
-  const lblStyle = { fontSize: '0.82rem', fontWeight: 800, color: '#94A3B8', display: 'block', marginBottom: '0.6rem' }
+  const cardStyle = { background: '#FFFFFF', borderRadius: 24, border: '1px solid #E2E8F0', padding: '2rem' }
+  const inpStyle = { width: '100%', padding: '1rem', border: '1px solid #E2E8F0', borderRadius: 14, fontSize: '0.95rem', color: '#0F172A', outline: 'none', background: '#ECFEFF', boxSizing: 'border-box' as const }
+  const lblStyle = { fontSize: '0.82rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.6rem' }
 
   return (
-    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
       <AnimatePresence>
         {toast && (
-          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -50, opacity: 0 }} style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10001, background: toast.type === 'ok' ? '#10B981' : '#EF4444', color: '#fff', padding: '1rem 2rem', borderRadius: 50, fontWeight: 800, boxShadow: '0 10px 40px rgba(0,0,0,0.5)', pointerEvents: 'none' }}>
+          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -50, opacity: 0 }} style={{ position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10001, background: toast.type === 'ok' ? '#10B981' : '#EF4444', color: '#0F172A', padding: '1rem 2rem', borderRadius: 50, fontWeight: 800, boxShadow: '0 10px 40px rgba(0,0,0,0.5)', pointerEvents: 'none' }}>
             {toast.msg}
           </motion.div>
         )}
@@ -344,7 +344,7 @@ export default function DataCenterPage() {
           <h1 style={{ fontSize: '2.5rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <Database size={40} color="#06B6D4" /> مركز تسوية المخزون السيادي
           </h1>
-          <p style={{ color: '#94A3B8', marginTop: '0.5rem', fontSize: '1.1rem' }}>Stock Reconciliation & Physical Count Center</p>
+          <p style={{ color: '#475569', marginTop: '0.5rem', fontSize: '1.1rem' }}>Stock Reconciliation & Physical Count Center</p>
         </div>
       </div>
 
@@ -384,11 +384,11 @@ export default function DataCenterPage() {
               }}
             >
               <input type="file" ref={fileInputRef} hidden accept=".xlsx,.csv,.pdf" onChange={e => e.target.files && setSelectedFile(e.target.files[0])} />
-              <div style={{ background: 'rgba(6,182,212,0.1)', width: 100, height: 100, borderRadius: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
+              <div style={{ background: '#ECFEFF', width: 100, height: 100, borderRadius: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
                 <UploadCloud size={50} color="#06B6D4" />
               </div>
-              <h2 style={{ fontWeight: 900, fontSize: '1.8rem', color: '#fff', marginBottom: '0.75rem' }}>إسقاط كشوف الجرد</h2>
-              <p style={{ color: '#94A3B8', fontSize: '1.1rem' }}>اسحب ملف Excel أو PDF الخاص بالجرد الميداني هنا</p>
+              <h2 style={{ fontWeight: 900, fontSize: '1.8rem', color: '#0F172A', marginBottom: '0.75rem' }}>إسقاط كشوف الجرد</h2>
+              <p style={{ color: '#475569', fontSize: '1.1rem' }}>اسحب ملف Excel أو PDF الخاص بالجرد الميداني هنا</p>
               
               {selectedFile && (
                 <div style={{ marginTop: '2.5rem', padding: '1rem 2rem', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 16, display: 'inline-flex', alignItems: 'center', gap: '1rem', color: '#10B981', fontWeight: 900 }}>
@@ -402,8 +402,8 @@ export default function DataCenterPage() {
               disabled={parsing || !selectedFile}
               style={{ 
                 padding: '1.5rem', borderRadius: 20, 
-                background: selectedFile ? 'linear-gradient(135deg, #06B6D4, #3B82F6)' : 'rgba(255,255,255,0.05)', 
-                color: '#fff', border: 'none', fontWeight: 900, fontSize: '1.25rem', 
+                background: selectedFile ? 'linear-gradient(135deg, #06B6D4, #3B82F6)' : '#F8FAFC', 
+                color: '#0F172A', border: 'none', fontWeight: 900, fontSize: '1.25rem', 
                 cursor: selectedFile ? 'pointer' : 'not-allowed', 
                 display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' 
               }}
@@ -419,11 +419,11 @@ export default function DataCenterPage() {
             <div style={{ ...cardStyle, background: 'rgba(34,197,94,0.03)', borderColor: 'rgba(34,197,94,0.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ color: '#22C55E', fontWeight: 900, fontSize: '1.3rem' }}>مطابقة الجرد الفعلي</h3>
-                <p style={{ color: '#94A3B8', marginTop: '0.3rem' }}>تم استخراج {items.length} عنصر للمطابقة. الكميات الموضحة ستصبح هي الكميات النهائية في المخزن.</p>
+                <p style={{ color: '#475569', marginTop: '0.3rem' }}>تم استخراج {items.length} عنصر للمطابقة. الكميات الموضحة ستصبح هي الكميات النهائية في المخزن.</p>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button onClick={() => setStep(1)} style={{ padding: '0.8rem 1.5rem', borderRadius: 12, background: 'rgba(255,255,255,0.05)', color: '#94A3B8', border: 'none', fontWeight: 700, cursor: 'pointer' }}>تراجع</button>
-                <button onClick={handleApprovePipes} style={{ padding: '0.8rem 2rem', borderRadius: 12, background: '#22C55E', color: '#fff', border: 'none', fontWeight: 900, cursor: 'pointer' }}>اعتماد المطابقة (Execute Recon)</button>
+                <button onClick={() => setStep(1)} style={{ padding: '0.8rem 1.5rem', borderRadius: 12, background: '#F8FAFC', color: '#475569', border: 'none', fontWeight: 700, cursor: 'pointer' }}>تراجع</button>
+                <button onClick={handleApprovePipes} style={{ padding: '0.8rem 2rem', borderRadius: 12, background: '#22C55E', color: '#0F172A', border: 'none', fontWeight: 900, cursor: 'pointer' }}>اعتماد المطابقة (Execute Recon)</button>
               </div>
             </div>
 
@@ -431,7 +431,7 @@ export default function DataCenterPage() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', tableLayout: 'fixed' }}>
                   <thead>
-                    <tr style={{ background: 'rgba(6,182,212,0.1)', borderBottom: '1px solid rgba(6,182,212,0.2)' }}>
+                    <tr style={{ background: '#ECFEFF', borderBottom: '1px solid rgba(6,182,212,0.2)' }}>
                       <th style={{ padding: '1.25rem', width: '130px' }}>التصنيف</th>
                       <th style={{ padding: '1.25rem', width: '220px' }}>اسم المنتج</th>
                       <th style={{ padding: '1.25rem', width: '90px' }}>العدد الفعلي</th>
@@ -443,7 +443,7 @@ export default function DataCenterPage() {
                   </thead>
                   <tbody>
                     {items.map((it, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', background: i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
+                      <tr key={i} style={{ borderBottom: '1px solid #F1F5F9', background: i % 2 === 0 ? 'transparent' : 'transparent' }}>
                         <td style={{ padding: '0.75rem 1rem' }}>
                           <select value={it.categoryId} onChange={e => updateItem(i, 'categoryId', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem' }}>
                             <option value="">-- التصنيف --</option>
@@ -466,7 +466,7 @@ export default function DataCenterPage() {
                           <input value={it.notes} onChange={e => updateItem(i, 'notes', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem' }} placeholder="البيان..." />
                         </td>
                         <td style={{ padding: '0.75rem 1rem' }}>
-                           <span style={{ fontSize: '0.75rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', padding: '4px 8px', borderRadius: 8, fontWeight: 800 }}>
+                           <span style={{ fontSize: '0.75rem', background: '#ECFEFF', color: '#06B6D4', padding: '4px 8px', borderRadius: 8, fontWeight: 800 }}>
                               {it.status === 'existing' ? 'موجود' : 'جديد'}
                            </span>
                         </td>
@@ -480,16 +480,16 @@ export default function DataCenterPage() {
         )}
 
         {step === 3 && (
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ ...cardStyle, background: '#0B1120', padding: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
+          <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} style={{ ...cardStyle, background: '#F8FAFC', padding: '4rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem' }}>
             <div style={{ textAlign: 'center' }}>
                <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '0.5rem' }}>جاري تنفيذ تسوية المخزون (Data Recon)</h2>
-               <p style={{ color: '#94A3B8' }}>تحديث الكميات الفعلية وتصحيح الأرصدة في القنوات البرمجية.</p>
+               <p style={{ color: '#475569' }}>تحديث الكميات الفعلية وتصحيح الأرصدة في القنوات البرمجية.</p>
             </div>
 
             <div style={{ width: '100%', maxWidth: 600, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(6,182,212,0.05)', padding: '1.5rem', borderRadius: 20, border: '1px solid rgba(6,182,212,0.1)' }}>
-                <div style={{ background: pipe1 === 'done' ? '#22C55E' : pipe1 === 'running' ? '#06B6D4' : 'rgba(255,255,255,0.05)', width: 50, height: 50, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: '#ECFEFF', padding: '1.5rem', borderRadius: 20, border: '1px solid #F1F5F9' }}>
+                <div style={{ background: pipe1 === 'done' ? '#22C55E' : pipe1 === 'running' ? '#06B6D4' : '#F8FAFC', width: 50, height: 50, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {pipe1 === 'done' ? <CheckCircle2 color="#fff" /> : pipe1 === 'running' ? <Loader2 className="animate-spin" color="#fff" /> : <Package color="#475569" />}
                 </div>
                 <div style={{ flex: 1 }}>
@@ -497,19 +497,19 @@ export default function DataCenterPage() {
                     <span style={{ fontWeight: 800 }}>Pipe 1: مطابقة تعريفات المنتجات</span>
                     <span style={{ fontSize: '0.8rem', color: '#06B6D4' }}>{processedCount} / {items.length}</span>
                   </div>
-                  <div style={{ height: 8, background: 'rgba(6,182,212,0.1)', borderRadius: 10, overflow: 'hidden' }}>
+                  <div style={{ height: 8, background: '#ECFEFF', borderRadius: 10, overflow: 'hidden' }}>
                     <motion.div initial={{ width: 0 }} animate={{ width: `${(processedCount / items.length) * 100}%` }} style={{ height: '100%', background: '#06B6D4' }} />
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(168,85,247,0.05)', padding: '1.5rem', borderRadius: 20, border: '1px solid rgba(168,85,247,0.1)', opacity: pipe1 === 'done' ? 1 : 0.5 }}>
-                <div style={{ background: pipe3 === 'done' ? '#22C55E' : pipe3 === 'running' ? '#A855F7' : 'rgba(255,255,255,0.05)', width: 50, height: 50, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ background: pipe3 === 'done' ? '#22C55E' : pipe3 === 'running' ? '#A855F7' : '#F8FAFC', width: 50, height: 50, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {pipe3 === 'done' ? <CheckCircle2 color="#fff" /> : pipe3 === 'running' ? <Loader2 className="animate-spin" color="#fff" /> : <Server color="#475569" />}
                 </div>
                 <div style={{ flex: 1 }}>
                   <span style={{ fontWeight: 800 }}>Pipe 3: محرك تسوية المخزون الفعلي</span>
-                  <p style={{ fontSize: '0.75rem', color: '#94A3B8', marginTop: '0.3rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.3rem' }}>
                     {pipe3 === 'running' ? 'جاري تحديث وحدات المخزن وإعادة حساب الأرصدة...' : pipe3 === 'done' ? 'تم اكتمال المطابقة بنجاح ✓' : 'في انتظار اكتمال المحرك السابق...'}
                   </p>
                 </div>
@@ -520,7 +520,7 @@ export default function DataCenterPage() {
             {pipe3 === 'done' && (
               <button 
                 onClick={() => window.location.href = '/dashboard/inventory'}
-                style={{ padding: '1rem 3rem', borderRadius: 15, background: '#06B6D4', color: '#fff', border: 'none', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer' }}
+                style={{ padding: '1rem 3rem', borderRadius: 15, background: '#06B6D4', color: '#0F172A', border: 'none', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer' }}
               >
                 الذهاب لدفتر المخزن (Audit) <ArrowRight size={20} style={{ display: 'inline', marginLeft: '0.5rem' }} />
               </button>

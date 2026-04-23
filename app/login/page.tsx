@@ -30,8 +30,8 @@ export default function LoginPage() {
         throw new Error(data.error || 'إسم المستخدم أو كلمة المرور غير صحيحة')
       }
 
-      // Success, redirect to dashboard
-      router.push('/dashboard')
+      // Success, perform hard redirect to dashboard to ensure cookies are sent and middleware applies
+      window.location.href = '/dashboard'
     } catch (err: any) {
       setError(err.message)
     } finally {

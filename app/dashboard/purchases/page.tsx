@@ -255,16 +255,16 @@ export default function PurchasesPage() {
     showToast('تم إدراج الأصناف بنجاح 📊', 'ok')
   }
 
-  const cardStyle = { background: 'rgba(6,182,212,0.03)', border: '1px solid rgba(6,182,212,0.15)', borderRadius: 24, padding: '2rem' }
-  const inputStyle = { background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 16, padding: '1rem', color: '#fff', outline: 'none', width: '100%', fontSize: '1rem' }
-  const lblStyle = { fontSize: '0.8rem', fontWeight: 800, color: '#94A3B8', display: 'block', marginBottom: '0.5rem' }
+  const cardStyle = { background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, padding: '2rem' }
+  const inputStyle = { background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 16, padding: '1rem', color: '#0F172A', outline: 'none', width: '100%', fontSize: '1rem' }
+  const lblStyle = { fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.5rem' }
 
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}><Loader2 className="animate-spin text-cyan-500" size={48} /></div>
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#1E293B' }}>
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
           {toast.msg}
         </div>
       )}
@@ -275,11 +275,11 @@ export default function PurchasesPage() {
           <h1 style={{ fontSize: '2.2rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <ShoppingBag color="#06B6D4" size={36} /> المشتريات المحلية
           </h1>
-          <p style={{ color: '#94A3B8' }}>تسجيل فواتير الشراء، إضافة للمخزن، وتسوية الخزنة والموردين</p>
+          <p style={{ color: '#475569' }}>تسجيل فواتير الشراء، إضافة للمخزن، وتسوية الخزنة والموردين</p>
         </div>
         <button 
           onClick={() => setMagicOpen(true)}
-          style={{ padding: '0.8rem 1.5rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 14, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem', boxShadow: '0 10px 20px -5px rgba(6,182,212,0.2)' }}
+          style={{ padding: '0.8rem 1.5rem', background: '#ECFEFF', color: '#06B6D4', border: '1px solid #CBD5E1', borderRadius: 14, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem', boxShadow: '0 10px 20px -5px rgba(6,182,212,0.2)' }}
         >
           <Database size={18} /> 📊 إدراج من إكسيل
         </button>
@@ -292,7 +292,7 @@ export default function PurchasesPage() {
           <div style={cardStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#06B6D4' }}>بيانات المورد / العميل</h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: isWalkIn ? 'rgba(168,85,247,0.1)' : 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: 50, border: `1px solid ${isWalkIn ? 'rgba(168,85,247,0.3)' : 'rgba(255,255,255,0.1)'}`, cursor: 'pointer' }} onClick={() => setIsWalkIn(!isWalkIn)}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: isWalkIn ? 'rgba(168,85,247,0.1)' : '#F8FAFC', padding: '0.4rem 0.8rem', borderRadius: 50, border: `1px solid ${isWalkIn ? 'rgba(168,85,247,0.3)' : 'rgba(255,255,255,0.1)'}`, cursor: 'pointer' }} onClick={() => setIsWalkIn(!isWalkIn)}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 800, color: isWalkIn ? '#A855F7' : '#94A3B8' }}>{isWalkIn ? 'شراء من عميل (طياري)' : 'شراء من مورد (جملة)'}</span>
                 <input type="checkbox" checked={isWalkIn} readOnly style={{ display: 'none' }} />
               </div>
@@ -335,23 +335,23 @@ export default function PurchasesPage() {
                   styles={{
                     control: (base) => ({
                       ...base,
-                      background: '#0B1120',
+                      background: '#F8FAFC',
                       borderColor: 'rgba(6,182,212,0.3)',
                       borderRadius: '16px',
                       padding: '0.3rem',
-                      color: '#fff',
+                      color: '#0F172A',
                       boxShadow: 'none',
                       '&:hover': { borderColor: '#06B6D4' }
                     }),
-                    menu: (base) => ({ ...base, background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)' }),
+                    menu: (base) => ({ ...base, background: '#F8FAFC', border: '1px solid rgba(6,182,212,0.2)' }),
                     option: (base, { isFocused }) => ({
                       ...base,
-                      background: isFocused ? 'rgba(6,182,212,0.1)' : 'transparent',
-                      color: '#fff',
+                      background: isFocused ? '#F0F9FF' : 'transparent',
+                      color: '#0F172A',
                       cursor: 'pointer'
                     }),
-                    singleValue: (base) => ({ ...base, color: '#fff' }),
-                    input: (base) => ({ ...base, color: '#fff' })
+                    singleValue: (base) => ({ ...base, color: '#0F172A' }),
+                    input: (base) => ({ ...base, color: '#0F172A' })
                   }}
                 />
               </motion.div>
@@ -368,10 +368,10 @@ export default function PurchasesPage() {
 
           <div style={cardStyle}>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '1.5rem', color: '#06B6D4' }}>الحسابات والخزنة</h2>
-            <div style={{ background: '#0B1120', padding: '1.5rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', textAlign: 'center' }}>
-              <span style={{ fontSize: '0.85rem', color: '#94A3B8' }}>إجمالي الفاتورة</span>
-              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#fff' }}>
-                {totalAmount.toLocaleString('ar-EG')} <span style={{ fontSize: '1rem', color: '#64748B' }}>ج.م</span>
+            <div style={{ background: '#F8FAFC', padding: '1.5rem', borderRadius: 16, border: '1px solid #E2E8F0', marginBottom: '1.5rem', textAlign: 'center' }}>
+              <span style={{ fontSize: '0.85rem', color: '#475569' }}>إجمالي الفاتورة</span>
+              <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0F172A' }}>
+                {totalAmount.toLocaleString('ar-EG')} <span style={{ fontSize: '1rem', color: '#475569' }}>ج.م</span>
               </div>
             </div>
 
@@ -399,7 +399,7 @@ export default function PurchasesPage() {
           <button 
             onClick={handleSave} 
             disabled={saving}
-            style={{ padding: '1.25rem', borderRadius: 16, background: '#06B6D4', color: '#fff', border: 'none', fontWeight: 900, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
+            style={{ padding: '1.25rem', borderRadius: 16, background: '#06B6D4', color: '#0F172A', border: 'none', fontWeight: 900, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
           >
             {saving ? <Loader2 className="animate-spin" /> : <Save />} حفظ الفاتورة وتوريد المخزون
           </button>
@@ -423,23 +423,23 @@ export default function PurchasesPage() {
                   styles={{
                     control: (base) => ({
                       ...base,
-                      background: '#0B1120',
+                      background: '#F8FAFC',
                       borderColor: 'rgba(6,182,212,0.3)',
                       borderRadius: '16px',
                       padding: '0.3rem',
-                      color: '#fff',
+                      color: '#0F172A',
                       boxShadow: 'none',
                       '&:hover': { borderColor: '#06B6D4' }
                     }),
-                    menu: (base) => ({ ...base, background: '#0B1120', border: '1px solid rgba(6,182,212,0.2)' }),
+                    menu: (base) => ({ ...base, background: '#F8FAFC', border: '1px solid rgba(6,182,212,0.2)' }),
                     option: (base, { isFocused }) => ({
                       ...base,
-                      background: isFocused ? 'rgba(6,182,212,0.1)' : 'transparent',
-                      color: '#fff',
+                      background: isFocused ? '#F0F9FF' : 'transparent',
+                      color: '#0F172A',
                       cursor: 'pointer'
                     }),
-                    singleValue: (base) => ({ ...base, color: '#fff' }),
-                    input: (base) => ({ ...base, color: '#fff' })
+                    singleValue: (base) => ({ ...base, color: '#0F172A' }),
+                    input: (base) => ({ ...base, color: '#0F172A' })
                   }}
                 />
               </div>
@@ -486,7 +486,7 @@ export default function PurchasesPage() {
                     value={currImeis}
                     onChange={e => setCurrImeis(e.target.value)}
                   />
-                  <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.5rem' }}>عدد الأرقام المدخلة يجب أن يطابق الكمية المحددة ({currQty}) إذا أردت تتبعهم.</p>
+                  <p style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.5rem' }}>عدد الأرقام المدخلة يجب أن يطابق الكمية المحددة ({currQty}) إذا أردت تتبعهم.</p>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -500,7 +500,7 @@ export default function PurchasesPage() {
                   exit={{ opacity: 0, height: 0 }}
                   style={{ overflow: 'hidden', marginTop: '1rem' }}
                 >
-                  <div style={{ background: 'rgba(6,182,212,0.05)', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 16, padding: '1rem' }}>
+                  <div style={{ background: '#ECFEFF', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 16, padding: '1rem' }}>
                     <p style={{ fontSize: '0.8rem', fontWeight: 900, color: '#06B6D4', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       📱 مواصفات الجهاز (مطلوبة للأجهزة المحمولة)
                     </p>
@@ -539,7 +539,7 @@ export default function PurchasesPage() {
             </AnimatePresence>
             <button 
               onClick={handleAddItem}
-              style={{ marginTop: '1.5rem', width: '100%', padding: '1rem', borderRadius: 16, background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.3)', fontWeight: 800, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
+              style={{ marginTop: '1.5rem', width: '100%', padding: '1rem', borderRadius: 16, background: '#ECFEFF', color: '#06B6D4', border: '1px solid #CBD5E1', fontWeight: 800, cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}
             >
               <Plus /> إضافة الصنف للفاتورة
             </button>
@@ -548,23 +548,23 @@ export default function PurchasesPage() {
           <div style={{ ...cardStyle, flex: 1 }}>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '1.5rem', color: '#06B6D4' }}>أصناف الفاتورة</h2>
             {items.length === 0 ? (
-              <div style={{ textAlign: 'center', color: '#64748B', padding: '3rem 0', fontWeight: 700 }}>لم يتم إضافة أصناف بعد</div>
+              <div style={{ textAlign: 'center', color: '#475569', padding: '3rem 0', fontWeight: 700 }}>لم يتم إضافة أصناف بعد</div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
                   <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '1rem', color: '#94A3B8' }}>المنتج</th>
-                      <th style={{ padding: '1rem', color: '#94A3B8' }}>الكمية</th>
-                      <th style={{ padding: '1rem', color: '#94A3B8' }}>التكلفة</th>
-                      <th style={{ padding: '1rem', color: '#94A3B8' }}>الإجمالي</th>
-                      <th style={{ padding: '1rem', color: '#94A3B8' }}></th>
+                    <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                      <th style={{ padding: '1rem', color: '#475569' }}>المنتج</th>
+                      <th style={{ padding: '1rem', color: '#475569' }}>الكمية</th>
+                      <th style={{ padding: '1rem', color: '#475569' }}>التكلفة</th>
+                      <th style={{ padding: '1rem', color: '#475569' }}>الإجمالي</th>
+                      <th style={{ padding: '1rem', color: '#475569' }}></th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((item, idx) => (
-                      <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '1rem', fontWeight: 800, color: '#fff' }}>
+                      <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '1rem', fontWeight: 800, color: '#0F172A' }}>
                           {item.productName}
                           {item.imeis && item.imeis.length > 0 && <div style={{ fontSize: '0.7rem', color: '#06B6D4', marginTop: 4 }}>+ {item.imeis.length} سيريال</div>}
                         </td>
@@ -601,23 +601,23 @@ export default function PurchasesPage() {
         </h2>
         
         {recentPurchases.length === 0 ? (
-          <p style={{ color: '#64748B', textAlign: 'center', padding: '2rem' }}>لا توجد مشتريات مسجلة مؤخراً</p>
+          <p style={{ color: '#475569', textAlign: 'center', padding: '2rem' }}>لا توجد مشتريات مسجلة مؤخراً</p>
         ) : (
           <div style={{ overflowX: 'visible', width: '100%' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem', tableLayout: 'auto' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                  <th style={{ padding: '1rem', color: '#94A3B8', width: '150px' }}>التاريخ</th>
-                  <th style={{ padding: '1rem', color: '#94A3B8' }}>المورد / العميل</th>
-                  <th style={{ padding: '1rem', color: '#94A3B8', width: '120px' }}>الإجمالي</th>
-                  <th style={{ padding: '1rem', color: '#94A3B8', width: '120px' }}>الحالة</th>
-                  <th style={{ padding: '1rem', color: '#94A3B8', width: '150px', textAlign: 'center' }}>الإجراءات</th>
+                <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                  <th style={{ padding: '1rem', color: '#475569', width: '150px' }}>التاريخ</th>
+                  <th style={{ padding: '1rem', color: '#475569' }}>المورد / العميل</th>
+                  <th style={{ padding: '1rem', color: '#475569', width: '120px' }}>الإجمالي</th>
+                  <th style={{ padding: '1rem', color: '#475569', width: '120px' }}>الحالة</th>
+                  <th style={{ padding: '1rem', color: '#475569', width: '150px', textAlign: 'center' }}>الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
                 {recentPurchases.map((p, idx) => (
-                  <tr key={p._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', verticalAlign: 'middle' }}>
-                    <td style={{ padding: '1rem', color: '#CBD5E1' }}>{new Date(p.createdAt).toLocaleDateString('ar-EG')}</td>
+                  <tr key={p._id} style={{ borderBottom: '1px solid #F1F5F9', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '1rem', color: '#475569' }}>{new Date(p.createdAt).toLocaleDateString('ar-EG')}</td>
                     <td style={{ padding: '1rem', fontWeight: 800 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         {p.walkInName || p.supplierName}
@@ -635,7 +635,7 @@ export default function PurchasesPage() {
                         <Link 
                           href={`/dashboard/purchase-contract?purchaseId=${p._id}`}
                           target="_blank"
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20"
+                          className="bg-purple-600 hover:bg-purple-700 text-slate-900 px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20"
                         >
                           <Printer size={14} /> طباعة مبايعة
                         </Link>
@@ -643,7 +643,7 @@ export default function PurchasesPage() {
                         <Link 
                           href={`/dashboard/purchase-invoice?purchaseId=${p._id}`}
                           target="_blank"
-                          className="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/20"
+                          className="bg-cyan-500 hover:bg-cyan-600 text-slate-900 px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/20"
                         >
                           <Printer size={14} /> طباعة فاتورة
                         </Link>
@@ -661,24 +661,24 @@ export default function PurchasesPage() {
     <AnimatePresence>
       {completedPurchase && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8,12,20,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#0B1120', borderRadius: 28, border: '1px solid #06B6D4', width: '100%', maxWidth: 500, padding: '3rem', textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.5)' }}>
-            <div style={{ width: 80, height: 80, background: 'rgba(6,182,212,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#F8FAFC', borderRadius: 28, border: '1px solid #06B6D4', width: '100%', maxWidth: 500, padding: '3rem', textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.1)' }}>
+            <div style={{ width: 80, height: 80, background: '#ECFEFF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <CheckCircle2 color="#06B6D4" size={48} />
             </div>
             <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '1rem' }}>تم حفظ الفاتورة!</h2>
-            <p style={{ color: '#94A3B8', marginBottom: '2rem', fontSize: '1.1rem' }}>تم توريد المخزون لفرع <span style={{ color: '#06B6D4', fontWeight: 800 }}>{completedPurchase.branchName}</span> بنجاح.</p>
+            <p style={{ color: '#475569', marginBottom: '2rem', fontSize: '1.1rem' }}>تم توريد المخزون لفرع <span style={{ color: '#06B6D4', fontWeight: 800 }}>{completedPurchase.branchName}</span> بنجاح.</p>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <Link 
                 href={`/dashboard/purchase-invoice?purchaseId=${completedPurchase._id}&branchName=${encodeURIComponent(completedPurchase.branchName)}`}
                 target="_blank"
-                style={{ background: '#06B6D4', color: '#fff', padding: '1rem', borderRadius: 16, fontWeight: 900, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                style={{ background: '#06B6D4', color: '#0F172A', padding: '1rem', borderRadius: 16, fontWeight: 900, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
               >
                 <Printer size={20} /> طباعة الفاتورة
               </Link>
               <button 
                 onClick={() => setCompletedPurchase(null)}
-                style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: 16, fontWeight: 900, cursor: 'pointer' }}
+                style={{ background: '#F8FAFC', color: '#0F172A', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 16, fontWeight: 900, cursor: 'pointer' }}
               >
                 إغلاق
               </button>

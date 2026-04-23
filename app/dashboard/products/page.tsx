@@ -326,7 +326,7 @@ export default function ProductsPage() {
       const canvas = await html2canvas(pdfTemplateRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#FFFFFF',
+        backgroundcolor: '#0F172A',
       })
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF({
@@ -352,20 +352,20 @@ export default function ProductsPage() {
 
   const filtered = items.filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()))
 
-  const card: React.CSSProperties = { background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: '1.75rem', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }
-  const inp: React.CSSProperties = { width: '100%', padding: '0.75rem 1rem', border: '1px solid #E2E8F0', borderRadius: 12, fontSize: '0.92rem', color: '#0F172A', outline: 'none', background: '#FFFFFF', boxSizing: 'border-box' }
+  const card: React.CSSProperties = { background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: '1.75rem' }
+  const inp: React.CSSProperties = { width: '100%', padding: '0.75rem 1rem', border: '1px solid #E2E8F0', borderRadius: 12, fontSize: '0.92rem', color: '#0F172A', outline: 'none', background: '#ECFEFF', boxSizing: 'border-box' }
   const lbl: React.CSSProperties = { fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.45rem' }
   const td: React.CSSProperties = { padding: '1rem', whiteSpace: 'nowrap', verticalAlign: 'middle' }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#0F172A' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
       <PrintHeader title="قائمة الجرد والمنتجات" subtitle={`${items.length} منتج مسجل`} />
-      {toast && <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toast.msg}</div>}
+      {toast && <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toast.msg}</div>}
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0F172A' }}>إدارة المنتجات</h1>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 900 }}>إدارة المنتجات</h1>
           <p style={{ color: '#475569' }}>{items.length} {businessType === 'B2B_WHALE' ? 'منتج مسجل بالعملات المحلية والدولية' : 'المنتجات المسجلة'}</p>
         </div>
         
@@ -376,7 +376,7 @@ export default function ProductsPage() {
                 onClick={sendToWhatsApp}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.2rem', 
-                  background: '#22C55E', borderRadius: 12, color: '#fff', fontWeight: 800, 
+                  background: '#22C55E', borderRadius: 12, color: '#0F172A', fontWeight: 800, 
                   border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
                 }}
                 onMouseEnter={(e)=>e.currentTarget.style.transform='translateY(-2px)'}
@@ -390,7 +390,7 @@ export default function ProductsPage() {
                 disabled={generatingPDF}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.2rem', 
-                  background: '#EF4444', borderRadius: 12, color: '#fff', fontWeight: 800, 
+                  background: '#EF4444', borderRadius: 12, color: '#0F172A', fontWeight: 800, 
                   border: 'none', cursor: 'pointer', transition: 'all 0.2s', opacity: generatingPDF ? 0.7 : 1, fontSize: '0.85rem'
                 }}
                 onMouseEnter={(e)=>e.currentTarget.style.transform='translateY(-2px)'}
@@ -406,8 +406,8 @@ export default function ProductsPage() {
             onClick={() => window.print()}
             style={{ 
               display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.2rem', 
-              background: 'rgba(6,182,212,0.1)', borderRadius: 12, color: '#06B6D4', fontWeight: 800, 
-              border: '1px solid rgba(6,182,212,0.3)', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
+              background: '#ECFEFF', borderRadius: 12, color: '#06B6D4', fontWeight: 800, 
+              border: '1px solid #CBD5E1', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
             }}
           >
             <Printer size={18} /> طباعة الجرد
@@ -418,7 +418,7 @@ export default function ProductsPage() {
             style={{ 
               display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', 
               background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', 
-              borderRadius: 12, color: '#fff', fontWeight: 800, border: 'none', 
+              borderRadius: 12, color: '#0F172A', fontWeight: 800, border: 'none', 
               cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.85rem'
             }}
             onMouseEnter={(e)=>e.currentTarget.style.transform='translateY(-2px)'}
@@ -434,14 +434,14 @@ export default function ProductsPage() {
       <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+            <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
               {['المنتج', 'القسم', 'السعـر (قطاعي)', 'سعر الجملة', 'المخزون', ''].map(h => <th key={h} style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 800, color: '#475569', fontSize: '0.75rem' }}>{h}</th>)}
             </tr>
           </thead>
           <tbody>
             {filtered.map(p => (
-              <tr key={p._id} style={{ borderBottom: '1px solid #F1F5F9', transition: 'background 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+              <tr key={p._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(6,182,212,0.03)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 {/* Product name + image */}
@@ -449,22 +449,22 @@ export default function ProductsPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                     {p.imageUrl
                       ? <img src={p.imageUrl} style={{ width: 40, height: 40, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
-                      : <Package size={20} style={{ flexShrink: 0, color: '#94A3B8' }} />}
+                      : <Package size={20} style={{ flexShrink: 0, color: '#475569' }} />}
                     <div>
-                      <p style={{ fontWeight: 800, margin: 0, color: '#0F172A' }}>{p.name}</p>
-                      <p style={{ fontSize: '0.7rem', color: '#64748B', margin: 0 }}>{p.specs}</p>
+                      <p style={{ fontWeight: 800, margin: 0 }}>{p.name}</p>
+                      <p style={{ fontSize: '0.7rem', color: '#475569', margin: 0 }}>{p.specs}</p>
                     </div>
                   </div>
                 </td>
                 {/* Category badge */}
                 <td style={td}>
-                  <span style={{ background: 'rgba(6,182,212,0.1)', color: '#06B6D4', padding: '0.25rem 0.7rem', borderRadius: 6, fontSize: '0.78rem', fontWeight: 700 }}>
+                  <span style={{ background: '#ECFEFF', color: '#06B6D4', padding: '0.25rem 0.7rem', borderRadius: 6, fontSize: '0.78rem', fontWeight: 700 }}>
                     {p.category}
                   </span>
                 </td>
                 {/* Retail price */}
-                <td style={{ ...td, fontWeight: 800, direction: 'ltr', color: '#0F172A' }}>
-                  {p.price.toLocaleString('ar-EG')} <span style={{ fontSize: '0.7rem', color: '#64748B' }}>ج.م</span>
+                <td style={{ ...td, fontWeight: 800, direction: 'ltr', color: '#1E293B' }}>
+                  {p.price.toLocaleString('ar-EG')} <span style={{ fontSize: '0.7rem', color: '#475569' }}>ج.م</span>
                 </td>
                 {/* Wholesale price */}
                 <td style={{ ...td, fontWeight: 900, color: '#06B6D4', direction: 'ltr' }}>
@@ -485,7 +485,7 @@ export default function ProductsPage() {
                 {/* Actions */}
                 <td style={{ ...td, textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                    <button onClick={() => openEdit(p)} style={{ background: 'rgba(6,182,212,0.1)', border: 'none', color: '#06B6D4', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Pencil size={15} /></button>
+                    <button onClick={() => openEdit(p)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Pencil size={15} /></button>
                     <button onClick={async () => { if(confirm('متأكد من الحذف؟')) { await fetch('/api/products?id=' + p._id, { method: 'DELETE' }); window.location.reload(); } }} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trash2 size={15} /></button>
                   </div>
                 </td>
@@ -503,11 +503,11 @@ export default function ProductsPage() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }} 
               animate={{ opacity: 1, scale: 1, y: 0 }} 
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              style={{ background: '#FFFFFF', borderRadius: 28, width: '100%', maxWidth: 450, padding: '2.5rem', border: '1px solid #E2E8F0', position: 'relative', zIndex: 2, boxShadow: '0 32px 100px rgba(0,0,0,0.1)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 450, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', position: 'relative', zIndex: 2 }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#0F172A' }}>إرسال لستة الأسعار</h2>
-                <button onClick={() => setWaModal(false)} style={{ background: '#F1F5F9', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#64748B' }}><X size={20} /></button>
+                <button onClick={() => setWaModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#0F172A' }}><X size={20} /></button>
               </div>
 
               <div style={{ marginBottom: '1.5rem' }}>
@@ -523,12 +523,12 @@ export default function ProductsPage() {
                   />
                   <Send size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#06B6D4', opacity: 0.5 }} />
                 </div>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.75rem' }}>سيتم إضافة كود الدولة (2+) تلقائياً في حال عدم وجوده.</p>
+                <p style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.75rem' }}>سيتم إضافة كود الدولة (2+) تلقائياً في حال عدم وجوده.</p>
               </div>
 
               <button 
                 onClick={executeWaSend}
-                style={{ width: '100%', background: '#22C55E', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: 'all 0.2s' }}
+                style={{ width: '100%', background: '#22C55E', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', transition: 'all 0.2s' }}
                 onMouseEnter={(e)=>e.currentTarget.style.boxShadow='0 12px 30px rgba(34,197,94,0.3)'}
                 onMouseLeave={(e)=>e.currentTarget.style.boxShadow='none'}
               >
@@ -541,11 +541,11 @@ export default function ProductsPage() {
 
       <AnimatePresence>
         {modal && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0, 0, 0, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#FFFFFF', borderRadius: 28, width: '100%', maxWidth: 650, padding: '2.5rem', border: '1px solid #E2E8F0', maxHeight: '92vh', overflowY: 'auto', boxShadow: '0 32px 100px rgba(0,0,0,0.1)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 650, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', maxHeight: '92vh', overflowY: 'auto' }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}><h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#0F172A' }}>{isEditing ? 'تعديل بيانات المنتج' : 'إضافة منتج للسوق'}</h2><button onClick={()=>setModal(false)} style={{ background: '#F1F5F9', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#64748B' }}><X size={24} /></button></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}><h2 style={{ fontWeight: 900, fontSize: '1.5rem' }}>{isEditing ? 'تعديل بيانات المنتج' : 'إضافة منتج للسوق'}</h2><button onClick={()=>setModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer' }}><X size={24} /></button></div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                 <div style={{ gridColumn: '1/-1' }}><label style={lbl}>الاسم التجاري *</label><input style={inp} value={form.name} onChange={e=>setForm({...form, name: e.target.value})} /></div>
@@ -553,11 +553,11 @@ export default function ProductsPage() {
                 {/* ── Image Upload Section (Phase 31) ── */}
                 <div style={{ gridColumn: '1/-1', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
                    <label style={lbl}>صورة المنتج (ImgBB Cloud Hosting)</label>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: 'rgba(6,182,212,0.05)', padding: '1rem', borderRadius: 16, border: '1px solid rgba(6,182,212,0.15)' }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', background: '#ECFEFF', padding: '1rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
                       <div 
                         onClick={() => fileRef.current?.click()}
                         style={{ 
-                          width: 80, height: 80, borderRadius: 12, border: '2px dashed #E2E8F0', 
+                          width: 80, height: 80, borderRadius: 12, border: '2px dashed rgba(6,182,212,0.3)', 
                           display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                           background: '#F8FAFC', overflow: 'hidden', position: 'relative'
                         }}
@@ -595,20 +595,20 @@ export default function ProductsPage() {
                          <button 
                            onClick={() => fileRef.current?.click()}
                            disabled={uploading}
-                           style={{ padding: '0.6rem 1.2rem', borderRadius: 10, background: '#06B6D4', color: '#fff', border: 'none', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}
+                           style={{ padding: '0.6rem 1.2rem', borderRadius: 10, background: '#06B6D4', color: '#0F172A', border: 'none', fontWeight: 800, cursor: 'pointer', fontSize: '0.85rem' }}
                          >
                             {form.imageUrl ? 'تغيير الصورة' : 'رفع صورة المنتج'}
                          </button>
-                         <p style={{ fontSize: '0.7rem', color: '#64748B', marginTop: '0.5rem' }}>ImgBB سيتم استضافة الصورة سحابياً عبر</p>
+                         <p style={{ fontSize: '0.7rem', color: '#475569', marginTop: '0.5rem' }}>ImgBB سيتم استضافة الصورة سحابياً عبر</p>
                       </div>
                    </div>
                 </div>
                 
                 {/* ── Wholesale Engine ─────────────────────────────────── */}
                 {businessType === 'B2B_WHALE' && (
-                  <div style={{ gridColumn: '1/-1', background: 'rgba(6,182,212,0.05)', padding: '1.25rem', borderRadius: 16, border: '1px solid rgba(6,182,212,0.15)' }}>
+                  <div style={{ gridColumn: '1/-1', background: '#ECFEFF', padding: '1.25rem', borderRadius: 16, border: '1px solid #E2E8F0' }}>
                     <p style={{ fontSize: '0.72rem', fontWeight: 800, color: '#06B6D4', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1rem' }}>محرك تسعير الجملة</p>
-                    <p style={{ fontSize: '0.73rem', color: '#64748B', marginBottom: '1rem' }}>التكلفة الفعلية تُزامن تلقائياً من الشحنة (شاملة جميع المصاريف).</p>
+                    <p style={{ fontSize: '0.73rem', color: '#475569', marginBottom: '1rem' }}>التكلفة الفعلية تُزامن تلقائياً من الشحنة (شاملة جميع المصاريف).</p>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '1rem', alignItems: 'flex-end' }}>
 
                       {/* Margin */}
@@ -634,14 +634,14 @@ export default function ProductsPage() {
                         </label>
                         <input
                           readOnly
-                          style={{ ...inp, background: dbSyncedLandedCost > 0 ? '#F0FDF4' : '#F1F5F9', color: dbSyncedLandedCost > 0 ? '#166534' : '#64748B', cursor: 'not-allowed', border: dbSyncedLandedCost > 0 ? '1px solid #BBF7D0' : undefined }}
+                          style={{ ...inp, background: dbSyncedLandedCost > 0 ? 'rgba(34,197,94,0.05)' : 'rgba(0,0,0,0.2)', color: dbSyncedLandedCost > 0 ? '#22C55E' : '#94A3B8', cursor: 'not-allowed', border: dbSyncedLandedCost > 0 ? '1px solid rgba(34,197,94,0.3)' : undefined }}
                           value={liveLocalCost > 0 ? liveLocalCost.toFixed(2) : ''}
                           placeholder="يُحسب عند استلام الشحنة"
                         />
                       </div>
 
                       {/* Live wholesale EGP */}
-                      <div style={{ textAlign: 'center', background: 'rgba(6,182,212,0.05)', borderRadius: 12, padding: '0.75rem', border: '1px solid #E2E8F0' }}>
+                      <div style={{ textAlign: 'center', background: '#ECFEFF', borderRadius: 12, padding: '0.75rem', border: '1px solid #F1F5F9' }}>
                         <span style={{ fontSize: '0.65rem', color: '#06B6D4', fontWeight: 800, display: 'block', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>سعر الجملة EGP</span>
                         <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A' }}>{liveWholesale > 0 ? liveWholesale.toLocaleString('ar-EG', { maximumFractionDigits: 2 }) : '—'}</span>
                       </div>
@@ -654,9 +654,9 @@ export default function ProductsPage() {
                 
                 <div>
                   <label style={lbl}>قيمة الضريبة</label>
-                  <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 12, overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, overflow: 'hidden' }}>
                     <select 
-                      style={{ ...inp, border: 'none', background: '#F8FAFC', borderRadius: 0, width: '40%', borderRight: '1px solid #E2E8F0', fontWeight: 800, color: '#06B6D4' }}
+                      style={{ ...inp, border: 'none', background: '#ECFEFF', borderRadius: 0, width: '40%', borderRight: '1px solid rgba(6,182,212,0.15)', fontWeight: 800, color: '#06B6D4' }}
                       value={form.taxType} 
                       onChange={e => setForm({...form, taxType: e.target.value as 'PERCENTAGE' | 'FIXED'})}
                     >
@@ -674,14 +674,14 @@ export default function ProductsPage() {
                 </div>
 
                 <div><label style={lbl}>المخزون المتوفر</label><input style={inp} value={form.stock} onChange={e=>setForm({...form, stock: e.target.value})} type="number" /></div>
-                <div><label style={lbl}>القسم</label><select style={{...inp, background: '#FFFFFF', appearance: 'none'}} value={form.categoryId} onChange={e=>setForm({...form, categoryId: e.target.value, category: e.target.options[e.target.selectedIndex].text})}><option value="">-- اختر القسم --</option>{dbCategories.map(c=><option key={c._id} value={c._id}>{c.name}</option>)}</select></div>
-                <div><label style={lbl}>الفرع / المستودع / العهدة</label><select style={{...inp, background: '#FFFFFF', appearance: 'none'}} value={form.branchId} onChange={e=>setForm({...form, branchId: e.target.value})}><option value="">-- بدون تخصيص --</option>{dbBranches.map(b=><option key={b._id} value={b._id}>{b.name}</option>)}</select></div>
+                <div><label style={lbl}>القسم</label><select style={{...inp, background: '#F8FAFC', appearance: 'none'}} value={form.categoryId} onChange={e=>setForm({...form, categoryId: e.target.value, category: e.target.options[e.target.selectedIndex].text})}><option value="">-- اختر القسم --</option>{dbCategories.map(c=><option key={c._id} value={c._id}>{c.name}</option>)}</select></div>
+                <div><label style={lbl}>الفرع / المستودع / العهدة</label><select style={{...inp, background: '#F8FAFC', appearance: 'none'}} value={form.branchId} onChange={e=>setForm({...form, branchId: e.target.value})}><option value="">-- بدون تخصيص --</option>{dbBranches.map(b=><option key={b._id} value={b._id}>{b.name}</option>)}</select></div>
                 
                 {/* ── Condition & Description ── */}
                 <div>
                   <label style={lbl}>حالة المنتج</label>
                   <select 
-                    style={{...inp, background: '#FFFFFF', appearance: 'none'}} 
+                    style={{...inp, background: '#F8FAFC', appearance: 'none'}} 
                     value={form.condition || 'new'} 
                     onChange={e=>setForm({...form, condition: e.target.value})}
                   >
@@ -701,13 +701,13 @@ export default function ProductsPage() {
                     />
                     <span style={{ 
                       position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, 
-                      backgroundColor: form.isSerialized ? '#06B6D4' : '#E2E8F0', 
+                      backgroundColor: form.isSerialized ? '#06B6D4' : 'rgba(255,255,255,0.1)', 
                       transition: '.3s', borderRadius: '24px' 
                     }}>
                       <span style={{ 
                         position: 'absolute', height: '16px', width: '16px', 
                         left: form.isSerialized ? '24px' : '4px', bottom: '4px', 
-                        backgroundColor: 'white', transition: '.3s', borderRadius: '50%' 
+                        backgroundcolor: '#0F172A', transition: '.3s', borderRadius: '50%' 
                       }} />
                     </span>
                   </label>
@@ -715,14 +715,14 @@ export default function ProductsPage() {
                     <span style={{ fontSize: '0.85rem', fontWeight: 800, color: form.isSerialized ? '#06B6D4' : '#A855F7', display: 'block' }}>
                       تتبع بالأرقام التسلسلية (Has Serial Numbers / IMEI) 
                     </span>
-                    <span style={{ fontSize: '0.72rem', color: '#64748B' }}>قم بإيقاف هذا الخيار للمنتجات التي تُباع بالكمية المستمرة كالإكسسوارات</span>
+                    <span style={{ fontSize: '0.72rem', color: '#475569' }}>قم بإيقاف هذا الخيار للمنتجات التي تُباع بالكمية المستمرة كالإكسسوارات</span>
                   </div>
                 </div>
                 
                 <div style={{ gridColumn: '1/-1' }}>
                   <label style={lbl}>الوصف والملاحظات</label>
                   <textarea 
-                    style={{ ...inp, height: 100, resize: 'vertical', background: '#FFFFFF' }} 
+                    style={{ ...inp, height: 100, resize: 'vertical', background: '#F8FAFC' }} 
                     placeholder="مثال: نسخة شرق أوسط شريحتين، أو مستعمل بطارية 90% بدون علبة..."
                     value={form.description || ''}
                     onChange={e => setForm({ ...form, description: e.target.value })}
@@ -730,7 +730,7 @@ export default function ProductsPage() {
                 </div>
               </div>
               
-              <button onClick={handleSave} disabled={saving} style={{ width: '100%', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, marginTop: '2rem', cursor: 'pointer' }}>{saving ? <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto' }} /> : 'تأكيد وحفظ المنتج'}</button>
+              <button onClick={handleSave} disabled={saving} style={{ width: '100%', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, marginTop: '2rem', cursor: 'pointer' }}>{saving ? <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto' }} /> : 'تأكيد وحفظ المنتج'}</button>
             </motion.div>
           </div>
         )}
@@ -765,7 +765,7 @@ export default function ProductsPage() {
           <div style={{ textAlign: 'center', borderBottom: '4px solid #06B6D4', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
             <img src="/assets/logo.png" alt="FREE ZONE" style={{ height: '80px', marginBottom: '1rem', objectFit: 'contain' }} />
             <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#06B6D4' }}>قائمة أسعار الجملة المعتمدة</p>
-            <p style={{ fontSize: '1rem', color: '#64748B', marginTop: '0.5rem' }}>
+            <p style={{ fontSize: '1rem', color: '#475569', marginTop: '0.5rem' }}>
                بتاريخ: {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -784,7 +784,7 @@ export default function ProductsPage() {
                 <tr key={p._id} style={{ borderBottom: '1px solid #E2E8F0', background: i % 2 === 0 ? '#FFFFFF' : '#F8FAFC' }}>
                   <td style={{ padding: '1.25rem 1rem' }}>
                     <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0F172A' }}>{p.name}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#64748B', marginTop: '0.2rem' }}>{p.description || p.specs || '-'}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#475569', marginTop: '0.2rem' }}>{p.description || p.specs || '-'}</div>
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 700, color: p.condition === 'used' ? '#F59E0B' : '#10B981' }}>
                     {p.condition === 'used' ? 'مستعمل' : 'جديد'}
@@ -792,7 +792,7 @@ export default function ProductsPage() {
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 900, fontSize: '1.15rem', color: '#06B6D4' }}>
                     {(p.wholesalePriceEGP || 0).toLocaleString('ar-EG')} ج.م
                   </td>
-                  <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#64748B', fontSize: '0.9rem' }}>
+                  <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 600, color: '#475569', fontSize: '0.9rem' }}>
                     {(p.taxPercentage || 0) === 0 ? '(معفي)' : `${(p.taxAmountEGP || 0).toLocaleString('ar-EG')} م`}
                   </td>
                 </tr>
@@ -801,7 +801,7 @@ export default function ProductsPage() {
           </table>
 
           <div style={{ marginTop: '3rem', textAlign: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '1.5rem' }}>
-            <p style={{ color: '#94A3B8', fontSize: '0.9rem' }}>فري زون للإستيراد - السراج مول، مكرم عبيد، مدينة نصر - القاهرة - الأسعار قابلة للتغيير دون إشعار مسبق</p>
+            <p style={{ color: '#475569', fontSize: '0.9rem' }}>فري زون للإستيراد - السراج مول، مكرم عبيد، مدينة نصر - القاهرة - الأسعار قابلة للتغيير دون إشعار مسبق</p>
           </div>
         </div>
       </div>

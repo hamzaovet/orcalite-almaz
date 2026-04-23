@@ -113,7 +113,7 @@ export default function SupplierStatementPage() {
   const totalDebit  = ledger.reduce((s, r) => s + r.debit, 0)
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
 
       {/* PrintHeader — only visible when printing */}
       <PrintHeader
@@ -126,18 +126,18 @@ export default function SupplierStatementPage() {
         <div>
           <button
             onClick={() => router.back()}
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#94A3B8', padding: '0.5rem 1rem', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontFamily: 'inherit' }}
+            style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#475569', padding: '0.5rem 1rem', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontFamily: 'inherit' }}
           >
             <ArrowRight size={16} /> رجوع للموردين
           </button>
           <h1 style={{ fontSize: '2rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <FileText color="#06B6D4" size={32} /> كشف حساب: {supplier?.name}
           </h1>
-          <p style={{ color: '#94A3B8', marginTop: '0.4rem' }}>السجل التفصيلي للمشتريات والمدفوعات</p>
+          <p style={{ color: '#475569', marginTop: '0.4rem' }}>السجل التفصيلي للمشتريات والمدفوعات</p>
         </div>
         <button
           onClick={handlePrint}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.15)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#ECFEFF', color: '#06B6D4', border: '1px solid #CBD5E1', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.15)' }}
         >
           <Printer size={20} /> طباعة كشف الحساب
         </button>
@@ -150,33 +150,33 @@ export default function SupplierStatementPage() {
           { label: 'إجمالي المدفوعات (مدين)', value: totalDebit,  color: '#22C55E', Icon: TrendingDown },
           { label: 'الرصيد النهائي على الحساب', value: supplier?.balance || 0, color: '#06B6D4', Icon: Wallet },
         ].map(({ label, value, color, Icon }) => (
-          <div key={label} style={{ background: 'rgba(6,182,212,0.03)', borderRadius: 20, padding: '1.5rem', border: '1px solid rgba(6,182,212,0.15)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div key={label} style={{ background: '#FFFFFF', borderRadius: 20, padding: '1.5rem', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ width: 50, height: 50, borderRadius: 14, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Icon size={22} color={color} />
             </div>
             <div>
-              <p style={{ fontSize: '0.75rem', color: '#94A3B8', fontWeight: 700, marginBottom: '0.3rem' }}>{label}</p>
-              <p style={{ fontSize: '1.4rem', fontWeight: 900, color: '#fff', direction: 'ltr' }}>{Math.abs(value).toLocaleString('ar-EG')} ج.م</p>
+              <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700, marginBottom: '0.3rem' }}>{label}</p>
+              <p style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A', direction: 'ltr' }}>{Math.abs(value).toLocaleString('ar-EG')} ج.م</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Ledger Table */}
-      <div style={{ background: 'rgba(6,182,212,0.03)', borderRadius: 20, border: '1px solid rgba(6,182,212,0.15)', overflow: 'hidden' }}>
+      <div style={{ background: '#FFFFFF', borderRadius: 20, border: '1px solid #E2E8F0', overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem' }}>
             <thead>
               <tr style={{ background: 'rgba(6,182,212,0.08)', borderBottom: '1px solid rgba(6,182,212,0.2)' }}>
                 {['التاريخ', 'النوع', 'البيان', 'المرجع', 'دائن (مستحق له)', 'مدين (سداد)', 'الرصيد التراكمي'].map(h => (
-                  <th key={h} style={{ padding: '1rem', fontWeight: 800, color: '#94A3B8', fontSize: '0.78rem', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} style={{ padding: '1rem', fontWeight: 800, color: '#475569', fontSize: '0.78rem', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {ledger.map((row, i) => (
-                <tr key={row.id + i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
-                  <td style={{ padding: '1rem', color: '#CBD5E1', whiteSpace: 'nowrap' }}>
+                <tr key={row.id + i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: i % 2 === 0 ? 'transparent' : 'transparent' }}>
+                  <td style={{ padding: '1rem', color: '#475569', whiteSpace: 'nowrap' }}>
                     {row.date.toLocaleDateString('ar-EG')}
                   </td>
                   <td style={{ padding: '1rem' }}>
@@ -189,7 +189,7 @@ export default function SupplierStatementPage() {
                     </span>
                   </td>
                   <td style={{ padding: '1rem', color: '#E2E8F0', maxWidth: 260 }}>{row.description}</td>
-                  <td style={{ padding: '1rem', color: '#64748B', fontSize: '0.8rem' }}>{row.ref}</td>
+                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.8rem' }}>{row.ref}</td>
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 800, color: row.credit > 0 ? '#FB923C' : '#334155' }}>
                     {row.credit > 0 ? row.credit.toLocaleString('ar-EG') : '—'}
                   </td>
@@ -202,13 +202,13 @@ export default function SupplierStatementPage() {
                 </tr>
               ))}
               {ledger.length === 0 && (
-                <tr><td colSpan={7} style={{ padding: '4rem', textAlign: 'center', color: '#64748B', fontWeight: 700 }}>لا توجد حركات مالية مسجلة لهذا المورد</td></tr>
+                <tr><td colSpan={7} style={{ padding: '4rem', textAlign: 'center', color: '#475569', fontWeight: 700 }}>لا توجد حركات مالية مسجلة لهذا المورد</td></tr>
               )}
             </tbody>
             {ledger.length > 0 && (
               <tfoot>
                 <tr style={{ background: 'rgba(6,182,212,0.06)', borderTop: '2px solid rgba(6,182,212,0.2)' }}>
-                  <td colSpan={4} style={{ padding: '1rem', fontWeight: 900, color: '#fff' }}>الإجمالي</td>
+                  <td colSpan={4} style={{ padding: '1rem', fontWeight: 900, color: '#0F172A' }}>الإجمالي</td>
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 900, color: '#FB923C' }}>{totalCredit.toLocaleString('ar-EG')} ج.م</td>
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 900, color: '#22C55E' }}>{totalDebit.toLocaleString('ar-EG')} ج.م</td>
                   <td style={{ padding: '1rem', textAlign: 'center', fontWeight: 900, color: '#06B6D4', direction: 'ltr' }}>{(supplier?.balance || 0).toLocaleString('ar-EG')} ج.م</td>

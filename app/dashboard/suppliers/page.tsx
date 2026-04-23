@@ -196,22 +196,22 @@ export default function SuppliersPage() {
   /* ── Styles ──────────────────────────────────────────────── */
   const card: React.CSSProperties = {
     background: 'rgba(6, 182, 212, 0.03)', borderRadius: 20, padding: '2rem',
-    border: '1px solid rgba(6, 182, 212, 0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+    border: '1px solid rgba(6, 182, 212, 0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
   }
   const inp: React.CSSProperties = {
     width: '100%', padding: '0.8rem 1rem', border: '1px solid rgba(6, 182, 212, 0.15)',
-    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#FFFFFF',
+    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#0F172A',
     outline: 'none', background: 'rgba(6, 182, 212, 0.05)', boxSizing: 'border-box'
   }
   const lbl: React.CSSProperties = {
-    fontSize: '0.8rem', fontWeight: 700, color: '#94A3B8', display: 'block', marginBottom: '0.5rem'
+    fontSize: '0.8rem', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '0.5rem'
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
 
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
           {toast.msg}
         </div>
       )}
@@ -220,12 +220,12 @@ export default function SuppliersPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>الحسابات المالية</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>الموردون والعملاء</h1>
-          <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginTop: '0.2rem' }}>{items.length} جهة تعامل نشطة</p>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>الموردون والعملاء</h1>
+          <p style={{ color: '#475569', fontSize: '0.9rem', marginTop: '0.2rem' }}>{items.length} جهة تعامل نشطة</p>
         </div>
         <button
           onClick={openNew}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.35)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 8px 24px rgba(6,182,212,0.35)' }}
         >
           <Plus size={20} /> إضافة حساب جديد
         </button>
@@ -245,8 +245,8 @@ export default function SuppliersPage() {
                 <Icon size={24} color={s.color} />
               </div>
               <div>
-                <p style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700, marginBottom: '0.4rem' }}>{s.label}</p>
-                <p style={{ fontSize: '1.6rem', fontWeight: 900, color: '#FFFFFF', direction: s.isCount ? 'inherit' : 'ltr', lineHeight: 1 }}>
+                <p style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 700, marginBottom: '0.4rem' }}>{s.label}</p>
+                <p style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F172A', direction: s.isCount ? 'inherit' : 'ltr', lineHeight: 1 }}>
                   {s.isCount ? s.value : s.value.toLocaleString('ar-EG') + ' ج.م'}
                 </p>
               </div>
@@ -277,19 +277,19 @@ export default function SuppliersPage() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
               <thead>
-                <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid rgba(6,182,212,0.15)' }}>
+                <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
                   {['#', 'الجهة', 'النوع', 'الرصيد الحالي', 'الهاتف', 'إجراءات'].map((h) => (
-                    <th key={h} style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 800, color: '#94A3B8', fontSize: '0.75rem', letterSpacing: '0.1em' }}>{h}</th>
+                    <th key={h} style={{ padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 800, color: '#475569', fontSize: '0.75rem', letterSpacing: '0.1em' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((s, i) => (
                   <tr key={s._id ?? i} style={{ borderBottom: '1px solid rgba(6,182,212,0.08)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(6,182,212,0.03)'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-                    <td style={{ padding: '1.2rem 1rem', color: '#64748B', fontWeight: 600 }}>{i + 1}</td>
+                    <td style={{ padding: '1.2rem 1rem', color: '#475569', fontWeight: 600 }}>{i + 1}</td>
                     <td style={{ padding: '1.2rem 1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span onClick={() => setLedgerModal(s)} style={{ fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#06B6D4', textDecorationThickness: '2px', textUnderlineOffset: '4px' }}>{s.name}</span>
+                        <span onClick={() => setLedgerModal(s)} style={{ fontWeight: 800, color: '#0F172A', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: '#06B6D4', textDecorationThickness: '2px', textUnderlineOffset: '4px' }}>{s.name}</span>
                         <Link href={`/dashboard/suppliers/${s._id}`} title="كشف حساب تفصيلي" style={{ color: '#06B6D4', opacity: 0.6, display: 'flex', alignItems: 'center' }}>
                           <ExternalLink size={14} />
                         </Link>
@@ -297,10 +297,10 @@ export default function SuppliersPage() {
                     </td>
                     <td style={{ padding: '1.2rem 1rem' }}><TypeBadge type={s.type} /></td>
                     <td style={{ padding: '1.2rem 1rem' }}><BalanceBadge balance={s.balance} type={s.type} /></td>
-                    <td style={{ padding: '1.2rem 1rem', color: '#94A3B8', direction: 'ltr', textAlign: 'right' }}>{s.phone || '—'}</td>
+                    <td style={{ padding: '1.2rem 1rem', color: '#475569', direction: 'ltr', textAlign: 'right' }}>{s.phone || '—'}</td>
                     <td style={{ padding: '1.2rem 1rem' }}>
                       <div style={{ display: 'flex', gap: '0.6rem' }}>
-                        <button onClick={() => openEdit(s)} style={{ background: 'rgba(6,182,212,0.1)', border: 'none', color: '#06B6D4', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Pencil size={18} /></button>
+                        <button onClick={() => openEdit(s)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Pencil size={18} /></button>
                         <button onClick={async () => { if(confirm('متأكد من الحذف؟')) { await fetch('/api/suppliers?id=' + s._id, { method: 'DELETE' }); window.location.reload(); } }} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Trash2 size={18} /></button>
                       </div>
                     </td>
@@ -310,7 +310,7 @@ export default function SuppliersPage() {
             </table>
           </div>
         )}
-        {!loading && filtered.length === 0 && <div style={{ textAlign: 'center', padding: '5rem', color: '#64748B' }}>لا توجد حسابات مطابقة</div>}
+        {!loading && filtered.length === 0 && <div style={{ textAlign: 'center', padding: '5rem', color: '#475569' }}>لا توجد حسابات مطابقة</div>}
       </div>
 
       {/* Modal Overlay */}
@@ -318,11 +318,11 @@ export default function SuppliersPage() {
         {modal && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#0B1120', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 500, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.15)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#FFFFFF' }}>{isEditing ? 'تعديل الحساب' : 'إضافة حساب جديد'}</h2>
-                <button onClick={() => setModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#fff' }}><X size={24} /></button>
+                <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#0F172A' }}>{isEditing ? 'تعديل الحساب' : 'إضافة حساب جديد'}</h2>
+                <button onClick={() => setModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#0F172A' }}><X size={24} /></button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -335,12 +335,12 @@ export default function SuppliersPage() {
                     <option value="Both">مورد وعميل (Both)</option>
                   </select>
                 </div>
-                <div><label style={lbl}>رصيد البداية (ج.م)</label><input style={{...inp, direction: 'ltr'}} type="number" placeholder="0.00" value={form.balance} onChange={e => setForm({...form, balance: e.target.value})} /><p style={{ fontSize: '0.72rem', color: '#64748B', marginTop: '0.4rem' }}>موجب = مستحق عليهم لنا — سالب = مستحق لهم علينا</p></div>
+                <div><label style={lbl}>رصيد البداية (ج.م)</label><input style={{...inp, direction: 'ltr'}} type="number" placeholder="0.00" value={form.balance} onChange={e => setForm({...form, balance: e.target.value})} /><p style={{ fontSize: '0.72rem', color: '#475569', marginTop: '0.4rem' }}>موجب = مستحق عليهم لنا — سالب = مستحق لهم علينا</p></div>
                 <div><label style={lbl}>رقم الهاتف</label><input style={{...inp, direction: 'ltr'}} placeholder="+20..." value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} /></div>
                 
                 <button
                   onClick={handleSave} disabled={saving}
-                  style={{ background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
+                  style={{ background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
                 >
                   {saving ? <Loader2 className="animate-spin" size={24} style={{ margin: '0 auto' }} /> : (isEditing ? 'حفظ التغييرات' : 'إضافة الحساب')}
                 </button>

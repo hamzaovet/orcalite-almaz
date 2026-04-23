@@ -161,14 +161,14 @@ export default function ProcurementPage() {
     </div>
   )
 
-  const card = { background: 'rgba(6,182,212,0.03)', borderRadius: 18, border: '1px solid rgba(6,182,212,0.15)', padding: '1.5rem' }
-  const th = { padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 800, color: '#94A3B8', fontSize: '0.75rem', borderBottom: '1px solid rgba(6,182,212,0.1)' }
+  const card = { background: '#FFFFFF', borderRadius: 18, border: '1px solid #E2E8F0', padding: '1.5rem' }
+  const th = { padding: '1.2rem 1rem', textAlign: 'right', fontWeight: 800, color: '#475569', fontSize: '0.75rem', borderBottom: '1px solid rgba(6,182,212,0.1)' }
   const td = { padding: '1.2rem 1rem', verticalAlign: 'middle', borderBottom: '1px solid rgba(255,255,255,0.04)' }
 
   return (
     <div style={{ maxWidth: 1300, margin: '0 auto' }}>
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 1100, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', animation: 'float-in 0.3s' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 1100, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', animation: 'float-in 0.3s' }}>
           {toast.msg}
         </div>
       )}
@@ -177,10 +177,10 @@ export default function ProcurementPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-             <div style={{ background: 'rgba(6,182,212,0.1)', padding: '0.6rem', borderRadius: 12 }}><Briefcase color="#06B6D4" size={24} /></div>
+             <div style={{ background: '#ECFEFF', padding: '0.6rem', borderRadius: 12 }}><Briefcase color="#06B6D4" size={24} /></div>
              <h1 style={{ fontSize: '2.2rem', fontWeight: 950, letterSpacing: '-0.02em' }}>إدارة الرسائل الاستيرادية</h1>
           </div>
-          <p style={{ color: '#64748B', fontWeight: 500 }}>لوحة متابعة المشتريات الدولية وتكاليف الاستيراد (Procurement Control Room)</p>
+          <p style={{ color: '#475569', fontWeight: 500 }}>لوحة متابعة المشتريات الدولية وتكاليف الاستيراد (Procurement Control Room)</p>
         </div>
         
         <div style={{ display: 'flex', gap: '1rem' }}>
@@ -193,7 +193,7 @@ export default function ProcurementPage() {
           
           <button 
             onClick={() => { setSelectedShipment(null); setModalOpen(true) }}
-            style={{ padding: '0.85rem 1.75rem', background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', borderRadius: 14, color: '#fff', fontWeight: 900, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem', boxShadow: '0 10px 20px -5px rgba(6, 182, 212, 0.4)' }}
+            style={{ padding: '0.85rem 1.75rem', background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', borderRadius: 14, color: '#0F172A', fontWeight: 900, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.6rem', boxShadow: '0 10px 20px -5px rgba(6, 182, 212, 0.4)' }}
           >
             <Plus size={20} strokeWidth={3} /> إضافة رسالة استيرادية
           </button>
@@ -206,12 +206,12 @@ export default function ProcurementPage() {
            { label: 'إجمالي المشحونات', value: shipments.length, icon: Briefcase, color: '#06B6D4' },
            { label: 'بانتظار الاستلام', value: shipments.filter(s => s.status === 'Draft').length, icon: FileClock, color: '#F59E0B' },
            { label: 'رسائل مستلمة', value: shipments.filter(s => s.status === 'Received').length, icon: CheckCircle2, color: '#10B981' },
-           { label: 'إجمالي القيمة (EGP)', value: shipments.reduce((sum, s) => sum + s.totalLandedCostEGP, 0).toLocaleString(), icon: Wallet2, color: '#fff' }
+           { label: 'إجمالي القيمة (EGP)', value: shipments.reduce((sum, s) => sum + s.totalLandedCostEGP, 0).toLocaleString(), icon: Wallet2, color: '#0F172A' }
          ].map((stat, i) => (
            <div key={i} style={{ ...card, display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
               <div style={{ background: `${stat.color}15`, padding: '0.8rem', borderRadius: 14 }}><stat.icon color={stat.color} size={22} /></div>
               <div>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 700, marginBottom: '0.15rem' }}>{stat.label}</p>
+                <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700, marginBottom: '0.15rem' }}>{stat.label}</p>
                 <p style={{ fontSize: '1.25rem', fontWeight: 900 }}>{stat.value}</p>
               </div>
            </div>
@@ -227,13 +227,13 @@ export default function ProcurementPage() {
               placeholder="البحث برقم الرسالة أو المورد..." 
               value={search} 
               onChange={e => setSearch(e.target.value)} 
-              style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(6,182,212,0.1)', borderRadius: 12, padding: '0.75rem 2.8rem 0.75rem 1rem', color: '#fff', outline: 'none' }} 
+              style={{ width: '100%', background: '#F1F5F9', border: '1px solid #F1F5F9', borderRadius: 12, padding: '0.75rem 2.8rem 0.75rem 1rem', color: '#0F172A', outline: 'none' }} 
             />
          </div>
          <select 
            value={statusFilter} 
            onChange={e => setStatusFilter(e.target.value)} 
-           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(6,182,212,0.1)', borderRadius: 12, padding: '0.75rem 1rem', color: '#fff', minWidth: 150 }}
+           style={{ background: '#F1F5F9', border: '1px solid #F1F5F9', borderRadius: 12, padding: '0.75rem 1rem', color: '#0F172A', minWidth: 150 }}
          >
            <option value="All">كل الحالات</option>
            <option value="Draft">مسودة (Draft)</option>
@@ -246,7 +246,7 @@ export default function ProcurementPage() {
       <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: 'rgba(6,182,212,0.05)' }}>
+            <tr style={{ background: '#ECFEFF' }}>
               {['رقم الرسالة', 'المورد', 'التاريخ', 'العملة وسعر الصرف', 'إجمالي أجنبي', 'التكلفة الإجمالية (ج.م)', 'الحالة', 'الإجراءات'].map(h => <th key={h} style={th as any}>{h}</th>)}
             </tr>
           </thead>
@@ -254,12 +254,12 @@ export default function ProcurementPage() {
             {filtered.map(s => (
               <tr key={s._id} style={{ transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(6,182,212,0.03)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                 <td style={td as any} onDoubleClick={() => { setSelectedShipment(s); setModalOpen(true) }}>
-                   <div style={{ fontWeight: 900, color: '#fff' }}>{s.shipmentNumber}</div>
-                   <div style={{ fontSize: '0.7rem', color: '#64748B' }}>{s._id.slice(-6)}</div>
+                   <div style={{ fontWeight: 900, color: '#0F172A' }}>{s.shipmentNumber}</div>
+                   <div style={{ fontSize: '0.7rem', color: '#475569' }}>{s._id.slice(-6)}</div>
                 </td>
                 <td style={td as any}>{s.supplierId?.name || 'مورد مجهول'}</td>
                 <td style={td as any}>
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94A3B8', fontSize: '0.85rem', fontWeight: 600 }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#475569', fontSize: '0.85rem', fontWeight: 600 }}>
                       <Calendar size={14} />
                       {new Date(s.date).toLocaleDateString('ar-EG')}
                    </div>
@@ -267,11 +267,11 @@ export default function ProcurementPage() {
                 <td style={td as any}>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <span style={{ background: s.currency === 'USD' ? 'rgba(34,197,94,0.1)' : 'rgba(6,182,212,0.1)', color: s.currency === 'USD' ? '#22C55E' : '#06B6D4', padding: '0.2rem 0.5rem', borderRadius: 8, fontSize: '0.75rem', fontWeight: 900 }}>{s.currency}</span>
-                      <span style={{ fontWeight: 800, color: '#64748B' }}>{s.exchangeRate.toFixed(3)}</span>
+                      <span style={{ fontWeight: 800, color: '#475569' }}>{s.exchangeRate.toFixed(3)}</span>
                    </div>
                 </td>
                 <td style={td as any}>
-                   <div style={{ fontWeight: 900, direction: 'ltr' }}>{s.totalForeignCost.toLocaleString()} <span style={{ color: '#64748B', fontWeight: 500, fontSize: '0.7rem' }}>{s.currency}</span></div>
+                   <div style={{ fontWeight: 900, direction: 'ltr' }}>{s.totalForeignCost.toLocaleString()} <span style={{ color: '#475569', fontWeight: 500, fontSize: '0.7rem' }}>{s.currency}</span></div>
                 </td>
                 <td style={td as any}>
                    <div style={{ fontWeight: 950, color: '#06B6D4', direction: 'ltr', fontSize: '1.05rem' }}>{s.totalLandedCostEGP.toLocaleString()} <span style={{ color: 'rgba(6,182,212,0.5)', fontWeight: 500, fontSize: '0.7rem' }}>ج.م</span></div>
@@ -288,7 +288,7 @@ export default function ProcurementPage() {
                 </td>
                 <td style={td as any}>
                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button onClick={() => { setSelectedShipment(s); setModalOpen(true) }} style={{ background: 'rgba(6,182,212,0.1)', border: 'none', color: '#06B6D4', padding: '0.5rem 0.8rem', borderRadius: 10, cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}>فتح</button>
+                      <button onClick={() => { setSelectedShipment(s); setModalOpen(true) }} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.5rem 0.8rem', borderRadius: 10, cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}>فتح</button>
                       <button onClick={() => handleDeleteShipment(s._id, s.shipmentNumber)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#ef4444', padding: '0.5rem', borderRadius: 10, cursor: 'pointer' }}><Trash2 size={18} /></button>
                    </div>
                 </td>
@@ -325,16 +325,16 @@ export default function ProcurementPage() {
         {deleteModalOpen && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(5, 8, 15, 0.95)', backdropFilter: 'blur(10px)', padding: '1.5rem' }}>
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              style={{ background: '#0B1120', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 24, width: '100%', maxWidth: '450px', padding: '2.5rem', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.7)' }}
+              style={{ background: '#F8FAFC', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 24, width: '100%', maxWidth: '450px', padding: '2.5rem', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.7)' }}
             >
               <div style={{ background: 'rgba(239, 68, 68, 0.1)', width: '80px', height: '80px', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                 <AlertCircle size={40} color="#EF4444" />
               </div>
               
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 950, color: '#fff', marginBottom: '1rem' }}>تأكيد الحذف النهائي</h3>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 950, color: '#0F172A', marginBottom: '1rem' }}>تأكيد الحذف النهائي</h3>
               
-              <p style={{ color: '#94A3B8', fontSize: '1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
-                هل أنت متأكد من حذف الرسالة رقم <span style={{ color: '#fff', fontWeight: 900 }}>({shipmentToDelete?.number})</span>؟ 
+              <p style={{ color: '#475569', fontSize: '1rem', lineHeight: '1.6', marginBottom: '2rem' }}>
+                هل أنت متأكد من حذف الرسالة رقم <span style={{ color: '#0F172A', fontWeight: 900 }}>({shipmentToDelete?.number})</span>؟ 
                 <br />
                 <span style={{ color: '#EF4444', fontWeight: 700 }}>سيتم حذف كافة كروت المخزون المرتبطة بها نهائياً.</span> لا يمكن التراجع عن هذا الإجراء.
               </p>
@@ -342,14 +342,14 @@ export default function ProcurementPage() {
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
                 <button 
                   onClick={() => { setDeleteModalOpen(false); setShipmentToDelete(null) }}
-                  style={{ flex: 1, padding: '0.85rem', borderRadius: 14, border: '1px solid #334155', background: 'transparent', color: '#94A3B8', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '0.85rem', borderRadius: 14, border: '1px solid #334155', background: 'transparent', color: '#475569', fontWeight: 700, cursor: 'pointer' }}
                 >
                   إلغاء التراجع
                 </button>
                 <button 
                   onClick={confirmDelete}
                   disabled={loading}
-                  style={{ flex: 1.5, padding: '0.85rem', borderRadius: 14, border: 'none', background: '#EF4444', color: '#fff', fontWeight: 950, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 10px 20px -5px rgba(239, 68, 68, 0.4)' }}
+                  style={{ flex: 1.5, padding: '0.85rem', borderRadius: 14, border: 'none', background: '#EF4444', color: '#0F172A', fontWeight: 950, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', boxShadow: '0 10px 20px -5px rgba(239, 68, 68, 0.4)' }}
                 >
                   {loading ? <Loader2 className="animate-spin" size={18} /> : 'حذف نهائي (Execute)'}
                 </button>

@@ -48,8 +48,8 @@ export function StorefrontClient({
   settings: any
 }) {
   const heroData = landingPageData || {
-    heroTitle: 'ألماظ ستور للإكسسوارات والصيانة',
-    heroSubtitle: 'وجهتك الأولى لكل ما يخص عالم الموبايل، صيانة معتمدة وإكسسوارات أصلية.'
+    heroTitle: 'الوجهة الأولى لحيتان الموبايلات',
+    heroSubtitle: 'منصتك الحصرية لأسعار الحرق، تحديث لحظي للسوق، وكميات فورية للتجار والموزعين.'
   }
 
   // ── Smart Routing Logic ──────────────────────────────────────────────────
@@ -106,7 +106,7 @@ export function StorefrontClient({
     setTimeout(() => setEvalToast(null), 3000)
   }
 
-  const inp: React.CSSProperties = { width: '100%', background: '#F1F5F9', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.85rem 1rem', color: '#0F172A', outline: 'none', fontSize: '0.95rem', fontFamily: 'inherit', boxSizing: 'border-box' as const }
+  const inp: React.CSSProperties = { width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.85rem 1rem', color: '#0F172A', outline: 'none', fontSize: '0.95rem', fontFamily: 'inherit', boxSizing: 'border-box' as const }
   const lbl: React.CSSProperties = { fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.5rem' }
 
   // ── Maintenance Clinic Modal State ──
@@ -178,10 +178,12 @@ export function StorefrontClient({
   return (
     <>
       {/* ── Hero Section ── */}
-      <section style={{ padding: '4rem 1.5rem', background: '#F9FAFB', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ position: 'relative', width: '100%', maxWidth: 1200, height: 'clamp(480px, 65vw, 720px)', borderRadius: '2.5rem', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }}>
-          <video src="/assets/trailer.mp4" autoPlay loop muted playsInline preload="auto" className="absolute inset-0 w-full h-full object-cover z-0 opacity-30" />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.4) 100%)', backdropFilter: 'blur(2px)' }} />
+      <section style={{ padding: '4rem 1.5rem', background: '#F0F9FF', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: 1200, height: 'clamp(480px, 65vw, 720px)', borderRadius: '2.5rem', overflow: 'hidden', boxShadow: '0 42px 100px rgba(0,0,0,0.35)' }}>
+          <video autoPlay loop muted playsInline preload="auto" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}>
+            <source src="/assets/trailer.mp4" type="video/mp4" />
+          </video>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)', backdropFilter: 'blur(2px)' }} />
           
           <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '2rem', gap: '1.5rem' }}>
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -204,7 +206,7 @@ export function StorefrontClient({
               initial={{ opacity: 0, y: 25 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.2, duration: 0.7 }} 
-              style={{ fontSize: 'clamp(2rem, 6vw, 4.2rem)', fontWeight: 900, color: '#0F172A', lineHeight: 1.1, maxWidth: 900, textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
+              style={{ fontSize: 'clamp(2rem, 6vw, 4.2rem)', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.1, maxWidth: 900, textShadow: '0 4px 32px rgba(0,0,0,0.5)' }}
             >
               {heroData.heroTitle}
             </motion.h1>
@@ -216,13 +218,13 @@ export function StorefrontClient({
               transition={{ delay: 0.4 }}
               style={{ width: '100%', maxWidth: 500, position: 'relative' }}
             >
-              <div style={{ background: '#FFFFFF', backdropFilter: 'blur(20px)', border: '1px solid #E2E8F0', borderRadius: 24, padding: '0.5rem', display: 'flex', gap: '0.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '0.5rem', display: 'flex', gap: '0.5rem' }}>
                 <input 
                   value={trackQuery}
                   onChange={e => setTrackQuery(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleTrack()}
                   placeholder="رقم الهاتف أو كود الاستلام (مثلاً 0A1B2C)"
-                  style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#0F172A', padding: '0 1.25rem', fontSize: '1rem', fontFamily: 'inherit' }}
+                  style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: '#fff', padding: '0 1.25rem', fontSize: '1rem', fontFamily: 'inherit' }}
                 />
                 <button 
                   onClick={handleTrack}
@@ -241,11 +243,11 @@ export function StorefrontClient({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    style={{ position: 'absolute', top: '120%', left: 0, right: 0, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, padding: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.1)', zIndex: 100, textAlign: 'right' }}
+                    style={{ position: 'absolute', top: '120%', left: 0, right: 0, background: '#FFFFFF', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 24, padding: '1.5rem', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', zIndex: 100, textAlign: 'right' }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#06B6D4' }}>نتائج البحث</span>
-                        <button onClick={() => { setTrackResults(null); setTrackError(null) }} style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer' }}><X size={16} /></button>
+                       <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#06B6D4' }}>نتائج البحث</span>
+                       <button onClick={() => { setTrackResults(null); setTrackError(null) }} style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer' }}><X size={16} /></button>
                     </div>
 
                     {trackError ? (
@@ -272,7 +274,7 @@ export function StorefrontClient({
                         ))}
                       </div>
                     ) : (
-                      <p style={{ color: '#94A3B8' }}>لا توجد أجهزة مطابقة</p>
+                      <p style={{ color: '#64748B' }}>لا توجد أجهزة مطابقة</p>
                     )}
                   </motion.div>
                 )}
@@ -283,7 +285,7 @@ export function StorefrontClient({
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               transition={{ delay: 0.6, duration: 0.8 }} 
-              style={{ fontSize: 'clamp(1rem, 1.5vw, 1.4rem)', color: '#475569', maxWidth: 700, lineHeight: 1.6, fontWeight: 500 }}
+              style={{ fontSize: 'clamp(1rem, 1.5vw, 1.4rem)', color: 'rgba(255,255,255,0.7)', maxWidth: 700, lineHeight: 1.6, fontWeight: 500 }}
             >
               {heroData.heroSubtitle}
             </motion.p>
@@ -297,8 +299,8 @@ export function StorefrontClient({
                   borderRadius: 16, color: '#fff', fontWeight: 900, fontSize: '1.15rem', textDecoration: 'none', 
                   boxShadow: '0 12px 40px rgba(6,182,212,0.4)', transition: 'all 0.3s' 
                 }}
-                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = 'translateY(-4px)'; el.style.boxShadow = '0 15px 40px rgba(6,182,212,0.3)' }}
-                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = 'translateY(0)'; el.style.boxShadow = '0 8px 30px rgba(6,182,212,0.2)' }}
+                onMouseEnter={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = 'translateY(-4px)'; el.style.boxShadow = '0 20px 60px rgba(6,182,212,0.6)' }}
+                onMouseLeave={(e) => { const el = e.currentTarget as HTMLAnchorElement; el.style.transform = 'translateY(0)'; el.style.boxShadow = '0 12px 40px rgba(6,182,212,0.4)' }}
               >
                 {landingPageData?.contact?.whatsapp ? 'تواصل معنا الآن' : 'دخول بورصة الأسعار'}
                 <ChevronLeft size={22} strokeWidth={3} />
@@ -331,9 +333,9 @@ export function StorefrontClient({
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
                   style={{
-                    background: '#FFFFFF',
+                    background: 'rgba(30, 41, 59, 0.4)',
                     backdropFilter: 'blur(12px)',
-                    border: '1px solid #E2E8F0',
+                    border: '1px solid rgba(255,255,255,0.06)',
                     borderRadius: '2rem',
                     padding: '3rem 2.5rem',
                     textAlign: 'right',
@@ -345,15 +347,15 @@ export function StorefrontClient({
                   onMouseEnter={(e) => {
                     const el = e.currentTarget as HTMLDivElement
                     el.style.transform = 'translateY(-10px)'
-                    el.style.background = '#FFFFFF'
-                    el.style.borderColor = '#06B6D4'
-                    el.style.boxShadow = '0 20px 40px rgba(0,0,0,0.08)'
+                    el.style.background = 'rgba(30, 41, 59, 0.7)'
+                    el.style.borderColor = 'rgba(6,182,212,0.3)'
+                    el.style.boxShadow = '0 30px 60px rgba(0,0,0,0.3), 0 0 20px rgba(6,182,212,0.1)'
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLDivElement
                     el.style.transform = 'translateY(0)'
-                    el.style.background = '#FFFFFF'
-                    el.style.borderColor = '#E2E8F0'
+                    el.style.background = 'rgba(30, 41, 59, 0.4)'
+                    el.style.borderColor = 'rgba(255,255,255,0.06)'
                     el.style.boxShadow = 'none'
                   }}
                 >
@@ -376,7 +378,7 @@ export function StorefrontClient({
       </section>
 
       {/* ── Categories Grid ── */}
-      <section id="categories" style={{ padding: '6rem 2rem', background: '#F9FAFB' }}>
+      <section id="categories" style={{ padding: '6rem 2rem', background: '#F8FAFC' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <p style={{ fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.3em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.75rem' }}>تصفح الأقسام</p>
@@ -400,14 +402,13 @@ export function StorefrontClient({
                         position: 'relative', background: '#FFFFFF', border: '1px solid #E2E8F0',
                         borderRadius: '2rem', padding: '2.5rem', display: 'flex', flexDirection: 'column',
                         gap: '1.25rem', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
-                        overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
+                        overflow: 'hidden'
                       }}
                       onMouseEnter={(e) => {
                         const el = e.currentTarget as HTMLDivElement
-                        el.style.borderColor = '#06B6D4'
-                        el.style.background = '#FFFFFF'
+                        el.style.borderColor = 'rgba(6,182,212,1)'
+                        el.style.background = '#0F172A'
                         el.style.transform = 'scale(1.02)'
-                        el.style.boxShadow = '0 10px 40px rgba(0,0,0,0.08)'
                       }}
                       onMouseLeave={(e) => {
                         const el = e.currentTarget as HTMLDivElement
@@ -441,7 +442,7 @@ export function StorefrontClient({
         </div>
       </section>
       {/* ── C2B: Sell Your Device Section ── */}
-      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 50%, #FFFFFF 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 50%, #EFF6FF 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '20%', right: '10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ position: 'absolute', bottom: '10%', left: '5%', width: 300, height: 300, background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
@@ -450,17 +451,17 @@ export function StorefrontClient({
             <span style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.15em', color: '#A855F7', textTransform: 'uppercase' }}>بوابة البيع الذكي C2B</span>
           </motion.div>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', fontWeight: 900, color: '#0F172A', lineHeight: 1.2, marginBottom: '1.5rem' }}>
+            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.2, marginBottom: '1.5rem' }}>
             ليه تنزل وتلف؟ 🚀
           </motion.h2>
           <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-            style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: '#475569', lineHeight: 1.8, maxWidth: 680, margin: '0 auto 2.5rem' }}>
+            style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, maxWidth: 680, margin: '0 auto 2.5rem' }}>
             صور تليفونك، ابعت مواصفاته، واسمع <strong style={{ color: '#A855F7' }}>أعلى سعر في السوق</strong> وإنت قاعد في بيتك!
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
             style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
             {['📸 صور الجهاز', '⚡ رد فوري', '💰 أعلى سعر', '🏠 من بيتك'].map((pill) => (
-              <span key={pill} style={{ background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 50, padding: '0.5rem 1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.9rem' }}>{pill}</span>
+              <span key={pill} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 50, padding: '0.5rem 1.25rem', color: 'rgba(255,255,255,0.8)', fontWeight: 700, fontSize: '0.9rem' }}>{pill}</span>
             ))}
           </motion.div>
           <motion.button
@@ -476,7 +477,7 @@ export function StorefrontClient({
         </div>
       </section>
       {/* ── Online Maintenance Clinic Section ── */}
-      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 50%, #F9FAFB 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #F0FDF4 0%, #F0F9FF 50%, #F0FDF4 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '15%', left: '8%', width: 350, height: 350, background: 'radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ position: 'absolute', bottom: '15%', right: '8%', width: 280, height: 280, background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
 
@@ -486,17 +487,17 @@ export function StorefrontClient({
             <span style={{ fontSize: '0.78rem', fontWeight: 800, letterSpacing: '0.15em', color: '#10B981', textTransform: 'uppercase' }}>عيادة الصيانة الأونلاين</span>
           </motion.div>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', fontWeight: 900, color: '#0F172A', lineHeight: 1.2, marginBottom: '1.5rem' }}>
+            style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.2, marginBottom: '1.5rem' }}>
             شاشتك مكسورة؟ جهازك فاصل؟ 🔧
           </motion.h2>
           <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-            style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: '#475569', lineHeight: 1.8, maxWidth: 680, margin: '0 auto 2.5rem' }}>
+            style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.8, maxWidth: 680, margin: '0 auto 2.5rem' }}>
             صور العطل وابعتلنا، وهنقولك <strong style={{ color: '#10B981' }}>التكلفة ووقت الاستلام فوراً!</strong> من أريحك ومن غير ما تتعب.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
             style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
             {['📸 صور العطل', '⚡ تسعير فوري', '🔧 إصلاح احترافي', '🚀 تسليم سريع'].map((pill) => (
-              <span key={pill} style={{ background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 50, padding: '0.5rem 1.25rem', color: '#475569', fontWeight: 700, fontSize: '0.9rem' }}>{pill}</span>
+              <span key={pill} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 50, padding: '0.5rem 1.25rem', color: 'rgba(255,255,255,0.8)', fontWeight: 700, fontSize: '0.9rem' }}>{pill}</span>
             ))}
           </motion.div>
           <motion.button
@@ -518,15 +519,15 @@ export function StorefrontClient({
           <div style={{ position: 'fixed', inset: 0, zIndex: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setClinicModal(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)' }} />
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              style={{ position: 'relative', zIndex: 2, background: '#FFFFFF', borderRadius: 32, width: '100%', maxWidth: 520, border: '1px solid #E2E8F0', boxShadow: '0 40px 100px rgba(0,0,0,0.1)', maxHeight: '92vh', overflowY: 'auto' }}>
-              <div style={{ padding: '2.25rem 2.25rem 1.75rem', background: 'linear-gradient(135deg, rgba(16,185,129,0.05) 0%, transparent 100%)', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              style={{ position: 'relative', zIndex: 2, background: '#0B1120', borderRadius: 32, width: '100%', maxWidth: 520, border: '1px solid rgba(16,185,129,0.3)', boxShadow: '0 40px 100px rgba(16,185,129,0.15)', maxHeight: '92vh', overflowY: 'auto' }}>
+              <div style={{ padding: '2.25rem 2.25rem 1.75rem', background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, transparent 100%)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 50, padding: '0.3rem 0.9rem', marginBottom: '0.75rem' }}>
                     <Wrench size={13} color="#10B981" />
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: '#10B981', textTransform: 'uppercase' }}>تسعير فوري</span>
                   </div>
-                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.2rem' }}>اطلب تسعير صيانة 🔧</h2>
-                  <p style={{ color: '#475569', fontSize: '0.85rem' }}>صف المشكلة وارفع صورة وسنرد بالتكلفة فوراً</p>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff', marginBottom: '0.2rem' }}>اطلب تسعير صيانة 🔧</h2>
+                  <p style={{ color: '#94A3B8', fontSize: '0.85rem' }}>صف المشكلة وارفع صورة وسنرد بالتكلفة فوراً</p>
                 </div>
                 <button onClick={() => setClinicModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#94A3B8', flexShrink: 0 }}>
                   <X size={22} />
@@ -536,8 +537,8 @@ export function StorefrontClient({
                 {clinicSubmitted ? (
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', padding: '2.5rem 0' }}>
                     <CheckCircle size={72} color="#10B981" style={{ margin: '0 auto 1.5rem' }} />
-                    <h3 style={{ fontSize: '1.7rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.75rem' }}>طلبك وصلنا! 🎉</h3>
-                    <p style={{ color: '#475569', lineHeight: 1.8 }}>سيتواصل معك فريق الصيانة على <strong style={{ color: '#10B981' }}>{clinicForm.whatsapp}</strong> بالتكلفة والوقت المتوقع.</p>
+                    <h3 style={{ fontSize: '1.7rem', fontWeight: 900, color: '#fff', marginBottom: '0.75rem' }}>طلبك وصلنا! 🎉</h3>
+                    <p style={{ color: '#94A3B8', lineHeight: 1.8 }}>سيتواصل معك فريق الصيانة على <strong style={{ color: '#10B981' }}>{clinicForm.whatsapp}</strong> بالتكلفة والوقت المتوقع.</p>
                     <button onClick={() => setClinicModal(false)} style={{ marginTop: '2rem', padding: '0.9rem 2.5rem', background: 'linear-gradient(135deg, #10B981, #06B6D4)', border: 'none', borderRadius: 16, color: '#fff', fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit' }}>ممتاز، شكراً!</button>
                   </motion.div>
                 ) : (
@@ -550,7 +551,7 @@ export function StorefrontClient({
                       </div>
                       <div>
                         <label style={lbl}>نوع العطل</label>
-                        <select style={{...inp, background: '#111827'}} value={clinicForm.issueCategory} onChange={e => setClinicForm(f => ({...f, issueCategory: e.target.value}))}>
+                        <select style={{...inp, background: '#1E293B'}} value={clinicForm.issueCategory} onChange={e => setClinicForm(f => ({...f, issueCategory: e.target.value}))}>
                           <option value="شاشة">📱 شاشة</option>
                           <option value="بطارية">🔋 بطارية</option>
                           <option value="سوفت وير">💻 سوفت وير</option>
@@ -612,15 +613,15 @@ export function StorefrontClient({
           <div style={{ position: 'fixed', inset: 0, zIndex: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEvalModal(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)' }} />
             <motion.div initial={{ opacity: 0, scale: 0.9, y: 40 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              style={{ position: 'relative', zIndex: 2, background: '#FFFFFF', borderRadius: 32, width: '100%', maxWidth: 520, border: '1px solid #E2E8F0', boxShadow: '0 40px 100px rgba(0,0,0,0.1)', maxHeight: '92vh', overflowY: 'auto' }}>
-              <div style={{ padding: '2.25rem 2.25rem 1.75rem', background: 'linear-gradient(135deg, rgba(168,85,247,0.05) 0%, transparent 100%)', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              style={{ position: 'relative', zIndex: 2, background: '#0B1120', borderRadius: 32, width: '100%', maxWidth: 520, border: '1px solid rgba(168,85,247,0.3)', boxShadow: '0 40px 100px rgba(168,85,247,0.2)', maxHeight: '92vh', overflowY: 'auto' }}>
+              <div style={{ padding: '2.25rem 2.25rem 1.75rem', background: 'linear-gradient(135deg, rgba(168,85,247,0.08) 0%, transparent 100%)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(168,85,247,0.1)', border: '1px solid rgba(168,85,247,0.25)', borderRadius: 50, padding: '0.3rem 0.9rem', marginBottom: '0.75rem' }}>
                     <Sparkles size={13} color="#A855F7" />
                     <span style={{ fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', color: '#A855F7', textTransform: 'uppercase' }}>تقييم فوري</span>
                   </div>
-                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.2rem' }}>ثمن جهازك الآن 📱</h2>
-                  <p style={{ color: '#475569', fontSize: '0.85rem' }}>أدخل البيانات وسنرد بأعلى سعر خلال دقائق</p>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#fff', marginBottom: '0.2rem' }}>ثمن جهازك الآن 📱</h2>
+                  <p style={{ color: '#94A3B8', fontSize: '0.85rem' }}>أدخل البيانات وسنرد بأعلى سعر خلال دقائق</p>
                 </div>
                 <button onClick={() => setEvalModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#94A3B8', flexShrink: 0 }}>
                   <X size={22} />
@@ -630,8 +631,8 @@ export function StorefrontClient({
                 {submitted ? (
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', padding: '2.5rem 0' }}>
                     <CheckCircle size={72} color="#22C55E" style={{ margin: '0 auto 1.5rem' }} />
-                    <h3 style={{ fontSize: '1.7rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.75rem' }}>تم استلام طلبك! 🎉</h3>
-                    <p style={{ color: '#475569', lineHeight: 1.8 }}>سيتواصل معك فريقنا على <strong style={{ color: '#06B6D4' }}>{evalForm.whatsapp}</strong> بأعلى سعر في السوق.</p>
+                    <h3 style={{ fontSize: '1.7rem', fontWeight: 900, color: '#fff', marginBottom: '0.75rem' }}>تم استلام طلبك! 🎉</h3>
+                    <p style={{ color: '#94A3B8', lineHeight: 1.8 }}>سيتواصل معك فريقنا على <strong style={{ color: '#06B6D4' }}>{evalForm.whatsapp}</strong> بأعلى سعر في السوق.</p>
                     <button onClick={() => setEvalModal(false)} style={{ marginTop: '2rem', padding: '0.9rem 2.5rem', background: 'linear-gradient(135deg, #A855F7, #06B6D4)', border: 'none', borderRadius: 16, color: '#fff', fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit' }}>ممتاز، شكراً!</button>
                   </motion.div>
                 ) : (
@@ -644,14 +645,14 @@ export function StorefrontClient({
                       </div>
                       <div>
                         <label style={lbl}>السعة التخزينية</label>
-                        <select style={{...inp, background: '#F1F5F9'}} value={evalForm.storage} onChange={e => setEvalForm(f => ({...f, storage: e.target.value}))}>
+                        <select style={{...inp, background: '#1E293B'}} value={evalForm.storage} onChange={e => setEvalForm(f => ({...f, storage: e.target.value}))}>
                           <option value="">اختر</option>
                           {['64GB','128GB','256GB','512GB','1TB'].map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </div>
                       <div>
                         <label style={lbl}>حالة الجهاز</label>
-                        <select style={{...inp, background: '#111827'}} value={evalForm.condition} onChange={e => setEvalForm(f => ({...f, condition: e.target.value}))}>
+                        <select style={{...inp, background: '#1E293B'}} value={evalForm.condition} onChange={e => setEvalForm(f => ({...f, condition: e.target.value}))}>
                           <option value="Kaser Zero">✨ كيسر زيرو</option>
                           <option value="Scratched">🔅 فيه خدوش بسيطة</option>
                           <option value="Needs Repair">🔧 محتاج إصلاح</option>

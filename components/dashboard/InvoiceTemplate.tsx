@@ -102,7 +102,7 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* ── TOP ACCENT BAR ─────────────────────────────────────── */}
-        <div style={{ height: 6, background: '#06B6D4', marginBottom: 20 }} />
+        <div style={{ height: 6, background: 'linear-gradient(90deg, #0ea5e9 0%, #22c55e 100%)', marginBottom: 20 }} />
 
         {/* ── HEADER ─────────────────────────────────────────────── */}
         <div style={{
@@ -129,16 +129,16 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
 
           {/* Invoice Meta */}
           <div style={{ textAlign: 'left', direction: 'ltr' }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#06B6D4', letterSpacing: '0.12em', marginBottom: 4 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#0ea5e9', letterSpacing: '0.12em', marginBottom: 4 }}>
               TAX INVOICE | فاتورة ضريبية
             </div>
             <div style={{ fontSize: 24, fontWeight: 900, color: '#0a0a0a' }}>
               #{data.invoiceNumber}
             </div>
-            <div style={{ fontSize: 13, fontWeight: 800, color: '#06B6D4', marginTop: 4 }}>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#0ea5e9', marginTop: 4 }}>
               فرع: {data.branchName || 'المركز الرئيسي'}
             </div>
-            <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
               {data.date} — {data.time}
             </div>
           </div>
@@ -156,14 +156,14 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
           marginBottom: 30
         }}>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.1em' }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.1em' }}>
               BILL TO | فاتورة إلى
             </div>
             <div style={{ fontSize: 18, fontWeight: 900, color: '#0a0a0a' }}>{data.customer}</div>
-            {data.phone && <div style={{ fontSize: 12, color: '#64748b', direction: 'ltr', marginTop: 4 }}>{data.phone}</div>}
+            {data.phone && <div style={{ fontSize: 12, color: '#475569', direction: 'ltr', marginTop: 4 }}>{data.phone}</div>}
           </div>
           <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.1em' }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', marginBottom: 8, letterSpacing: '0.1em' }}>
               PAYMENT | الدفع
             </div>
             <div style={{ fontSize: 14, fontWeight: 800, color: '#0a0a0a' }}>
@@ -177,10 +177,10 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 40 }}>
           <thead>
             <tr style={{ background: '#0a0a0a' }}>
-              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#fff', fontSize: 10, fontWeight: 800 }}>المنتج والتفاصيل | DESCRIPTION</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#fff', fontSize: 10, fontWeight: 800 }}>الكمية | QTY</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#fff', fontSize: 10, fontWeight: 800 }}>السعر | PRICE</th>
-              <th style={{ padding: '12px 16px', textAlign: 'left', color: '#fff', fontSize: 10, fontWeight: 800 }}>الإجمالي | TOTAL</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', color: '#0F172A', fontSize: 10, fontWeight: 800 }}>المنتج والتفاصيل | DESCRIPTION</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#0F172A', fontSize: 10, fontWeight: 800 }}>الكمية | QTY</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', color: '#0F172A', fontSize: 10, fontWeight: 800 }}>السعر | PRICE</th>
+              <th style={{ padding: '12px 16px', textAlign: 'left', color: '#0F172A', fontSize: 10, fontWeight: 800 }}>الإجمالي | TOTAL</th>
             </tr>
           </thead>
           <tbody>
@@ -191,28 +191,28 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
                   {/* Phase 82: Explicit spec display */}
                   <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 3 }}>
                     {item.color && (
-                      <div style={{ fontSize: 11, color: '#64748b' }}>
+                      <div style={{ fontSize: 11, color: '#475569' }}>
                         <span style={{ fontWeight: 700, color: '#7c3aed' }}>اللون: </span>{item.color}
                       </div>
                     )}
                     {item.storage && (
-                      <div style={{ fontSize: 11, color: '#64748b' }}>
+                      <div style={{ fontSize: 11, color: '#475569' }}>
                         <span style={{ fontWeight: 700, color: '#1d4ed8' }}>المساحة: </span>{item.storage}
                       </div>
                     )}
                     {item.batteryHealth && (
-                      <div style={{ fontSize: 11, color: '#64748b' }}>
+                      <div style={{ fontSize: 11, color: '#475569' }}>
                         <span style={{ fontWeight: 700, color: '#c2410c' }}>البطارية: </span>{item.batteryHealth}
                       </div>
                     )}
                     {item.condition && (
-                      <div style={{ fontSize: 11, color: '#64748b' }}>
+                      <div style={{ fontSize: 11, color: '#475569' }}>
                         <span style={{ fontWeight: 700 }}>الحالة: </span>{item.condition === 'Used' ? 'مستعمل' : 'جديد'}
                       </div>
                     )}
                   </div>
                   {item.serialNumber && (
-                    <div style={{ fontSize: 11, fontWeight: 800, color: '#06B6D4', direction: 'ltr', marginTop: 6, textAlign: 'right' }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: '#0ea5e9', direction: 'ltr', marginTop: 6, textAlign: 'right' }}>
                       IMEI / SN: {item.serialNumber}
                     </div>
                   )}
@@ -230,18 +230,18 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
           <div style={{ minWidth: 250 }}>
             {data.discount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: 12, color: '#64748b' }}>خصم | Discount</span>
+                <span style={{ fontSize: 12, color: '#475569' }}>خصم | Discount</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#ef4444' }}>-{fmt(data.discount)} ج.م</span>
               </div>
             )}
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               padding: '16px', marginTop: 12,
-              background: '#0a0a0a', color: '#fff', borderRadius: 12,
-              border: '2px solid #06B6D4'
+              background: '#0a0a0a', color: '#0F172A', borderRadius: 12,
+              border: '2px solid #0ea5e9'
             }}>
               <span style={{ fontSize: 13, fontWeight: 800 }}>الإجمالي | TOTAL</span>
-              <span style={{ fontSize: 22, fontWeight: 950, color: '#06B6D4', direction: 'ltr' }}>{fmt(data.totalSalePrice)} EGP</span>
+              <span style={{ fontSize: 22, fontWeight: 950, color: '#0ea5e9', direction: 'ltr' }}>{fmt(data.totalSalePrice)} EGP</span>
             </div>
           </div>
         </div>
@@ -251,9 +251,9 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontSize: 11, fontWeight: 900, marginBottom: 4 }}>THANK YOU FOR YOUR BUSINESS | شكراً لثقتكم</div>
-              <div style={{ fontSize: 10, color: '#64748b' }}>Keep this invoice for warranty purposes.</div>
+              <div style={{ fontSize: 10, color: '#475569' }}>Keep this invoice for warranty purposes.</div>
             </div>
-            <div style={{ textAlign: 'left', fontSize: 10, color: '#64748b' }}>
+            <div style={{ textAlign: 'left', fontSize: 10, color: '#475569' }}>
               {storeName || 'ORCA ERP Store'}
             </div>
           </div>

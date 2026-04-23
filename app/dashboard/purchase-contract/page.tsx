@@ -87,7 +87,7 @@ function ContractContent() {
             <h2 className="text-xl font-bold text-blue-800 mb-4 border-r-4 border-blue-800 pr-3">تفاصيل الأجهزة المتنازل عنها:</h2>
             <table className="w-full text-right border-collapse">
               <thead>
-                <tr className="bg-blue-900 text-white">
+                <tr className="bg-blue-700 text-slate-900">
                   <th className="border p-3">اسم المنتج والمواصفات</th>
                   <th className="border p-3 text-center">الكمية</th>
                   <th className="border p-3">الأرقام التسلسلية / IMEI</th>
@@ -120,7 +120,7 @@ function ContractContent() {
                           <div key={i} className="border-b border-dashed border-gray-200 py-1 last:border-0">{imei}</div>
                         ))
                       ) : (
-                        <span className="text-gray-400 italic">بدون سيريال مسجل</span>
+                        <span className="text-gray-600 italic">بدون سيريال مسجل</span>
                       )}
                     </td>
                   </tr>
@@ -138,17 +138,17 @@ function ContractContent() {
           <div className="grid grid-cols-2 gap-20 text-center mt-20">
             <div>
               <div className="border-t-2 border-blue-900 pt-3 font-bold text-xl">توقيع البـائع (العميل)</div>
-              <div className="mt-4 text-gray-400 italic">البصمة / الختم</div>
+              <div className="mt-4 text-gray-600 italic">البصمة / الختم</div>
             </div>
             <div>
               <div className="border-t-2 border-blue-900 pt-3 font-bold text-xl">توقيع المستلم (المحل)</div>
-              <div className="mt-4 text-gray-400 italic">ختم المؤسسة</div>
+              <div className="mt-4 text-gray-600 italic">ختم المؤسسة</div>
             </div>
           </div>
 
           <div className="stamp-area">ختم المعرض الرسمي</div>
 
-          <div className="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-400">
+          <div className="absolute bottom-6 left-0 right-0 text-center text-xs text-gray-600">
             تم إصدار هذا العقد آلياً بواسطة ORCA ERP - {new Date(purchase.createdAt).toLocaleString('ar-EG')}
           </div>
         </div>

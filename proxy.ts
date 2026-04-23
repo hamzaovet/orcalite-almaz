@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { verifyTokenEdge } from './lib/auth'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get('orca_auth')?.value
   const path = request.nextUrl.pathname
   const isDashboard = path.startsWith('/dashboard')
@@ -30,14 +30,37 @@ export async function middleware(request: NextRequest) {
     
     const role = payload.role as string
 
+    // ── GATE: Admin-Only Dashboard Routes ──────────────────────────────────
+    // Settings & Employees screens are STRICTLY for Admin / SuperAdmin only.
+    // Any other role (Cashier, Manager, Technician, Sales, DEMO …) gets
+    // hard-redirected to /dashboard before any page code ever runs.
+    const ADMIN_ONLY_PATHS = [
+      '/dashboard/employees',
+      '/dashboard/settings',
+    ]
+    const isAdminRole = role === 'SuperAdmin' || role === 'Admin'
+    if (isDashboard && !isAdminRole && ADMIN_ONLY_PATHS.some((p2) => path.startsWith(p2))) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+
+    // ── GATE: Admin-Only API Mutations on /api/users ─────────────────────────
+    // POST / PUT / DELETE to /api/users requires Admin or SuperAdmin.
+    if (isApi && path.startsWith('/api/users') && !isAdminRole) {
+      const isWrite = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)
+      if (isWrite) {
+        return NextResponse.json(
+          { success: false, error: 'Access denied. Admin privileges required.' },
+          { status: 403 }
+        )
+      }
+    }
+
     // Cashier Security Lock
     if (isDashboard && (role === 'Cashier' || role === 'كاشير')) {
       const blockedPaths = [
         '/dashboard/reports',
         '/dashboard/treasury',
         '/dashboard/expenses',
-        '/dashboard/employees',
-        '/dashboard/settings',
         '/dashboard/branches',
       ]
       if (blockedPaths.some((bp) => path.startsWith(bp))) {

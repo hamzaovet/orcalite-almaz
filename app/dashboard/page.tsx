@@ -36,7 +36,7 @@ function StatusBadge({ status }: { status: string }) {
     معلق:         { bg: 'rgba(6,182,212,0.1)',   color: '#06B6D4' },
     ملغي:         { bg: 'rgba(239,68,68,0.1)',    color: '#ef4444' },
   }
-  const s = map[status] ?? { bg: 'rgba(255,255,255,0.05)', color: '#94A3B8' }
+  const s = map[status] ?? { bg: '#F8FAFC', color: '#475569' }
   return (
     <span style={{ background: s.bg, color: s.color, padding: '0.3rem 0.8rem', borderRadius: 50, fontSize: '0.75rem', fontWeight: 800 }}>
       {status}
@@ -46,13 +46,13 @@ function StatusBadge({ status }: { status: string }) {
 
 function SkeletonCard() {
   return (
-    <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.25rem', padding: '1.5rem' }}>
+    <div style={{ background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: '1.25rem', padding: '1.5rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
         <div style={{ flex: 1 }}>
-          <div style={{ height: 12, width: '55%', background: '#F1F5F9', borderRadius: 6, marginBottom: '0.75rem' }} />
-          <div style={{ height: 28, width: '70%', background: '#E2E8F0', borderRadius: 6 }} />
+          <div style={{ height: 12, width: '55%', background: '#F8FAFC', borderRadius: 6, marginBottom: '0.75rem' }} />
+          <div style={{ height: 28, width: '70%', background: '#F1F5F9', borderRadius: 6 }} />
         </div>
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: '#F1F5F9', flexShrink: 0 }} />
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: '#F8FAFC', flexShrink: 0 }} />
       </div>
     </div>
   )
@@ -109,7 +109,7 @@ export default function DashboardPage() {
   const recentOrders = sales.slice(0, 6)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', color: '#0F172A' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', color: '#1E293B' }}>
 
       {/* Page Header */}
       <div>
@@ -128,13 +128,13 @@ export default function DashboardPage() {
               const Icon = s.icon
               return (
                 <motion.div key={s.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-                  style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.5rem', padding: '1.75rem', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}
+                  style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.5rem', padding: '1.75rem', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
-                      <p style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 700, marginBottom: '0.5rem' }}>{s.label}</p>
+                      <p style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 700, marginBottom: '0.5rem' }}>{s.label}</p>
                       <p style={{ fontSize: '1.8rem', fontWeight: 900, color: '#0F172A', lineHeight: 1, direction: 'ltr' }}>
-                        {s.value} <span style={{ fontSize: '0.8rem', color: '#94A3B8' }}>{s.unit}</span>
+                        {s.value} <span style={{ fontSize: '0.8rem', color: '#475569' }}>{s.unit}</span>
                       </p>
                     </div>
                     <div style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, border: `1px solid ${s.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -151,25 +151,25 @@ export default function DashboardPage() {
         
         {/* Recent Mails / Sales */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.75rem', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}
+          style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.75rem', overflow: 'hidden' }}
         >
-          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC' }}>
+          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ECFEFF' }}>
             <h2 style={{ fontWeight: 900, fontSize: '1.15rem', color: '#0F172A' }}>أحدث العمليات</h2>
-            <Link href="/dashboard/sales" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#06B6D4', textDecoration: 'none', background: 'rgba(6,182,212,0.1)', padding: '0.4rem 1rem', borderRadius: 10 }}>مشاهدة الكل</Link>
+            <Link href="/dashboard/sales" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#06B6D4', textDecoration: 'none', background: '#ECFEFF', padding: '0.4rem 1rem', borderRadius: 10 }}>مشاهدة الكل</Link>
           </div>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
-                  {['العميل', 'المبلغ', 'الحالة'].map(h => <th key={h} style={{ padding: '1rem 1.5rem', textAlign: 'right', fontSize: '0.75rem', color: '#64748B', fontWeight: 800 }}>{h}</th>)}
+                <tr style={{ borderBottom: '1px solid rgba(6,182,212,0.1)' }}>
+                  {['العميل', 'المبلغ', 'الحالة'].map(h => <th key={h} style={{ padding: '1rem 1.5rem', textAlign: 'right', fontSize: '0.75rem', color: '#475569', fontWeight: 800 }}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
                 {recentOrders.map(sale => (
-                  <tr key={sale._id} style={{ borderBottom: '1px solid #F8FAFC' }}>
+                  <tr key={sale._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
                     <td style={{ padding: '1.25rem 1.5rem' }}>
                       <p style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.9rem' }}>{sale.customer}</p>
-                      <p style={{ fontSize: '0.75rem', color: '#64748B' }}>{sale.productName}</p>
+                      <p style={{ fontSize: '0.75rem', color: '#475569' }}>{sale.productName}</p>
                     </td>
                     <td style={{ padding: '1.25rem 1.5rem', fontWeight: 900, color: '#06B6D4', direction: 'ltr' }}>{fmt(sale.total ?? sale.price * sale.qty)} ج.م</td>
                     <td style={{ padding: '1.25rem 1.5rem' }}><StatusBadge status="مكتمل" /></td>
@@ -178,34 +178,34 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
-          {!loading && recentOrders.length === 0 && <div style={{ padding: '4rem', textAlign: 'center', color: '#64748B' }}>لا توجد بيانات</div>}
+          {!loading && recentOrders.length === 0 && <div style={{ padding: '4rem', textAlign: 'center', color: '#475569' }}>لا توجد بيانات</div>}
         </motion.div>
 
         {/* Low Stock Section */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-          style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.75rem', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}
+          style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '1.75rem', overflow: 'hidden' }}
         >
-          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC' }}>
+          <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ECFEFF' }}>
             <h2 style={{ fontWeight: 900, fontSize: '1.15rem', color: '#0F172A' }}>تنبيهات المخزون</h2>
             <Link href="/dashboard/products" style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FB923C', textDecoration: 'none', background: 'rgba(251,146,60,0.1)', padding: '0.4rem 1rem', borderRadius: 10 }}>إدارة المستودع</Link>
           </div>
           <div>
             {products.slice(0, 7).map(p => (
-              <div key={p._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.1rem 2rem', borderBottom: '1px solid #F8FAFC' }}>
+              <div key={p._id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.1rem 2rem', borderBottom: '1px solid #F1F5F9' }}>
                 <div>
                   <p style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.9rem' }}>{p.name}</p>
-                  <p style={{ fontSize: '0.75rem', color: '#64748B' }}>{p.category}</p>
+                  <p style={{ fontSize: '0.75rem', color: '#475569' }}>{p.category}</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                  <span style={{ fontWeight: 900, color: '#0F172A' }}>{p.stock} <small style={{ fontWeight: 500, color: '#64748B' }}>وحدة</small></span>
-                  <div style={{ width: 60, height: 6, background: '#F1F5F9', borderRadius: 20 }}>
+                  <span style={{ fontWeight: 900, color: '#1E293B' }}>{p.stock} <small style={{ fontWeight: 500, color: '#475569' }}>وحدة</small></span>
+                  <div style={{ width: 60, height: 6, background: '#F8FAFC', borderRadius: 20 }}>
                     <div style={{ width: `${Math.min(p.stock * 5, 100)}%`, height: '100%', background: p.stock < 5 ? '#EF4444' : '#FB923C', borderRadius: 20 }} />
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          {!loading && products.length === 0 && <div style={{ padding: '4rem', textAlign: 'center', color: '#64748B' }}>المستودع فارغ</div>}
+          {!loading && products.length === 0 && <div style={{ padding: '4rem', textAlign: 'center', color: '#475569' }}>المستودع فارغ</div>}
         </motion.div>
       </div>
 

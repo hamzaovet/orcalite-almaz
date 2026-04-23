@@ -39,6 +39,16 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     await connectDB()
+
+    // ── RBAC: Only Admin / SuperAdmin may create users ─────────────────────
+    const headerData = req.headers.get('x-user-data')
+    if (!headerData) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const requester = JSON.parse(headerData)
+    if (requester.role !== 'Admin' && requester.role !== 'SuperAdmin') {
+      return NextResponse.json({ error: 'Access denied. Admin privileges required.' }, { status: 403 })
+    }
+    // ──────────────────────────────────────────────────────────────
+
     const { name, username, role, password, branchId } = await req.json()
 
     if (!name || !username || !password || !role) {
@@ -92,6 +102,16 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     await connectDB()
+
+    // ── RBAC: Only Admin / SuperAdmin may update users ─────────────────────
+    const headerData = req.headers.get('x-user-data')
+    if (!headerData) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const requester = JSON.parse(headerData)
+    if (requester.role !== 'Admin' && requester.role !== 'SuperAdmin') {
+      return NextResponse.json({ error: 'Access denied. Admin privileges required.' }, { status: 403 })
+    }
+    // ──────────────────────────────────────────────────────────────
+
     const { id, name, username, role, password, branchId } = await req.json()
 
     if (!id || !name || !username) {
@@ -106,12 +126,8 @@ export async function PUT(req: Request) {
     const updateData: any = { name, username, branchId: branchId || null }
     if (role) {
        // Anti-lockout: Admin/SuperAdmin cannot downgrade themselves
-       const headerData = req.headers.get('x-user-data')
-       if (headerData) {
-         const p = JSON.parse(headerData)
-         if (p.sub === id && (['Manager', 'Cashier', 'Sales', 'Technician', 'Inventory', 'Accountant'].includes(role))) {
-            return NextResponse.json({ error: 'لا يمكنك تغيير صلاحياتك لتجنب فقدان الوصول' }, { status: 403 })
-         }
+       if (requester.sub === id && (['Manager', 'Cashier', 'Sales', 'Technician', 'Inventory', 'Accountant'].includes(role))) {
+          return NextResponse.json({ error: 'لا يمكنك تغيير صلاحياتك لتجنب فقدان الوصول' }, { status: 403 })
        }
        updateData.role = role
     }
@@ -132,6 +148,15 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    // ── RBAC: Only Admin / SuperAdmin may delete users ─────────────────────
+    const headerData = req.headers.get('x-user-data')
+    if (!headerData) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const requester = JSON.parse(headerData)
+    if (requester.role !== 'Admin' && requester.role !== 'SuperAdmin') {
+      return NextResponse.json({ error: 'Access denied. Admin privileges required.' }, { status: 403 })
+    }
+    // ──────────────────────────────────────────────────────────────
+
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'Missing user id' }, { status: 400 })

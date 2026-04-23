@@ -62,8 +62,8 @@ export default function ShowroomPage() {
     <div className="max-w-7xl mx-auto px-4 py-8" dir="rtl">
       {/* Header Section */}
       <div className="mb-12">
-        <h1 className="text-4xl font-black text-white mb-2 font-tajawal">معرض المنتجات</h1>
-        <p className="text-slate-400">تصفح أحدث الأجهزة والمواصفات المتوفرة في صالة العرض</p>
+        <h1 className="text-4xl font-black text-foreground mb-2 font-tajawal">معرض المنتجات</h1>
+        <p className="text-slate-500">تصفح أحدث الأجهزة والمواصفات المتوفرة في صالة العرض</p>
       </div>
 
       {/* Control Bar */}
@@ -73,7 +73,7 @@ export default function ShowroomPage() {
           <input 
             type="text" 
             placeholder="ابحث عن هاتف أو قسم..."
-            className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl py-4 pr-12 pl-4 text-white focus:outline-none focus:border-cyan-500/50 transition-all"
+            className="w-full bg-surface border border-border-light rounded-2xl py-4 pr-12 pl-4 text-foreground focus:outline-none focus:border-cyan-500/50 transition-all"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -86,7 +86,7 @@ export default function ShowroomPage() {
           <motion.div
             key={product._id}
             whileHover={{ y: -5 }}
-            className="bg-slate-900/40 border border-slate-800 rounded-3xl overflow-hidden cursor-pointer hover:border-cyan-500/30 transition-all group"
+            className="bg-white/40 border border-gray-200 rounded-3xl overflow-hidden cursor-pointer hover:border-cyan-500/30 transition-all group"
             onClick={() => setSelectedProduct(product)}
           >
             {/* Image Placeholder/Real Image */}
@@ -101,8 +101,8 @@ export default function ShowroomPage() {
               <div className="absolute top-4 left-4">
                 <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                   product.condition === 'new' 
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                  ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20' 
+                  : 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
                 }`}>
                   {product.condition === 'new' ? 'جديد | NEW' : 'مستعمل | USED'}
                 </span>
@@ -114,29 +114,29 @@ export default function ShowroomPage() {
               <span className="text-xs font-bold text-cyan-500 uppercase tracking-widest mb-2 block opacity-60">
                 {product.category?.name || 'قسم عام'}
               </span>
-              <h3 className="text-xl font-bold text-white mb-4 line-clamp-1">{product.name}</h3>
+              <h3 className="text-xl font-bold text-foreground mb-4 line-clamp-1">{product.name}</h3>
               
               {/* Quick Specs */}
               <div className="flex flex-wrap gap-2 mb-6 min-h-[30px]">
                 {product.storage && (
-                  <span className="bg-slate-800/50 text-slate-300 text-[10px] py-1 px-2.5 rounded-lg border border-slate-700">
+                  <span className="bg-gray-100 text-slate-600 text-[10px] py-1 px-2.5 rounded-lg border border-gray-300">
                     💾 {product.storage}
                   </span>
                 )}
                 {product.color && (
-                  <span className="bg-slate-800/50 text-slate-300 text-[10px] py-1 px-2.5 rounded-lg border border-slate-700">
+                  <span className="bg-gray-100 text-slate-600 text-[10px] py-1 px-2.5 rounded-lg border border-gray-300">
                     🎨 {product.color}
                   </span>
                 )}
               </div>
 
               {/* Price Area */}
-              <div className="flex items-end justify-between border-t border-slate-800/50 pt-4">
+              <div className="flex items-end justify-between border-t border-gray-200/50 pt-4">
                 <div>
                   <p className="text-xs text-slate-500 font-bold mb-1">السعر المعلن</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black text-white">{fmt(product.price)}</span>
-                    <span className="text-sm font-bold text-slate-400">ج.م</span>
+                    <span className="text-3xl font-black text-foreground">{fmt(product.price)}</span>
+                    <span className="text-sm font-bold text-slate-500">ج.م</span>
                   </div>
                 </div>
                 
@@ -162,18 +162,18 @@ export default function ShowroomPage() {
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
               onClick={() => setSelectedProduct(null)}
-              className="absolute inset-0 bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 bg-gray-50/90 backdrop-blur-md"
             />
             
             <motion.div 
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-[2.5rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-4xl bg-white border border-gray-200 rounded-[2.5rem] overflow-hidden shadow-2xl"
             >
               <button 
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-8 left-8 z-10 p-4 bg-slate-800 hover:bg-slate-700 rounded-2xl text-white transition-colors"
+                className="absolute top-8 left-8 z-10 p-4 bg-surface hover:bg-surface-hover rounded-2xl text-foreground border border-border-light transition-colors"
               >
                 <ArrowLeft className="w-6 h-6" />
               </button>
@@ -194,15 +194,15 @@ export default function ShowroomPage() {
                     <span className="text-cyan-500 font-bold tracking-widest text-sm mb-4 block uppercase opacity-70">
                       {selectedProduct.category?.name || 'قسم عام'}
                     </span>
-                    <h2 className="text-4xl font-black text-white mb-2 font-tajawal">{selectedProduct.name}</h2>
+                    <h2 className="text-4xl font-black text-foreground mb-2 font-tajawal">{selectedProduct.name}</h2>
                     <div className="flex gap-4">
                        <span className={`px-4 py-1 rounded-full text-xs font-bold ${
-                        selectedProduct.condition === 'new' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                        selectedProduct.condition === 'new' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'
                        }`}>
                          {selectedProduct.condition === 'new' ? 'منتج جديد' : 'منتج مستعمل'}
                        </span>
                        <span className={`px-4 py-1 rounded-full text-xs font-bold ${
-                        selectedProduct.stock > 0 ? 'bg-cyan-500/10 text-cyan-400' : 'bg-red-500/10 text-red-400'
+                        selectedProduct.stock > 0 ? 'bg-cyan-500/10 text-cyan-600' : 'bg-red-500/10 text-red-600'
                        }`}>
                          {selectedProduct.stock > 0 ? 'متوفر بالمخزون' : 'نفد من المخزون'}
                        </span>
@@ -211,27 +211,27 @@ export default function ShowroomPage() {
 
                   {/* Specifications */}
                   <div className="grid grid-cols-2 gap-4 mb-10">
-                    <div className="bg-slate-800/30 p-4 rounded-3xl border border-slate-800/50">
+                    <div className="bg-gray-50 p-4 rounded-3xl border border-gray-200/50">
                       <div className="flex items-center gap-3 mb-1 text-slate-500">
                         <Palette size={16} />
                         <span className="text-xs font-bold">اللون</span>
                       </div>
-                      <p className="text-white font-bold">{selectedProduct.color || '—'}</p>
+                      <p className="text-foreground font-bold">{selectedProduct.color || '—'}</p>
                     </div>
-                    <div className="bg-slate-800/30 p-4 rounded-3xl border border-slate-800/50">
+                    <div className="bg-gray-50 p-4 rounded-3xl border border-gray-200/50">
                       <div className="flex items-center gap-3 mb-1 text-slate-500">
                         <HardDrive size={16} />
                         <span className="text-xs font-bold">المساحة</span>
                       </div>
-                      <p className="text-white font-bold">{selectedProduct.storage || '—'}</p>
+                      <p className="text-foreground font-bold">{selectedProduct.storage || '—'}</p>
                     </div>
                     {selectedProduct.batteryHealth && (
-                      <div className="bg-slate-800/30 p-4 rounded-3xl border border-slate-800/50 col-span-2">
+                      <div className="bg-gray-50 p-4 rounded-3xl border border-gray-200/50 col-span-2">
                         <div className="flex items-center gap-3 mb-1 text-slate-500">
                           <BatteryLow size={16} />
                           <span className="text-xs font-bold">حالة البطارية</span>
                         </div>
-                        <p className="text-white font-bold">{selectedProduct.batteryHealth}</p>
+                        <p className="text-foreground font-bold">{selectedProduct.batteryHealth}</p>
                       </div>
                     )}
                   </div>
@@ -239,11 +239,11 @@ export default function ShowroomPage() {
                   <div className="mt-auto">
                     <p className="text-sm text-slate-500 font-bold mb-1">السعر النهائي للجمهور</p>
                     <div className="flex items-baseline gap-2 mb-8">
-                       <span className="text-6xl font-black text-white">{fmt(selectedProduct.price)}</span>
+                       <span className="text-6xl font-black text-foreground">{fmt(selectedProduct.price)}</span>
                        <span className="text-xl font-bold text-slate-500">ج.م</span>
                     </div>
 
-                    <button className="w-full py-6 rounded-3xl bg-cyan-500 text-white font-black text-xl shadow-lg shadow-cyan-500/20 hover:bg-cyan-400 transition-colors">
+                    <button className="w-full py-6 rounded-3xl bg-cyan-500 text-slate-900 font-black text-xl shadow-lg shadow-cyan-500/20 hover:bg-cyan-400 transition-colors">
                       احجز الآن 🔒
                     </button>
                     <p className="text-center mt-4 text-xs font-bold text-slate-500">

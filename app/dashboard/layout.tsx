@@ -49,14 +49,14 @@ const navItems = [
   { label: 'المنتجات',     href: '/dashboard/products',   icon: Package },
   { label: 'الموردون',     href: '/dashboard/suppliers',  icon: Users2 },
   { label: 'الفروع',       href: '/dashboard/branches',   icon: MapPin, blockCashier: true },
-  { label: 'الصلاحيات',    href: '/dashboard/employees',  icon: Shield, blockCashier: true },
+  { label: 'الصلاحيات',    href: '/dashboard/employees',  icon: Shield, isAdminOnly: true },
   { label: 'الخزنة',       href: '/dashboard/treasury',   icon: Landmark, blockCashier: true },
   { label: 'الخدمات الرقمية', href: '/dashboard/digital-services', icon: Smartphone },
   { label: 'التقارير',     href: '/dashboard/reports',    icon: BarChart3, blockCashier: true },
   { label: 'معرض المنتجات', href: '/dashboard/showroom',    icon: Smartphone, color: '#06B6D4' },
   { label: 'إدارة المحتوى', href: '/dashboard/content',    icon: Layout,    blockCashier: true },
   { label: 'العملات',      href: '/dashboard/settings#currency-section', icon: Coins, blockCashier: true, blockRetail: true },
-  { label: 'الإعدادات',   href: '/dashboard/settings',   icon: Settings, blockCashier: true },
+  { label: 'الإعدادات',   href: '/dashboard/settings',   icon: Settings, isAdminOnly: true },
   { label: 'حاسبة أوركا (Sales)', href: '/dashboard/godfather-calc', icon: Calculator, isGodfather: true },
 ]
 
@@ -160,18 +160,17 @@ export default function DashboardLayout({
         className="print:hidden"
         style={{
           width: 256,
-          background: '#FFFFFF',
+          background: '#0B1120',
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
           padding: '2rem 1rem',
           gap: '0.35rem',
-          borderLeft: '1px solid #E2E8F0',
+          borderLeft: '1px solid rgba(6,182,212,0.12)',
           position: 'sticky',
           top: 0,
           height: '100dvh',
           overflowY: 'auto',
-          boxShadow: '4px 0 20px rgba(0,0,0,0.02)',
         }}
       >
         {/* Sidebar header */}
@@ -198,7 +197,7 @@ export default function DashboardLayout({
             />
             <div style={{ display: 'none', direction: 'ltr', fontSize: '1.25rem', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
               <span style={{ fontWeight: 900, color: '#06B6D4' }}>ORCA</span>
-              <span style={{ fontWeight: 300, color: '#64748B', letterSpacing: '0.2em', marginLeft: '2px' }}>ERP</span>
+              <span style={{ fontWeight: 300, color: '#94A3B8', letterSpacing: '0.2em', marginLeft: '2px' }}>ERP</span>
             </div>
           </div>
 
@@ -206,16 +205,16 @@ export default function DashboardLayout({
           {user && (
             <div style={{ 
               marginTop: '1.25rem', padding: '0.75rem', 
-              background: 'rgba(6,182,212,0.04)', 
-              border: '1px solid rgba(6,182,212,0.1)', 
+              background: 'rgba(6,182,212,0.06)', 
+              border: '1px solid rgba(6,182,212,0.15)', 
               borderRadius: 12, display: 'flex', alignItems: 'center', gap: '0.65rem' 
             }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(6,182,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(6,182,212,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <User size={16} color="#06B6D4" />
               </div>
               <div style={{ overflow: 'hidden' }}>
-                <p style={{ color: '#0F172A', fontSize: '0.82rem', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-tajawal)' }}>{user.name}</p>
-                <p style={{ color: '#0891B2', fontSize: '0.7rem', fontWeight: 600 }}>
+                <p style={{ color: '#fff', fontSize: '0.82rem', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: 'var(--font-tajawal)' }}>{user.name}</p>
+                <p style={{ color: '#06B6D4', fontSize: '0.7rem', fontWeight: 600 }}>
                   {user.role === 'SuperAdmin' ? 'مالك (SuperAdmin)' : user.role === 'Admin' ? 'مدير نظام (Admin)' : user.role === 'Manager' ? 'مدير فرع (Manager)' : user.role === 'Cashier' ? 'كاشير (Cashier)' : user.role}
                 </p>
               </div>
@@ -279,24 +278,24 @@ export default function DashboardLayout({
                 textDecoration: 'none',
                 fontWeight: active ? 800 : 500,
                 fontSize: '0.92rem',
-                color: active ? '#06B6D4' : '#64748B',
-                background: active ? 'rgba(6,182,212,0.05)' : 'transparent',
+                color: active ? '#06B6D4' : 'rgba(255,255,255,0.6)',
+                background: active ? 'rgba(6,182,212,0.1)' : 'transparent',
                 border: active
-                  ? '1px solid rgba(6,182,212,0.15)'
+                  ? '1px solid rgba(6,182,212,0.22)'
                   : '1px solid transparent',
                 transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
                 if (!active) {
                   const el = e.currentTarget as HTMLAnchorElement
-                  el.style.color = '#0F172A'
+                  el.style.color = 'rgba(255,255,255,0.9)'
                   el.style.background = 'rgba(6,182,212,0.05)'
                 }
               }}
               onMouseLeave={(e) => {
                 if (!active) {
                   const el = e.currentTarget as HTMLAnchorElement
-                  el.style.color = '#64748B'
+                  el.style.color = 'rgba(255,255,255,0.6)'
                   el.style.background = 'transparent'
                 }
               }}
@@ -308,7 +307,7 @@ export default function DashboardLayout({
         })}
 
         {/* Logout Button */}
-        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid #F1F5F9' }}>
+        <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           <button
             onClick={handleLogout}
             style={{
@@ -341,14 +340,14 @@ export default function DashboardLayout({
         {/* Full-Screen Suspension Block */}
         {billingStatus === 'SUSPENDED' && (
           <div style={{
-            position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.85)',
+            position: 'absolute', inset: 0, background: 'rgba(11,17,32,0.96)',
             zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
             backdropFilter: 'blur(10px)', padding: '2rem', textAlign: 'center'
           }}>
             <div style={{
-              background: '#FFFFFF', border: '1px solid #E2E8F0',
+              background: '#F8FAFC', border: '1px solid rgba(239,68,68,0.3)',
               borderRadius: '24px', padding: '3rem', maxWidth: '500px',
-              boxShadow: '0 25px 50px rgba(0,0,0,0.05)'
+              boxShadow: '0 25px 50px -12px rgba(239,68,68,0.25)'
             }}>
               <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🚫</div>
               <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0F172A', marginBottom: '1rem' }}>الحساب معلق</h2>
@@ -361,7 +360,7 @@ export default function DashboardLayout({
               <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem' }}>
                 <button 
                    onClick={() => window.location.href = 'tel:201551190990'}
-                   style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', background: '#06B6D4', border: 'none', color: '#fff', fontWeight: 800, cursor: 'pointer' }}
+                   style={{ flex: 1, padding: '0.8rem', borderRadius: '12px', background: '#06B6D4', border: 'none', color: '#0F172A', fontWeight: 800, cursor: 'pointer' }}
                 >
                   اتصل بالمبيعات
                 </button>
@@ -377,7 +376,7 @@ export default function DashboardLayout({
         )}
 
         {isRestricted ? (
-          <div style={{ height: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', fontWeight: 600, fontSize: '1.2rem' }}>
+          <div style={{ height: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontWeight: 600, fontSize: '1.2rem' }}>
              يتم فحص الصلاحيات...
           </div>
         ) : children}
@@ -400,7 +399,7 @@ export default function DashboardLayout({
                   border: '1px solid #E2E8F0',
                   borderRadius: 32, padding: '3rem',
                   maxWidth: 450, width: '100%',
-                  textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.1)'
+                  textAlign: 'center', boxShadow: '0 50px 100px -20px rgba(0,0,0,0.1)'
                 }}
               >
                 <div style={{
@@ -412,8 +411,8 @@ export default function DashboardLayout({
                   <Lock size={32} color="#06B6D4" />
                 </div>
 
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#fff', marginBottom: '1rem', fontFamily: 'var(--font-tajawal)' }}>نطقة محمية</h2>
-                <p style={{ color: '#94A3B8', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', marginBottom: '1rem', fontFamily: 'var(--font-tajawal)' }}>نطقة محمية</h2>
+                <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.8, marginBottom: '2rem' }}>
                   عذراً، هذه المنطقة تتطلب صلاحيات الإدارة. يرجى إدخال كلمة مرور مدير النظام للمتابعة.
                 </p>
 
@@ -427,7 +426,7 @@ export default function DashboardLayout({
                     onKeyDown={(e) => e.key === 'Enter' && handleGuardVerify()}
                     style={{
                       width: '100%', padding: '1.1rem 1.5rem', borderRadius: 16,
-                      background: '#F8FAFC', border: guardError ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid #E2E8F0',
+                      background: '#F1F5F9', border: guardError ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255,255,255,0.1)',
                       color: '#0F172A', fontSize: '1.1rem', outline: 'none', transition: 'all 0.2s', textAlign: 'center'
                     }}
                   />
@@ -448,7 +447,7 @@ export default function DashboardLayout({
                     style={{
                       padding: '1.1rem', borderRadius: 16, border: 'none',
                       background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)',
-                      color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer',
+                      color: '#0F172A', fontWeight: 900, fontSize: '1rem', cursor: 'pointer',
                       boxShadow: '0 10px 25px -5px rgba(6, 182, 212, 0.4)'
                     }}
                   >
@@ -462,7 +461,7 @@ export default function DashboardLayout({
                     }}
                     style={{
                       padding: '1.1rem', borderRadius: 16, border: '1px solid #E2E8F0',
-                      background: '#F8FAFC', color: '#64748B',
+                      background: '#F1F5F9', color: '#475569',
                       fontWeight: 700, fontSize: '1rem', cursor: 'pointer'
                     }}
                   >

@@ -37,7 +37,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Banish fake wealth (Phase 140)
-    match.description = { $not: /رصيد افتتاح لمنتجات/ };
+    match.description = { $not: /رصيد افتتاح لمنتجات/ }
+
+    // Exclude pure ledger entries (supplier credit invoices) from cash flow views
+    // Pass ?includeSupplierLedger=true to get them (e.g. supplier statement modal)
+    const includeSupplierLedger = searchParams.get('includeSupplierLedger') === 'true'
+    if (!includeSupplierLedger) {
+      match.entityType = { $nin: ['SupplierLedger', 'System_Forex_Adjustment'] }
+    }
 
     // Bulletproof Date Logic (Phase 140)
     if ((startDate && startDate !== 'undefined' && startDate !== '') || 
@@ -102,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     const validTypes   = ['IN', 'OUT']
     const validMethods = ['Cash', 'Visa', 'Valu', 'InstaPay', 'Vodafone Cash']
-    const validEntities = ['Branch', 'Supplier', 'Customer', 'GeneralExpense', 'Sales', 'BankAccount', 'OwnerEquity', 'System_Forex_Adjustment']
+    const validEntities = ['Branch', 'Supplier', 'Customer', 'GeneralExpense', 'Sales', 'BankAccount', 'OwnerEquity', 'System_Forex_Adjustment', 'OPENING_BALANCE']
 
     if (!validTypes.includes(type)) {
       return NextResponse.json({ success: false, message: 'Invalid type. Must be IN or OUT' }, { status: 400 })
@@ -174,20 +181,23 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 2. Map PaymentMethod to InternalAccount automatically
-    const methodMap: Record<string, string> = {
-      'Cash': 'الخزينة الرئيسية (Main Safe)',
-      'Visa': 'فيزا (Visa)',
-      'Valu': 'ValU',
-      'InstaPay': 'إنستاباي (InstaPay)',
-      'Vodafone Cash': 'فودافون كاش (Vodafone Cash)'
-    }
-
-    const accountName = methodMap[paymentMethod]
-    if (accountName) {
+    // 2. Update the InternalAccount balance that matches the paymentMethod.
+    // The paymentMethod value is EITHER a hardcoded name ('Cash', 'Visa', etc.)
+    // OR the exact account name from the InternalAccount collection.
+    // We resolve it by searching for an account whose name matches.
+    if (paymentMethod && paymentMethod !== 'Cash') {
+      // Direct name match — covers all custom account names
       const multiplier = type === 'IN' ? 1 : -1
       await InternalAccount.findOneAndUpdate(
-        { name: accountName },
+        { name: paymentMethod },
+        { $inc: { currentBalance: Number(amount) * multiplier } }
+      )
+    } else if (paymentMethod === 'Cash') {
+      // 'Cash' maps to any account whose name contains 'كاش' or 'safe' or 'خزين'
+      const multiplier = type === 'IN' ? 1 : -1
+      const branchFilter = (body.branchId && body.branchId !== 'all') ? { branchId: body.branchId } : {}
+      await InternalAccount.findOneAndUpdate(
+        { name: { $regex: /كاش|safe|خزين/i }, ...branchFilter },
         { $inc: { currentBalance: Number(amount) * multiplier } }
       )
     }

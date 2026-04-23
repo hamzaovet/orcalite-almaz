@@ -54,8 +54,10 @@ export async function POST(request: NextRequest) {
       RepairTicket.deleteMany({}),
       InventoryUnit.deleteMany({}),
       DigitalWallet.deleteMany({}),
-      Supplier.updateMany({}, { balance: 0 }),       // zero supplier debts
-      InternalAccount.updateMany({}, { balance: 0 }), // zero treasury balances
+      // Zero out Supplier balances (current and initial)
+      Supplier.updateMany({}, { $set: { balance: 0, initialBalance: 0 } }),
+      // Zero out Treasury accounts (current and initial)
+      InternalAccount.updateMany({}, { $set: { balance: 0, currentBalance: 0, initialBalance: 0 } }),
     ])
 
     return NextResponse.json({ success: true, message: 'تم تصفير بيانات المتجر بنجاح' })

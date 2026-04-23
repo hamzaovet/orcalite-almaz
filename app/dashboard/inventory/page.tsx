@@ -442,18 +442,18 @@ export default function InventoryScannerPage() {
     </div>
   )
 
-  const cardStyle = { background: 'rgba(6,182,212,0.03)', border: '1px solid rgba(6,182,212,0.15)', borderRadius: 24, padding: '2rem' }
-  const inputStyle = { background: '#0B1120', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 16, padding: '1rem', color: '#fff', outline: 'none', width: '100%', fontSize: '1rem' }
+  const cardStyle = { background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, padding: '2rem' }
+  const inputStyle = { background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 16, padding: '1rem', color: '#0F172A', outline: 'none', width: '100%', fontSize: '1rem' }
 
   const filteredAuditUnits = selectedBranchFilter === 'all' 
      ? auditUnits 
      : auditUnits.filter(u => u.locationId?._id === selectedBranchFilter || String(u.locationId?.name).includes(selectedBranchFilter))
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#080C14', color: '#fff' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#080C14', color: '#0F172A' }}>
       
       {/* TABS HEADER */}
-      <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2.5rem', borderBottom: '1px solid rgba(6,182,212,0.15)', background: '#0B1120' }}>
+      <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2.5rem', borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
          <button 
            onClick={() => setActiveTab('RECEIVE')}
            style={{ padding: '0.8rem 2.5rem', borderRadius: 16, background: activeTab === 'RECEIVE' ? '#06B6D4' : 'transparent', color: activeTab === 'RECEIVE' ? '#000' : '#06B6D4', fontWeight: 900, fontSize: '1.1rem', border: '1px solid #06B6D4', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -473,7 +473,7 @@ export default function InventoryScannerPage() {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <span style={{ fontWeight: 800, color: '#94A3B8' }}>تصفية بالفرع/المخزن:</span>
+                <span style={{ fontWeight: 800, color: '#475569' }}>تصفية بالفرع/المخزن:</span>
                 <select 
                   style={{ ...inputStyle, width: '250px' }} 
                   value={selectedBranchFilter} 
@@ -506,11 +506,11 @@ export default function InventoryScannerPage() {
                     </thead>
                     <tbody>
                        {aggregatedAuditUnits.length === 0 && (
-                          <tr><td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#64748B' }}>لا توجد أجهزة متوفرة في هذا الموقع</td></tr>
+                          <tr><td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#475569' }}>لا توجد أجهزة متوفرة في هذا الموقع</td></tr>
                        )}
                        {aggregatedAuditUnits.map((u: any, i) => {
                           return (
-                            <tr key={u._id || `agg-${i}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <tr key={u._id || `agg-${i}`} style={{ borderBottom: '1px solid #F1F5F9' }}>
                                <td style={{ padding: '1.2rem', fontWeight: 700 }}>
                                  <button 
                                    onClick={() => openLedger(u.productId?._id || u.productId, u.productId?.name, String(u.locationId?._id || u.locationId))}
@@ -522,7 +522,7 @@ export default function InventoryScannerPage() {
                                <td style={{ padding: '1.2rem', fontWeight: 800, color: '#FCD34D' }}>{u.displayLocation}</td>
                                <td style={{ padding: '1.2rem', fontWeight: 900 }}>{u.aggregatedQty}</td>
                                <td style={{ padding: '1.2rem', color: '#10B981', fontWeight: 800 }}>{u.avgCost.toLocaleString()} ج.م</td>
-                               <td style={{ padding: '1.2rem', color: '#FFFFFF', fontWeight: 900 }}>{(u.avgCost * u.aggregatedQty).toLocaleString()} ج.م</td>
+                               <td style={{ padding: '1.2rem', color: '#0F172A', fontWeight: 900 }}>{(u.avgCost * u.aggregatedQty).toLocaleString()} ج.م</td>
                             </tr>
                           )
                        })}
@@ -530,7 +530,7 @@ export default function InventoryScannerPage() {
                     <tfoot>
                       <tr style={{ background: 'rgba(16,185,129,0.05)', borderTop: '2px solid #10B981' }}>
                          <td colSpan={2} style={{ padding: '1.2rem', fontWeight: 900, color: '#10B981', textAlign: 'left' }}>إجمالي المخزون المتاح:</td>
-                         <td style={{ padding: '1.2rem', fontWeight: 950, color: '#FFFFFF' }}>{auditTotals.totalQty} وحدة</td>
+                         <td style={{ padding: '1.2rem', fontWeight: 950, color: '#0F172A' }}>{auditTotals.totalQty} وحدة</td>
                          <td style={{ padding: '1.2rem', fontWeight: 950, color: '#10B981' }}>{auditTotals.totalValue.toLocaleString()} ج.م</td>
                          <td style={{ padding: '1.2rem' }}></td>
                       </tr>
@@ -564,7 +564,7 @@ export default function InventoryScannerPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     {businessType === 'B2B_WHALE' && (
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>1. اختر الرسالة المستلمة</label>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>1. اختر الرسالة المستلمة</label>
                 <select style={inputStyle} value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
                   <option value="">-- اختر رسالة (Shipment) --</option>
                   {shipmentOptions.map((s: any) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -572,7 +572,7 @@ export default function InventoryScannerPage() {
               </div>
               )}
               <div>
-                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>{businessType === 'B2B_WHALE' ? '2.' : '1.'} اختر المنتج الحالي</label>
+                <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>{businessType === 'B2B_WHALE' ? '2.' : '1.'} اختر المنتج الحالي</label>
                 <select 
                   style={inputStyle} 
                   disabled={!selectedBatch} 
@@ -618,7 +618,7 @@ export default function InventoryScannerPage() {
                             autoComplete="off"
                             disabled={stats.total === 0}
                             style={{
-                              width: '100%', padding: '1.25rem', background: '#0B1120', border: `2px solid ${stats.total === 0 ? 'rgba(239,68,68,0.2)' : 'rgba(6,182,212,0.5)'}`, 
+                              width: '100%', padding: '1.25rem', background: '#F8FAFC', border: `2px solid ${stats.total === 0 ? 'rgba(239,68,68,0.2)' : 'rgba(6,182,212,0.5)'}`, 
                               borderRadius: 16, fontSize: '1.8rem', textAlign: 'center', fontWeight: 950, letterSpacing: '0.15em',
                               color: stats.total === 0 ? 'rgba(255,255,255,0.1)' : '#06B6D4', boxShadow: '0 0 30px rgba(6,182,212,0.1) inset'
                             }}
@@ -638,14 +638,14 @@ export default function InventoryScannerPage() {
                             value={bulkQty}
                             onChange={e => setBulkQty(Number(e.target.value))}
                             style={{
-                              flex: 1, padding: '1rem', background: '#0B1120', border: '2px solid rgba(168,85,247,0.5)',
+                              flex: 1, padding: '1rem', background: '#F8FAFC', border: '2px solid rgba(168,85,247,0.5)',
                               borderRadius: 16, fontSize: '2rem', textAlign: 'center', fontWeight: 950, color: '#A855F7', outline: 'none'
                             }}
                           />
                           <button
                             onClick={handleBulkReceive}
                             disabled={bulkLoading || bulkQty <= 0}
-                            style={{ flex: 1.5, padding: '1rem', background: '#A855F7', border: 'none', borderRadius: 16, color: '#fff', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 32px rgba(168,85,247,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                            style={{ flex: 1.5, padding: '1rem', background: '#A855F7', border: 'none', borderRadius: 16, color: '#0F172A', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', boxShadow: '0 8px 32px rgba(168,85,247,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
                           >
                             {bulkLoading ? <Loader2 className="animate-spin" size={22} /> : '📥 استلام كمية'}
                           </button>
@@ -688,16 +688,16 @@ export default function InventoryScannerPage() {
              <AnimatePresence mode="wait">
                {lookupResult && (
                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                   style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid #06B6D4', borderRadius: 20, padding: '1.5rem' }}
+                   style={{ background: '#ECFEFF', border: '1px solid #06B6D4', borderRadius: 20, padding: '1.5rem' }}
                  >
                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
                       <Smartphone color="#06B6D4" size={24} />
-                      <h4 style={{ fontWeight: 900, color: '#FFFFFF' }}>{lookupResult.productId?.name}</h4>
+                      <h4 style={{ fontWeight: 900, color: '#0F172A' }}>{lookupResult.productId?.name}</h4>
                    </div>
                    
                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#64748B' }}>حالة الوحدة:</span> 
+                        <span style={{ color: '#475569' }}>حالة الوحدة:</span> 
                         <strong style={{ 
                           color: lookupResult.status === 'Available' ? '#10B981' : lookupResult.status === 'Sold' ? '#EF4444' : '#FB923C',
                           background: lookupResult.status === 'Available' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
@@ -706,15 +706,15 @@ export default function InventoryScannerPage() {
                           {lookupResult.status === 'Available' ? 'متاح' : lookupResult.status === 'Sold' ? 'مباع' : lookupResult.status === 'Reserved' ? 'محجوز' : 'مرتجع'}
                         </strong>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748B' }}>المساحة:</span> <strong style={{ color: '#06B6D4' }}>{lookupResult.attributes?.storage || '---'}</strong></div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748B' }}>اللون:</span> <strong style={{ color: '#06B6D4' }}>{lookupResult.attributes?.color || '---'}</strong></div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748B' }}>جودة الجهاز:</span> <strong style={{ color: lookupResult.attributes?.condition === 'Used' ? '#FB923C' : '#10B981' }}>{lookupResult.attributes?.condition === 'Used' ? 'مستعمل' : 'جديد'}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#475569' }}>المساحة:</span> <strong style={{ color: '#06B6D4' }}>{lookupResult.attributes?.storage || '---'}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#475569' }}>اللون:</span> <strong style={{ color: '#06B6D4' }}>{lookupResult.attributes?.color || '---'}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#475569' }}>جودة الجهاز:</span> <strong style={{ color: lookupResult.attributes?.condition === 'Used' ? '#FB923C' : '#10B981' }}>{lookupResult.attributes?.condition === 'Used' ? 'مستعمل' : 'جديد'}</strong></div>
                       {lookupResult.attributes?.condition === 'Used' && (
-                         <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748B' }}>البطارية:</span> <strong style={{ color: '#10B981' }}>{lookupResult.attributes?.batteryHealth}%</strong></div>
+                         <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#475569' }}>البطارية:</span> <strong style={{ color: '#10B981' }}>{lookupResult.attributes?.batteryHealth}%</strong></div>
                       )}
                    </div>
                    {lookupResult.attributes?.notes && (
-                     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(6,182,212,0.1)', fontSize: '0.8rem', color: '#94A3B8' }}>
+                     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(6,182,212,0.1)', fontSize: '0.8rem', color: '#475569' }}>
                         <FileText size={14} style={{ display: 'inline', marginLeft: '0.4rem' }} /> {lookupResult.attributes?.notes}
                      </div>
                    )}
@@ -743,20 +743,20 @@ export default function InventoryScannerPage() {
         {showModal && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8,12,20,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)' }}>
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              style={{ background: '#0B1120', borderRadius: 28, border: '1px solid rgba(6,182,212,0.3)', width: '100%', maxWidth: 500, padding: '2.5rem', boxShadow: '0 30px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, border: '1px solid #CBD5E1', width: '100%', maxWidth: 500, padding: '2.5rem', boxShadow: '0 30px 100px rgba(0,0,0,0.6)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-                <div style={{ padding: '0.6rem', background: 'rgba(6,182,212,0.1)', borderRadius: 12 }}><Scan color="#06B6D4" size={24} /></div>
+                <div style={{ padding: '0.6rem', background: '#ECFEFF', borderRadius: 12 }}><Scan color="#06B6D4" size={24} /></div>
                 <div>
                   <h2 style={{ fontSize: '1.2rem', fontWeight: 900 }}>شهادة ميلاد الجهاز</h2>
-                  <p style={{ fontSize: '0.8rem', color: '#64748B' }}>IMEI: {pendingImei}</p>
+                  <p style={{ fontSize: '0.8rem', color: '#475569' }}>IMEI: {pendingImei}</p>
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
-                    <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>المساحة *</label>
+                    <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>المساحة *</label>
                     <select autoFocus value={attributes.storage} onChange={e => setAttributes({...attributes, storage: e.target.value})} style={inputStyle}>
                       <option value="">-- اختر --</option>
                       <option value="128GB">128GB</option>
@@ -767,7 +767,7 @@ export default function InventoryScannerPage() {
                     </select>
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>اللون *</label>
+                    <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>اللون *</label>
                     <select value={attributes.color} onChange={e => setAttributes({...attributes, color: e.target.value})} style={inputStyle}>
                       <option value="">-- اختر --</option>
                       <option value="Black">Titanium Black</option>
@@ -780,10 +780,10 @@ export default function InventoryScannerPage() {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>الحالة</label>
+                  <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>الحالة</label>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     {['New', 'Used'].map(c => (
-                      <button key={c} onClick={() => setAttributes({...attributes, condition: c as any})} style={{ flex: 1, padding: '0.75rem', borderRadius: 12, border: '2px solid', borderColor: attributes.condition === c ? '#06B6D4' : 'rgba(255,255,255,0.05)', background: attributes.condition === c ? 'rgba(6,182,212,0.1)' : 'transparent', color: attributes.condition === c ? '#06B6D4' : '#64748B', fontWeight: 800, cursor: 'pointer' }}>
+                      <button key={c} onClick={() => setAttributes({...attributes, condition: c as any})} style={{ flex: 1, padding: '0.75rem', borderRadius: 12, border: '2px solid', borderColor: attributes.condition === c ? '#06B6D4' : '#F8FAFC', background: attributes.condition === c ? 'rgba(6,182,212,0.1)' : 'transparent', color: attributes.condition === c ? '#06B6D4' : '#64748B', fontWeight: 800, cursor: 'pointer' }}>
                         {c === 'New' ? 'جديد' : 'مستعمل'}
                       </button>
                     ))}
@@ -794,11 +794,11 @@ export default function InventoryScannerPage() {
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
                       <div>
-                        <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>صحة البطارية %</label>
+                        <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>صحة البطارية %</label>
                         <input type="number" value={attributes.batteryHealth} onChange={e => setAttributes({...attributes, batteryHealth: Number(e.target.value)})} style={inputStyle} min="0" max="100" />
                       </div>
                       <div>
-                        <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', marginBottom: '0.5rem', display: 'block' }}>ملاحظات</label>
+                        <label style={{ fontSize: '0.7rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>ملاحظات</label>
                         <input type="text" value={attributes.notes} onChange={e => setAttributes({...attributes, notes: e.target.value})} style={inputStyle} placeholder="الحالة العامة..." />
                       </div>
                     </div>
@@ -806,11 +806,11 @@ export default function InventoryScannerPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                  <button onClick={() => {setShowModal(false); setImei('')}} style={{ flex: 1, padding: '1rem', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)', background: 'transparent', color: '#64748B', fontWeight: 800, cursor: 'pointer' }}>إلغاء</button>
+                  <button onClick={() => {setShowModal(false); setImei('')}} style={{ flex: 1, padding: '1rem', borderRadius: 16, border: '1px solid #E2E8F0', background: 'transparent', color: '#475569', fontWeight: 800, cursor: 'pointer' }}>إلغاء</button>
                   <button 
                     disabled={!attributes.storage || !attributes.color || loading}
                     onClick={finalizeScan}
-                    style={{ flex: 2, padding: '1rem', borderRadius: 16, background: '#06B6D4', color: '#fff', border: 'none', fontWeight: 900, cursor: 'pointer', boxShadow: '0 8px 32px rgba(6,182,212,0.3)', opacity: (!attributes.storage || !attributes.color) ? 0.5 : 1 }}
+                    style={{ flex: 2, padding: '1rem', borderRadius: 16, background: '#06B6D4', color: '#0F172A', border: 'none', fontWeight: 900, cursor: 'pointer', boxShadow: '0 8px 32px rgba(6,182,212,0.3)', opacity: (!attributes.storage || !attributes.color) ? 0.5 : 1 }}
                   >
                     {loading ? <Loader2 className="animate-spin" style={{ margin: '0 auto' }} /> : 'حفظ في المخزن ✓'}
                   </button>
@@ -828,7 +828,7 @@ export default function InventoryScannerPage() {
     {ledgerOpen && (
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8,12,20,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(10px)' }}>
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-          style={{ background: '#0B1120', borderRadius: 28, border: '1px solid rgba(6,182,212,0.3)', width: '100%', maxWidth: 800, padding: '2.5rem', boxShadow: '0 30px 100px rgba(0,0,0,0.6)', maxHeight: '90vh', overflowY: 'auto' }}
+          style={{ background: '#F8FAFC', borderRadius: 28, border: '1px solid #CBD5E1', width: '100%', maxWidth: 800, padding: '2.5rem', boxShadow: '0 30px 100px rgba(0,0,0,0.6)', maxHeight: '90vh', overflowY: 'auto' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -838,7 +838,7 @@ export default function InventoryScannerPage() {
                 <p style={{ fontSize: '0.9rem', color: '#06B6D4', fontWeight: 800 }}>{ledgerProduct?.name}</p>
               </div>
             </div>
-            <button onClick={() => setLedgerOpen(false)} style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '1.5rem' }}>✕</button>
+            <button onClick={() => setLedgerOpen(false)} style={{ background: 'transparent', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '1.5rem' }}>✕</button>
           </div>
 
           {ledgerLoading ? (
@@ -856,10 +856,10 @@ export default function InventoryScannerPage() {
                 </tr>
               </thead>
               <tbody>
-                {ledgerData.length === 0 && <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#64748B' }}>لا توجد حركات مسجلة لهذا الصنف</td></tr>}
+                {ledgerData.length === 0 && <tr><td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#475569' }}>لا توجد حركات مسجلة لهذا الصنف</td></tr>}
                 {ledgerData.map((m, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <td style={{ padding: '1rem', color: '#94A3B8' }}>{new Date(m.date).toLocaleString('ar-EG')}</td>
+                  <tr key={i} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                    <td style={{ padding: '1rem', color: '#475569' }}>{new Date(m.date).toLocaleString('ar-EG')}</td>
                     <td style={{ padding: '1rem' }}>
                       <span style={{ 
                         background: m.type === 'IN' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', 
@@ -882,7 +882,7 @@ export default function InventoryScannerPage() {
           <div style={{ marginTop: '2rem', textAlign: 'center' }}>
              <button 
                onClick={() => setLedgerOpen(false)}
-               style={{ padding: '0.75rem 2rem', borderRadius: 12, background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid #06B6D4', fontWeight: 900, cursor: 'pointer' }}
+               style={{ padding: '0.75rem 2rem', borderRadius: 12, background: '#ECFEFF', color: '#06B6D4', border: '1px solid #06B6D4', fontWeight: 900, cursor: 'pointer' }}
              >
                إغلاق كارت الصنف
              </button>

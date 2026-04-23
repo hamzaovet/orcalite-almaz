@@ -270,7 +270,7 @@ export default function GodfatherCalcPage() {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div style={{ maxWidth: '1060px', margin: '0 auto', color: '#fff', direction: 'rtl', fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div style={{ maxWidth: '1060px', margin: '0 auto', color: '#0F172A', direction: 'rtl', fontFamily: 'Inter, system-ui, sans-serif' }}>
 
       {/* ── Header ── */}
       <header style={{ marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
@@ -302,17 +302,17 @@ export default function GodfatherCalcPage() {
             🎩
           </button>
 
-          <h1 style={{ fontSize: '1.9rem', fontWeight: 900, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <h1 style={{ fontSize: '1.9rem', fontWeight: 900, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <Crown size={30} color="#06B6D4" />
             حاسبة العروض البيعية (ORCA)
           </h1>
-          <p style={{ color: '#94A3B8', marginTop: '0.4rem', fontWeight: 500, fontSize: '0.88rem' }}>
+          <p style={{ color: '#475569', marginTop: '0.4rem', fontWeight: 500, fontSize: '0.88rem' }}>
             خاص بالعراب — تسعير حلول أوركا للمؤسسات والأفراد
           </p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
-          <div style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.2)', padding: '0.4rem 0.9rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ background: '#ECFEFF', border: '1px solid rgba(6,182,212,0.2)', padding: '0.4rem 0.9rem', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ color: '#06B6D4', fontWeight: 800, fontSize: '0.85rem' }}>Maestro Mode Active</span>
             <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 8px #22c55e' }} />
           </div>
@@ -355,30 +355,30 @@ export default function GodfatherCalcPage() {
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             style={{ padding: '1.5rem', background: 'rgba(11,17,32,0.6)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px' }}
           >
-            <h3 style={{ marginBottom: '1.25rem', color: '#94A3B8', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>تكوين النظام الأساسي</h3>
+            <h3 style={{ marginBottom: '1.25rem', color: '#475569', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>تكوين النظام الأساسي</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
               {/* Branches */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <label style={{ color: '#E2E8F0', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Building2 size={16} color="#06B6D4" />
-                  الفروع <span style={{ color: '#64748B', fontSize: '0.75rem' }}>(+{fmt(pricing.perBranch)} EGP/فرع)</span>
+                  الفروع <span style={{ color: '#475569', fontSize: '0.75rem' }}>(+{fmt(pricing.perBranch)} EGP/فرع)</span>
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#05080F', padding: '0.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <button onClick={() => setBranches(Math.max(1, branches - 1))} style={{ width: 34, height: 34, borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={15} /></button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#05080F', padding: '0.5rem', borderRadius: '12px', border: '1px solid #F1F5F9' }}>
+                  <button onClick={() => setBranches(Math.max(1, branches - 1))} style={{ width: 34, height: 34, borderRadius: '8px', background: '#F8FAFC', border: 'none', color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={15} /></button>
                   <span style={{ flex: 1, textAlign: 'center', color: '#06B6D4', fontSize: '1.15rem', fontWeight: 800 }}>{branches}</span>
-                  <button onClick={() => setBranches(branches + 1)} style={{ width: 34, height: 34, borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={15} /></button>
+                  <button onClick={() => setBranches(branches + 1)} style={{ width: 34, height: 34, borderRadius: '8px', background: '#F8FAFC', border: 'none', color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={15} /></button>
                 </div>
               </div>
               {/* Screens */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <label style={{ color: '#E2E8F0', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <Monitor size={16} color="#06B6D4" />
-                  شاشات الكاشير <span style={{ color: '#64748B', fontSize: '0.75rem' }}>(+{fmt(pricing.perScreen)} EGP/شاشة)</span>
+                  شاشات الكاشير <span style={{ color: '#475569', fontSize: '0.75rem' }}>(+{fmt(pricing.perScreen)} EGP/شاشة)</span>
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#05080F', padding: '0.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  <button onClick={() => setScreens(Math.max(1, screens - 1))} style={{ width: 34, height: 34, borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={15} /></button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#05080F', padding: '0.5rem', borderRadius: '12px', border: '1px solid #F1F5F9' }}>
+                  <button onClick={() => setScreens(Math.max(1, screens - 1))} style={{ width: 34, height: 34, borderRadius: '8px', background: '#F8FAFC', border: 'none', color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={15} /></button>
                   <span style={{ flex: 1, textAlign: 'center', color: '#06B6D4', fontSize: '1.15rem', fontWeight: 800 }}>{screens}</span>
-                  <button onClick={() => setScreens(screens + 1)} style={{ width: 34, height: 34, borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={15} /></button>
+                  <button onClick={() => setScreens(screens + 1)} style={{ width: 34, height: 34, borderRadius: '8px', background: '#F8FAFC', border: 'none', color: '#0F172A', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={15} /></button>
                 </div>
               </div>
             </div>
@@ -389,7 +389,7 @@ export default function GodfatherCalcPage() {
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             style={{ padding: '1.5rem', background: 'rgba(11,17,32,0.6)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px' }}
           >
-            <h3 style={{ marginBottom: '1.25rem', color: '#94A3B8', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>الإضافات والخدمات</h3>
+            <h3 style={{ marginBottom: '1.25rem', color: '#475569', fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>الإضافات والخدمات</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {/* Procurement */}
               {mode === 'ORCA_B2B' && (
@@ -398,7 +398,7 @@ export default function GodfatherCalcPage() {
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem',
                     background: hasProcurement ? 'rgba(6,182,212,0.1)' : 'rgba(5,8,15,0.8)',
-                    border: hasProcurement ? '1px solid rgba(6,182,212,0.35)' : '1px solid rgba(255,255,255,0.05)',
+                    border: hasProcurement ? '1px solid rgba(6,182,212,0.35)' : '1px solid #F8FAFC',
                     borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s'
                   }}
                 >
@@ -408,7 +408,7 @@ export default function GodfatherCalcPage() {
                     </div>
                     <div>
                       <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>نظام المشتريات والعملات (Forex)</p>
-                      <p style={{ fontSize: '0.75rem', color: '#94A3B8' }}>إدارة الاستيراد ببيانات حقيقية</p>
+                      <p style={{ fontSize: '0.75rem', color: '#475569' }}>إدارة الاستيراد ببيانات حقيقية</p>
                     </div>
                   </div>
                   <div style={{ color: '#06B6D4', fontWeight: 800, fontSize: '0.9rem' }}>+ {fmt(pricing.procurement)} EGP</div>
@@ -420,7 +420,7 @@ export default function GodfatherCalcPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem',
                   background: hasWhatsApp ? 'rgba(34,197,94,0.1)' : 'rgba(5,8,15,0.8)',
-                  border: hasWhatsApp ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(255,255,255,0.05)',
+                  border: hasWhatsApp ? '1px solid rgba(34,197,94,0.35)' : '1px solid #F8FAFC',
                   borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s'
                 }}
               >
@@ -430,7 +430,7 @@ export default function GodfatherCalcPage() {
                   </div>
                   <div>
                     <p style={{ fontWeight: 700, fontSize: '0.95rem' }}>محرك بث الواتساب (Mass Broadcast)</p>
-                    <p style={{ fontSize: '0.75rem', color: '#94A3B8' }}>إرسال قوائم الأسعار للعملاء</p>
+                    <p style={{ fontSize: '0.75rem', color: '#475569' }}>إرسال قوائم الأسعار للعملاء</p>
                   </div>
                 </div>
                 <div style={{ color: '#22c55e', fontWeight: 800, fontSize: '0.9rem' }}>+ {fmt(pricing.whatsapp)} EGP</div>
@@ -445,11 +445,11 @@ export default function GodfatherCalcPage() {
           >
             <div>
               <h3 style={{ color: '#E2E8F0', fontSize: '0.95rem', fontWeight: 700 }}>دورة الدفع</h3>
-              <p style={{ color: '#64748B', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+              <p style={{ color: '#475569', fontSize: '0.8rem', marginTop: '0.25rem' }}>
                 {paymentMode === 'annual' ? `خصم ${Math.round(ANNUAL_DISCOUNT_RATE * 100)}% على الاشتراك السنوي` : 'دفع شهري عادي'}
               </p>
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', background: '#05080F', padding: '4px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', background: '#05080F', padding: '4px', borderRadius: '12px', border: '1px solid #F1F5F9' }}>
               <button
                 onClick={() => setPaymentMode('monthly')}
                 style={{
@@ -477,7 +477,7 @@ export default function GodfatherCalcPage() {
         <section style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           <div style={{
-            background: '#05080F', border: '1px solid rgba(6,182,212,0.3)', borderRadius: '22px',
+            background: '#05080F', border: '1px solid #CBD5E1', borderRadius: '22px',
             padding: '1.75rem', boxShadow: '0 20px 50px rgba(0,0,0,0.6)', position: 'relative', overflow: 'hidden'
           }}>
             <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '180px', height: '180px', background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)', zIndex: 0 }} />
@@ -490,17 +490,17 @@ export default function GodfatherCalcPage() {
               </div>
 
               {/* Breakdown */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', padding: '1.25rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', padding: '1.25rem 0', borderTop: '1px solid #F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                  <span style={{ color: '#94A3B8' }}>النظام الأساسي:</span>
+                  <span style={{ color: '#475569' }}>النظام الأساسي:</span>
                   <span style={{ fontWeight: 700 }}>{fmt(pricing.setupBase)} EGP</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                  <span style={{ color: '#94A3B8' }}>الفروع ({branches} × {fmt(pricing.perBranch)}):</span>
+                  <span style={{ color: '#475569' }}>الفروع ({branches} × {fmt(pricing.perBranch)}):</span>
                   <span style={{ fontWeight: 700 }}>{fmt(branches * pricing.perBranch)} EGP</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                  <span style={{ color: '#94A3B8' }}>الشاشات ({screens} × {fmt(pricing.perScreen)}):</span>
+                  <span style={{ color: '#475569' }}>الشاشات ({screens} × {fmt(pricing.perScreen)}):</span>
                   <span style={{ fontWeight: 700 }}>{fmt(screens * pricing.perScreen)} EGP</span>
                 </div>
                 {hasProcurement && (
@@ -523,21 +523,21 @@ export default function GodfatherCalcPage() {
                 )}
 
                 {/* Separator */}
-                <div style={{ borderTop: '1px dashed rgba(255,255,255,0.08)', margin: '0.25rem 0' }} />
+                <div style={{ borderTop: '1px dashed '#F1F5F9'', margin: '0.25rem 0' }} />
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                  <span style={{ color: '#94A3B8' }}>رسوم التأسيس:</span>
-                  <span style={{ fontWeight: 800, color: '#fff' }}>{fmt(setupFee)} EGP</span>
+                  <span style={{ color: '#475569' }}>رسوم التأسيس:</span>
+                  <span style={{ fontWeight: 800, color: '#0F172A' }}>{fmt(setupFee)} EGP</span>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                  <span style={{ color: '#94A3B8' }}>الاشتراك الشهري (MRR):</span>
+                  <span style={{ color: '#475569' }}>الاشتراك الشهري (MRR):</span>
                   <span style={{ fontWeight: 700, color: '#06B6D4' }}>{fmt(monthlyMRR)} EGP</span>
                 </div>
 
                 {paymentMode === 'annual' && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem' }}>
-                    <span style={{ color: '#94A3B8' }}>الاشتراك السنوي (ARR):</span>
+                    <span style={{ color: '#475569' }}>الاشتراك السنوي (ARR):</span>
                     <span style={{ fontWeight: 700, color: '#22c55e' }}>{fmt(annualMRR)} EGP <span style={{ fontSize: '0.7rem' }}>(-{Math.round(ANNUAL_DISCOUNT_RATE * 100)}%)</span></span>
                   </div>
                 )}
@@ -545,10 +545,10 @@ export default function GodfatherCalcPage() {
 
               {/* Total Investment */}
               <div style={{ marginTop: '1.5rem' }}>
-                <p style={{ textAlign: 'center', color: '#94A3B8', fontSize: '0.78rem', marginBottom: '0.4rem', fontWeight: 600 }}>
+                <p style={{ textAlign: 'center', color: '#475569', fontSize: '0.78rem', marginBottom: '0.4rem', fontWeight: 600 }}>
                   إجمالي الاستثمار — {paymentMode === 'monthly' ? 'دفعة أولى شهر واحد' : 'دفعة سنوية كاملة'}
                 </p>
-                <div style={{ textAlign: 'center', background: 'rgba(6,182,212,0.1)', padding: '1.25rem', borderRadius: '18px', border: '1px solid rgba(6,182,212,0.2)' }}>
+                <div style={{ textAlign: 'center', background: '#ECFEFF', padding: '1.25rem', borderRadius: '18px', border: '1px solid rgba(6,182,212,0.2)' }}>
                   <span style={{ fontSize: '2.4rem', fontWeight: 950, color: '#06B6D4' }}>{fmt(totalInvestment)}</span>
                   <span style={{ fontSize: '1.1rem', fontWeight: 700, color: '#06B6D4', marginRight: '6px' }}>EGP</span>
                 </div>
@@ -559,7 +559,7 @@ export default function GodfatherCalcPage() {
                 {['دعم فني 24/7', 'تحديثات سنوية', 'استضافة سحابية'].map(t => (
                   <div key={t} style={{ textAlign: 'center' }}>
                     <ShieldCheck size={15} color="#22c55e" style={{ margin: '0 auto 0.2rem' }} />
-                    <p style={{ fontSize: '0.62rem', color: '#94A3B8' }}>{t}</p>
+                    <p style={{ fontSize: '0.62rem', color: '#475569' }}>{t}</p>
                   </div>
                 ))}
               </div>
@@ -572,7 +572,7 @@ export default function GodfatherCalcPage() {
               onClick={() => setShowContractModal(true)}
               style={{
                 width: '100%', padding: '1.1rem', background: 'linear-gradient(135deg, #06B6D4, #0284C7)',
-                color: '#fff', borderRadius: '16px', border: 'none', fontWeight: 900, fontSize: '1rem',
+                color: '#0F172A', borderRadius: '16px', border: 'none', fontWeight: 900, fontSize: '1rem',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem',
                 boxShadow: '0 8px 24px rgba(6,182,212,0.3)', transition: 'transform 0.2s'
               }}
@@ -592,7 +592,7 @@ export default function GodfatherCalcPage() {
               }}
               style={{
                 width: '100%', padding: '1.1rem', background: 'rgba(5,8,15,0.8)',
-                color: '#fff', borderRadius: '16px', border: '1px solid rgba(34,197,94,0.3)', 
+                color: '#0F172A', borderRadius: '16px', border: '1px solid rgba(34,197,94,0.3)', 
                 fontWeight: 800, fontSize: '0.95rem',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem',
                 transition: 'all 0.2s'
@@ -621,14 +621,14 @@ export default function GodfatherCalcPage() {
               initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.85, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               style={{
-                background: '#0B1120', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '24px',
+                background: '#F8FAFC', border: '1px solid rgba(245,158,11,0.4)', borderRadius: '24px',
                 padding: '2rem', width: '360px', direction: 'rtl'
               }}
             >
               <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem', filter: 'drop-shadow(0 0 10px rgba(245,158,11,0.8))' }}>🎩</div>
                 <h2 style={{ fontWeight: 900, fontSize: '1.25rem' }}>بوابة العراب</h2>
-                <p style={{ color: '#64748B', fontSize: '0.82rem', marginTop: '0.35rem' }}>أدخل كلمة مرور الوصول المميز</p>
+                <p style={{ color: '#475569', fontSize: '0.82rem', marginTop: '0.35rem' }}>أدخل كلمة مرور الوصول المميز</p>
               </div>
 
               <div style={{ position: 'relative', marginBottom: '1rem' }}>
@@ -641,12 +641,12 @@ export default function GodfatherCalcPage() {
                   style={{
                     width: '100%', padding: '0.9rem 1rem', paddingLeft: '3rem',
                     background: '#05080F', border: `1px solid ${passwordError ? '#ef4444' : 'rgba(255,255,255,0.1)'}`,
-                    borderRadius: '12px', color: '#fff', fontSize: '1rem', outline: 'none',
+                    borderRadius: '12px', color: '#0F172A', fontSize: '1rem', outline: 'none',
                     boxSizing: 'border-box'
                   }}
                   autoFocus
                 />
-                <button onClick={() => setPasswordVisible(!passwordVisible)} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}>
+                <button onClick={() => setPasswordVisible(!passwordVisible)} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}>
                   {passwordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -658,7 +658,7 @@ export default function GodfatherCalcPage() {
               )}
 
               <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button onClick={() => setShowPasswordModal(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#94A3B8', cursor: 'pointer', fontWeight: 600 }}>إلغاء</button>
+                <button onClick={() => setShowPasswordModal(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: '#F8FAFC', border: '1px solid #F1F5F9', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>إلغاء</button>
                 <button onClick={handlePasswordSubmit} style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: '#F59E0B', border: 'none', color: '#05080F', cursor: 'pointer', fontWeight: 800 }}>دخول</button>
               </div>
             </motion.div>
@@ -678,7 +678,7 @@ export default function GodfatherCalcPage() {
             <motion.div
               initial={{ scale: 0.85, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.85, opacity: 0 }}
               style={{
-                background: '#0B1120', border: '1px solid rgba(245,158,11,0.5)', borderRadius: '28px',
+                background: '#F8FAFC', border: '1px solid rgba(245,158,11,0.5)', borderRadius: '28px',
                 padding: '2.5rem', width: '420px', direction: 'rtl', boxShadow: '0 30px 80px rgba(245,158,11,0.15)'
               }}
             >
@@ -688,7 +688,7 @@ export default function GodfatherCalcPage() {
                     <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                       <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎩</div>
                       <h2 style={{ fontWeight: 900, fontSize: '1.4rem', color: '#F59E0B' }}>مرحباً يا عراب</h2>
-                      <p style={{ color: '#64748B', fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                      <p style={{ color: '#475569', fontSize: '0.82rem', marginTop: '0.35rem' }}>
                         الحد الأقصى للخصم: <span style={{ color: '#F59E0B', fontWeight: 700 }}>{fmt(maxGodfatherDiscount)} EGP (10%)</span>
                       </p>
                     </div>
@@ -715,7 +715,7 @@ export default function GodfatherCalcPage() {
                         style={{
                           width: '100%', padding: '1rem 1rem', background: '#05080F',
                           border: `1px solid ${discountError ? '#ef4444' : 'rgba(245,158,11,0.3)'}`,
-                          borderRadius: '14px', color: '#fff', fontSize: '1.1rem', fontWeight: 700,
+                          borderRadius: '14px', color: '#0F172A', fontSize: '1.1rem', fontWeight: 700,
                           outline: 'none', boxSizing: 'border-box', textAlign: 'center'
                         }}
                         autoFocus
@@ -729,7 +729,7 @@ export default function GodfatherCalcPage() {
                     )}
 
                     <div style={{ display: 'flex', gap: '0.75rem' }}>
-                      <button onClick={() => { setShowDiscountModal(false); setDiscountError(''); setDiscountInput('') }} style={{ flex: 1, padding: '0.85rem', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#94A3B8', cursor: 'pointer', fontWeight: 600 }}>إلغاء</button>
+                      <button onClick={() => { setShowDiscountModal(false); setDiscountError(''); setDiscountInput('') }} style={{ flex: 1, padding: '0.85rem', borderRadius: '14px', background: '#F8FAFC', border: '1px solid #F1F5F9', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>إلغاء</button>
                       <button onClick={handleDiscountApply} style={{ flex: 1, padding: '0.85rem', borderRadius: '14px', background: 'linear-gradient(135deg, #F59E0B, #D97706)', border: 'none', color: '#05080F', cursor: 'pointer', fontWeight: 800 }}>تطبيق الخصم</button>
                     </div>
                   </motion.div>
@@ -737,7 +737,7 @@ export default function GodfatherCalcPage() {
                   <motion.div key="success" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ textAlign: 'center', padding: '1rem 0' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
                     <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#22c55e' }}>تمت الموافقة يا عراب</h2>
-                    <p style={{ color: '#94A3B8', marginTop: '0.5rem' }}>يتم الآن تطبيق الخصم على الحاسبة...</p>
+                    <p style={{ color: '#475569', marginTop: '0.5rem' }}>يتم الآن تطبيق الخصم على الحاسبة...</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -760,7 +760,7 @@ export default function GodfatherCalcPage() {
               initial={{ scale: 0.9, y: 20, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               onClick={e => e.stopPropagation()}
               style={{
-                background: '#0B1120', border: '1px solid rgba(6,182,212,0.4)', borderRadius: '28px',
+                background: '#F8FAFC', border: '1px solid rgba(6,182,212,0.4)', borderRadius: '28px',
                 padding: '2.25rem', width: '520px', maxWidth: '100%', direction: 'rtl',
                 boxShadow: '0 40px 100px rgba(6,182,212,0.15)', maxHeight: '90vh', overflowY: 'auto'
               }}
@@ -772,23 +772,23 @@ export default function GodfatherCalcPage() {
                   </div>
                   <div>
                     <h2 style={{ fontWeight: 900, fontSize: '1.2rem' }}>عقد التعاقد والتراخيص</h2>
-                    <p style={{ color: '#64748B', fontSize: '0.78rem', marginTop: '0.2rem' }}>نكسارا - فل مارك وورك</p>
+                    <p style={{ color: '#475569', fontSize: '0.78rem', marginTop: '0.2rem' }}>نكسارا - فل مارك وورك</p>
                   </div>
                 </div>
-                <button onClick={() => setShowContractModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '10px', padding: '0.5rem', cursor: 'pointer', color: '#94A3B8' }}>
+                <button onClick={() => setShowContractModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: '10px', padding: '0.5rem', cursor: 'pointer', color: '#475569' }}>
                   <X size={18} />
                 </button>
               </div>
 
               {/* Summary row */}
-              <div style={{ background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.15)', borderRadius: '14px', padding: '1rem', marginBottom: '1.75rem', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+              <div style={{ background: 'rgba(6,182,212,0.06)', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '1rem', marginBottom: '1.75rem', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                 {[
                   ['رسوم التأسيس', `${fmt(setupFee)} EGP`],
                   [paymentMode === 'monthly' ? 'MRR' : 'ARR', `${fmt(paymentMode === 'monthly' ? monthlyMRR : annualMRR)} EGP`],
                   ['إجمالي الاستثمار', `${fmt(totalInvestment)} EGP`],
                 ].map(([label, val]) => (
                   <div key={label} style={{ textAlign: 'center' }}>
-                    <p style={{ color: '#64748B', fontSize: '0.7rem', fontWeight: 600 }}>{label}</p>
+                    <p style={{ color: '#475569', fontSize: '0.7rem', fontWeight: 600 }}>{label}</p>
                     <p style={{ color: '#06B6D4', fontWeight: 800, fontSize: '0.88rem', marginTop: '0.2rem' }}>{val}</p>
                   </div>
                 ))}
@@ -802,7 +802,7 @@ export default function GodfatherCalcPage() {
                   { label: 'الرقم القانوني / السجل التجاري', value: legalId, setter: setLegalId, placeholder: 'رقم التسجيل...', icon: <Hash size={16} /> },
                 ].map(({ label, value, setter, placeholder, icon }) => (
                   <div key={label}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#94A3B8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#475569', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' }}>
                       {icon} {label}
                     </label>
                     <input
@@ -811,12 +811,12 @@ export default function GodfatherCalcPage() {
                       placeholder={placeholder}
                       style={{
                         width: '100%', padding: '0.85rem 1rem', background: '#05080F',
-                        border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px',
-                        color: '#fff', fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box',
+                        border: '1px solid #F1F5F9', borderRadius: '12px',
+                        color: '#0F172A', fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box',
                         transition: 'border-color 0.2s'
                       }}
                       onFocus={e => e.target.style.borderColor = 'rgba(6,182,212,0.4)'}
-                      onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
+                      onBlur={e => e.target.style.borderColor = '#F1F5F9'}
                     />
                   </div>
                 ))}
@@ -827,7 +827,7 @@ export default function GodfatherCalcPage() {
                     { label: 'تاريخ تجديد الترخيص', value: renewalDate, setter: setRenewalDate },
                   ].map(({ label, value, setter }) => (
                     <div key={label}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#94A3B8', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#475569', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' }}>
                         <Calendar size={14} /> {label}
                       </label>
                       <input
@@ -836,8 +836,8 @@ export default function GodfatherCalcPage() {
                         onChange={e => setter(e.target.value)}
                         style={{
                           width: '100%', padding: '0.85rem 1rem', background: '#05080F',
-                          border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px',
-                          color: '#fff', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box',
+                          border: '1px solid #F1F5F9', borderRadius: '12px',
+                          color: '#0F172A', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box',
                           colorScheme: 'dark'
                         }}
                       />
@@ -847,7 +847,7 @@ export default function GodfatherCalcPage() {
               </div>
 
               {(!clientName || !storeName || !legalId) && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748B', fontSize: '0.78rem', marginTop: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#475569', fontSize: '0.78rem', marginTop: '1rem' }}>
                   <Lock size={13} /> الرجاء ملء جميع الحقول لتفعيل إنشاء العقد
                 </div>
               )}
@@ -857,7 +857,7 @@ export default function GodfatherCalcPage() {
                 disabled={!clientName || !storeName || !legalId}
                 style={{
                   width: '100%', padding: '1.1rem', marginTop: '1.5rem',
-                  background: (!clientName || !storeName || !legalId) ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #06B6D4, #0284C7)',
+                  background: (!clientName || !storeName || !legalId) ? '#F8FAFC' : 'linear-gradient(135deg, #06B6D4, #0284C7)',
                   color: (!clientName || !storeName || !legalId) ? '#475569' : '#fff',
                   borderRadius: '16px', border: 'none',
                   fontWeight: 900, fontSize: '1rem', cursor: (!clientName || !storeName || !legalId) ? 'not-allowed' : 'pointer',
@@ -888,7 +888,7 @@ export default function GodfatherCalcPage() {
               initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
               onClick={e => e.stopPropagation()}
               style={{
-                background: '#0B1120', border: '2px solid rgba(34,197,94,0.4)', borderRadius: '32px',
+                background: '#F8FAFC', border: '2px solid rgba(34,197,94,0.4)', borderRadius: '32px',
                 padding: '2.5rem', width: '450px', maxWidth: '100%', direction: 'rtl', textAlign: 'center'
               }}
             >
@@ -896,12 +896,12 @@ export default function GodfatherCalcPage() {
                 <>
                   <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🚀</div>
                   <h2 style={{ fontSize: '1.6rem', fontWeight: 900, marginBottom: '0.75rem' }}>تأكيد تفعيل النسخة</h2>
-                  <p style={{ color: '#94A3B8', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+                  <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '2rem' }}>
                     أنت على وشك تحويل هذا العرض إلى **نسخة نشطة** للنظام.
                     سيتم تخصيص <span style={{ color: '#22c55e', fontWeight: 700 }}>{screens} شاشات</span> و <span style={{ color: '#22c55e', fontWeight: 700 }}>{branches} فروع</span> لمتجر <span style={{ color: '#06B6D4', fontWeight: 700 }}>{storeName}</span>.
                   </p>
                   <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button onClick={() => setShowProvisionModal(false)} style={{ flex: 1, padding: '0.9rem', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: 'none', color: '#64748B', fontWeight: 700, cursor: 'pointer' }}>إلغاء</button>
+                    <button onClick={() => setShowProvisionModal(false)} style={{ flex: 1, padding: '0.9rem', borderRadius: '14px', background: '#F8FAFC', border: 'none', color: '#475569', fontWeight: 700, cursor: 'pointer' }}>إلغاء</button>
                     <button onClick={handleProvisionStore} style={{ flex: 1, padding: '0.9rem', borderRadius: '14px', background: '#22c55e', border: 'none', color: '#05080F', fontWeight: 900, cursor: 'pointer' }}>تفعيل الآن</button>
                   </div>
                 </>
@@ -911,7 +911,7 @@ export default function GodfatherCalcPage() {
                 <div style={{ padding: '2rem 0' }}>
                   <div className="animate-spin" style={{ width: '50px', height: '50px', border: '4px solid rgba(6,182,212,0.1)', borderTopColor: '#06B6D4', borderRadius: '50%', margin: '0 auto 1.5rem' }} />
                   <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>جاري ربط الماكينة بالعقد...</h3>
-                  <p style={{ color: '#64748B', marginTop: '0.5rem' }}>يرجى الانتظار، يتم إنشاء سجلات التراخيص</p>
+                  <p style={{ color: '#475569', marginTop: '0.5rem' }}>يرجى الانتظار، يتم إنشاء سجلات التراخيص</p>
                 </div>
               )}
 
@@ -919,7 +919,7 @@ export default function GodfatherCalcPage() {
                 <div style={{ padding: '2rem 0' }}>
                   <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✨</div>
                   <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#22c55e' }}>تم التفعيل بنجاح!</h3>
-                  <p style={{ color: '#94A3B8', marginTop: '0.5rem' }}>تم إنشاء سجل العميل وتحديث تراخيص النظام.</p>
+                  <p style={{ color: '#475569', marginTop: '0.5rem' }}>تم إنشاء سجل العميل وتحديث تراخيص النظام.</p>
                 </div>
               )}
 
@@ -927,8 +927,8 @@ export default function GodfatherCalcPage() {
                 <div style={{ padding: '1rem 0' }}>
                   <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>⚠️</div>
                   <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#ef4444' }}>فشل التفعيل</h3>
-                  <p style={{ color: '#94A3B8', marginTop: '0.5rem' }}>{provisionError}</p>
-                  <button onClick={() => setProvisioningStatus('idle')} style={{ marginTop: '1.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', cursor: 'pointer' }}>حاول مرة أخرى</button>
+                  <p style={{ color: '#475569', marginTop: '0.5rem' }}>{provisionError}</p>
+                  <button onClick={() => setProvisioningStatus('idle')} style={{ marginTop: '1.5rem', padding: '0.75rem 1.5rem', borderRadius: '10px', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#0F172A', cursor: 'pointer' }}>حاول مرة أخرى</button>
                 </div>
               )}
             </motion.div>

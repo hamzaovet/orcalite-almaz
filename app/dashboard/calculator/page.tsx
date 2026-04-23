@@ -57,29 +57,29 @@ export default function SaaS_CalculatorPage() {
 
   const inpStyle: React.CSSProperties = {
     width: '100%', padding: '0.9rem 1rem',
-    background: 'rgba(6,182,212,0.05)', border: '1px solid rgba(6,182,212,0.2)',
-    borderRadius: 12, color: '#fff', outline: 'none',
+    background: '#ECFEFF', border: '1px solid rgba(6,182,212,0.2)',
+    borderRadius: 12, color: '#0F172A', outline: 'none',
     fontSize: '1rem', fontWeight: 700, fontFamily: 'inherit',
     boxSizing: 'border-box',
   }
   const lblStyle: React.CSSProperties = {
     display: 'flex', alignItems: 'center', gap: '0.5rem',
-    color: '#94A3B8', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem',
+    color: '#475569', fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.75rem',
   }
   const cardStyle: React.CSSProperties = {
-    background: '#0B1120', border: '1px solid rgba(6,182,212,0.18)',
+    background: '#F8FAFC', border: '1px solid rgba(6,182,212,0.18)',
     borderRadius: 24, padding: '2rem',
   }
 
   return (
-    <div style={{ maxWidth: 1050, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1050, margin: '0 auto', color: '#1E293B' }}>
 
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
         <h1 style={{ fontSize: '2.4rem', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
           <Sparkles color="#06B6D4" size={34} /> حاسبة تسعير ORCA 2060
         </h1>
-        <p style={{ color: '#64748B', fontSize: '1rem' }}>SaaS Pricing & Valuation Engine — الأسعار تعكس قيمة حصنٍ رقمي لملايين في المخزون</p>
+        <p style={{ color: '#475569', fontSize: '1rem' }}>SaaS Pricing & Valuation Engine — الأسعار تعكس قيمة حصنٍ رقمي لملايين في المخزون</p>
       </div>
 
       {/* Mode Toggle */}
@@ -127,7 +127,7 @@ export default function SaaS_CalculatorPage() {
           <div style={cardStyle}>
             <label style={lblStyle}><ShieldCheck size={17} color="#F59E0B" /> رسوم التأسيس (Setup Fee)</label>
             <div style={{ position: 'relative', marginBottom: '1.75rem' }}>
-              <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: '#64748B', fontSize: '0.85rem' }}>EGP</span>
+              <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: '#475569', fontSize: '0.85rem' }}>EGP</span>
               <input
                 type="number"
                 value={setupFee}
@@ -183,13 +183,13 @@ export default function SaaS_CalculatorPage() {
             <ShieldCheck size={220} />
           </div>
 
-          <h3 style={{ fontSize: '1rem', color: '#64748B', fontWeight: 800, marginBottom: '0.25rem' }}>
+          <h3 style={{ fontSize: '1rem', color: '#475569', fontWeight: 800, marginBottom: '0.25rem' }}>
             عرض السعر المقترح ← {p.label}
           </h3>
 
           {/* Setup Fee Block */}
-          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '1.5rem' }}>
-            <span style={{ display: 'block', color: '#94A3B8', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.75rem' }}>
+          <div style={{ background: '#F1F5F9', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '1.5rem' }}>
+            <span style={{ display: 'block', color: '#475569', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.75rem' }}>
               دفعة التأسيس (مرة واحدة)
             </span>
 
@@ -197,7 +197,7 @@ export default function SaaS_CalculatorPage() {
               {hasDiscount ? (
                 <motion.div key="discounted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   {/* Crossed-out original */}
-                  <del style={{ color: '#64748B', fontSize: '1.1rem', display: 'block', marginBottom: '0.4rem' }}>
+                  <del style={{ color: '#475569', fontSize: '1.1rem', display: 'block', marginBottom: '0.4rem' }}>
                     {setupFee.toLocaleString('ar-EG')} ج.م
                   </del>
                   {/* Final price */}
@@ -226,10 +226,10 @@ export default function SaaS_CalculatorPage() {
 
           {/* MRR Block */}
           <div style={{ background: `rgba(${mode === 'B2B_WHALE' ? '6,182,212' : '168,85,247'},0.08)`, border: `1px solid rgba(${mode === 'B2B_WHALE' ? '6,182,212' : '168,85,247'},0.2)`, borderRadius: 20, padding: '1.5rem' }}>
-            <span style={{ display: 'block', color: '#94A3B8', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.4rem' }}>
+            <span style={{ display: 'block', color: '#475569', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.4rem' }}>
               الاشتراك الشهري (MRR)
             </span>
-            <span style={{ fontSize: '0.78rem', color: '#64748B' }}>{branches} فرع • {users} شاش{users > 1 ? 'ات' : 'ة'} • {p.label}</span>
+            <span style={{ fontSize: '0.78rem', color: '#475569' }}>{branches} فرع • {users} شاش{users > 1 ? 'ات' : 'ة'} • {p.label}</span>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, color: p.color, marginTop: '0.5rem' }}>
               {monthlyCost.toLocaleString('ar-EG')} <span style={{ fontSize: '1rem' }}>ج.م / شهر</span>
             </div>
@@ -239,7 +239,7 @@ export default function SaaS_CalculatorPage() {
           <div style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.15)', borderRadius: 20, padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <span style={{ display: 'block', color: '#A855F7', fontWeight: 900, fontSize: '1rem' }}>الاشتراك السنوي (وفر 15%)</span>
-              <span style={{ fontSize: '0.75rem', color: '#64748B' }}>بدلاً من {yearlyCost.toLocaleString('ar-EG')} ج.م</span>
+              <span style={{ fontSize: '0.75rem', color: '#475569' }}>بدلاً من {yearlyCost.toLocaleString('ar-EG')} ج.م</span>
             </div>
             <span style={{ fontSize: '1.8rem', fontWeight: 900, color: '#A855F7' }}>
               {(yearlyCost * 0.85).toLocaleString('ar-EG')}
@@ -248,12 +248,12 @@ export default function SaaS_CalculatorPage() {
 
           {/* Total Summary Row */}
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#64748B', fontWeight: 700, fontSize: '0.9rem' }}>
+            <span style={{ color: '#475569', fontWeight: 700, fontSize: '0.9rem' }}>
               إجمالي الاستثمار<br />
               <span style={{ fontSize: '0.75rem' }}>(تأسيس + 12 شهر)</span>
             </span>
-            <span style={{ fontWeight: 900, fontSize: '1.6rem', color: '#fff' }}>
-              {(finalSetupFee + yearlyCost).toLocaleString('ar-EG')} <span style={{ fontSize: '0.9rem', color: '#64748B' }}>ج.م</span>
+            <span style={{ fontWeight: 900, fontSize: '1.6rem', color: '#0F172A' }}>
+              {(finalSetupFee + yearlyCost).toLocaleString('ar-EG')} <span style={{ fontSize: '0.9rem', color: '#475569' }}>ج.م</span>
             </span>
           </div>
         </motion.div>

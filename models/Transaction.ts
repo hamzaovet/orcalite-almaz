@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
 export interface ITransaction extends Document {
-  entityType: 'Branch' | 'Supplier' | 'Customer' | 'GeneralExpense' | 'Sales' | 'BankAccount' | 'OwnerEquity' | 'System_Forex_Adjustment'
+  entityType: 'Branch' | 'Supplier' | 'SupplierLedger' | 'Customer' | 'GeneralExpense' | 'Sales' | 'BankAccount' | 'OwnerEquity' | 'System_Forex_Adjustment' | 'OPENING_BALANCE'
   entityId?: mongoose.Types.ObjectId | any
   entityName?: string // For GeneralExpense free-text
   amount: number
@@ -22,7 +22,7 @@ const TransactionSchema = new Schema<ITransaction>(
   {
     entityType: { 
       type: String, 
-      enum: ['Branch', 'Supplier', 'Customer', 'GeneralExpense', 'Sales', 'BankAccount', 'OwnerEquity', 'System_Forex_Adjustment'],
+      enum: ['Branch', 'Supplier', 'SupplierLedger', 'Customer', 'GeneralExpense', 'Sales', 'BankAccount', 'OwnerEquity', 'System_Forex_Adjustment', 'OPENING_BALANCE'],
       default: 'GeneralExpense',
       required: true 
     },

@@ -55,30 +55,30 @@ export function ImeiScanner({ onScanSuccess, onClose }: ImeiScannerProps) {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.3)',
+      position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)'
     }}>
       <div style={{
-        position: 'relative', width: '100%', maxWidth: 480, background: '#FFFFFF',
-        borderRadius: 24, padding: '1.5rem', boxShadow: '0 32px 80px rgba(0,0,0,0.1)',
-        border: '1px solid #E2E8F0', overflow: 'hidden'
+        position: 'relative', width: '100%', maxWidth: 480, background: '#0a0a0a',
+        borderRadius: 24, padding: '1.5rem', boxShadow: '0 32px 80px rgba(0,0,0,0.5)',
+        border: '1px solid rgba(14,165,233,0.3)', overflow: 'hidden'
       }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Scan size={24} color="#06B6D4" />
+            <Scan size={24} color="#0ea5e9" />
             <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
               الرادار الذكي (Free Zone Radar)
             </h2>
           </div>
-          <button onClick={onClose} style={{ background: '#F1F5F9', border: 'none', borderRadius: 50, padding: '0.4rem', color: '#64748B', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 50, padding: '0.4rem', color: '#0F172A', cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
 
         {/* Viewfinder Container */}
-        <div style={{ position: 'relative', width: '100%', height: 320, borderRadius: 18, background: '#F8FAFC', overflow: 'hidden', border: '2px solid #E2E8F0' }}>
+        <div style={{ position: 'relative', width: '100%', height: 320, borderRadius: 18, background: '#111', overflow: 'hidden', border: '2px solid rgba(14,165,233,0.15)' }}>
           {hasCamera ? (
             <video
               ref={videoRef}
@@ -88,7 +88,7 @@ export function ImeiScanner({ onScanSuccess, onClose }: ImeiScannerProps) {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           ) : (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94A3B8', gap: '0.5rem' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#475569', gap: '0.5rem' }}>
               <CameraOff size={32} />
               <span style={{ fontSize: '0.85rem' }}>الكاميرا غير متوفرة</span>
             </div>
@@ -97,21 +97,21 @@ export function ImeiScanner({ onScanSuccess, onClose }: ImeiScannerProps) {
           {/* Scanning Reticle over the viewfinder */}
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
             {/* Corners */}
-            <div style={{ position: 'absolute', top: 20, left: 20, width: 40, height: 40, borderTop: '4px solid #06B6D4', borderLeft: '4px solid #06B6D4', borderRadius: '10px 0 0 0' }} />
-            <div style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderTop: '4px solid #06B6D4', borderRight: '4px solid #06B6D4', borderRadius: '0 10px 0 0' }} />
-            <div style={{ position: 'absolute', bottom: 20, left: 20, width: 40, height: 40, borderBottom: '4px solid #06B6D4', borderLeft: '4px solid #06B6D4', borderRadius: '0 0 0 10px' }} />
-            <div style={{ position: 'absolute', bottom: 20, right: 20, width: 40, height: 40, borderBottom: '4px solid #06B6D4', borderRight: '4px solid #06B6D4', borderRadius: '0 0 10px 0' }} />
+            <div style={{ position: 'absolute', top: 20, left: 20, width: 40, height: 40, borderTop: '4px solid #0ea5e9', borderLeft: '4px solid #0ea5e9', borderRadius: '10px 0 0 0' }} />
+            <div style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderTop: '4px solid #0ea5e9', borderRight: '4px solid #0ea5e9', borderRadius: '0 10px 0 0' }} />
+            <div style={{ position: 'absolute', bottom: 20, left: 20, width: 40, height: 40, borderBottom: '4px solid #0ea5e9', borderLeft: '4px solid #0ea5e9', borderRadius: '0 0 0 10px' }} />
+            <div style={{ position: 'absolute', bottom: 20, right: 20, width: 40, height: 40, borderBottom: '4px solid #0ea5e9', borderRight: '4px solid #0ea5e9', borderRadius: '0 0 10px 0' }} />
             
             {/* Laser line animation */}
             <div style={{
-              position: 'absolute', left: 20, right: 20, height: 2, background: '#06B6D4',
-              boxShadow: '0 0 15px #06B6D4, 0 0 30px #06B6D4',
+              position: 'absolute', left: 20, right: 20, height: 2, background: '#0ea5e9',
+              boxShadow: '0 0 15px #0ea5e9, 0 0 30px #0ea5e9',
               animation: 'scan-laser 2.5s infinite linear'
             }} />
           </div>
 
           {/* Overlay gradient */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(6,182,212,0.1), transparent 20%, transparent 80%, rgba(6,182,212,0.1))', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(14,165,233,0.1), transparent 20%, transparent 80%, rgba(14,165,233,0.1))', pointerEvents: 'none' }} />
         </div>
 
         <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -122,10 +122,10 @@ export function ImeiScanner({ onScanSuccess, onClose }: ImeiScannerProps) {
           <button
             onClick={mockScan}
             style={{
-              padding: '1rem', background: '#06B6D4', color: '#fff', borderRadius: 14,
+              padding: '1rem', background: '#0ea5e9', color: '#0F172A', borderRadius: 14,
               border: 'none', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-              boxShadow: '0 8px 24px rgba(6,182,212,0.3)', fontFamily: 'inherit'
+              boxShadow: '0 8px 24px rgba(14,165,233,0.3)', fontFamily: 'inherit'
             }}
           >
             <Zap size={18} fill="#ffffff" />

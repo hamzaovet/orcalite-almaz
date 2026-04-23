@@ -19,6 +19,7 @@ interface Channel {
   totalOut: number
   balance: number
   txCount: number
+  initialBalance?: number
 }
 
 interface TreasuryData {
@@ -43,7 +44,7 @@ const blankTx = {
   type: 'IN' as TxType,
   paymentMethod: 'Cash',
   description: '',
-  entityType: 'GeneralExpense' as 'Branch' | 'Supplier' | 'Customer' | 'GeneralExpense' | 'BankAccount' | 'OwnerEquity',
+  entityType: 'GeneralExpense' as 'Branch' | 'Supplier' | 'Customer' | 'GeneralExpense' | 'BankAccount' | 'OwnerEquity' | 'OPENING_BALANCE',
   entityId: '',
   entityName: '',
   // Forex
@@ -54,7 +55,7 @@ const blankTx = {
 }
 
 function getAccountMeta(name: string) {
-  if (!name) return { icon: Landmark, color: '#94A3B8', labelAr: 'حساب' }
+  if (!name) return { icon: Landmark, color: '#475569', labelAr: 'حساب' }
   const lower = name.toLowerCase()
   if (lower.includes('كاش') || lower.includes('safe') || lower.includes('خزينة')) return { icon: Banknote, color: '#22C55E', labelAr: name }
   if (lower.includes('visa') || lower.includes('فيزا')) return { icon: CreditCard, color: '#06B6D4', labelAr: name }
@@ -82,7 +83,7 @@ export default function TreasuryPage() {
   const [saving,    setSaving]    = useState(false)
   const [toast,     setToast]     = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
   const [deletingId,setDeletingId]= useState<string | null>(null)
-  const [selectedBranch, setSelectedBranch] = useState('all')
+  const [selectedBranch, setSelectedBranch] = useState('')
   const [startDate,      setStartDate]      = useState('')
   const [endDate,        setEndDate]        = useState('')
 
@@ -111,34 +112,44 @@ export default function TreasuryPage() {
   const [supplierShipments, setSupplierShipments] = useState<any[]>([])
   const [forexAutoCalc, setForexAutoCalc] = useState<number | null>(null)
 
+  // ── Step 1: Init branches once on mount, then set default branch ──
+  useEffect(() => {
+    fetch('/api/branches')
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.branches?.length > 0) {
+          setBranches(d.branches)
+          setSelectedBranch(prev => prev || d.branches[0]._id)
+        }
+      })
+  }, [])
+
+  // ── Step 2: Fetch treasury data whenever branch/dates change ──
   const fetchData = useCallback(async () => {
+    if (!selectedBranch) return
     setLoading(true)
     try {
-      const bQuery = selectedBranch && selectedBranch !== 'all' ? `&branchId=${selectedBranch}` : '';
-      const dQuery = `&startDate=${startDate}&endDate=${endDate}`;
-      const [rT, rTx, rBr, rSu, rIA] = await Promise.all([
-        fetch(`/api/treasury?branchId=${selectedBranch || 'all'}${dQuery}`),
-        fetch(`/api/transactions?limit=20&branchId=${selectedBranch || 'all'}${dQuery}`),
-        fetch('/api/branches'),
+      const dQuery = `&startDate=${startDate}&endDate=${endDate}`
+      const [rT, rTx, rSu, rIA] = await Promise.all([
+        fetch(`/api/treasury?branchId=${selectedBranch}${dQuery}`),
+        fetch(`/api/transactions?limit=20&branchId=${selectedBranch}${dQuery}`),
         fetch('/api/suppliers'),
-        fetch('/api/internal-accounts'),
+        fetch(`/api/internal-accounts?branchId=${selectedBranch}`),
       ])
       const dT  = await rT.json()
       const dTx = await rTx.json()
-      const dBr = await rBr.json()
       const dSu = await rSu.json()
       const dIA = await rIA.json()
 
       if (dT.success)  setData(dT)
       if (dTx.success) setRecentTxs(dTx.transactions ?? [])
-      if (dBr.success) setBranches(dBr.branches ?? [])
       if (dSu.success) setSuppliers(dSu.suppliers ?? [])
       if (dIA.success) setInternalAccounts(dIA.accounts ?? [])
     } catch { showToast('فشل تحميل بيانات اﻟخزنة', 'err') }
     finally { setLoading(false) }
   }, [selectedBranch, startDate, endDate])
 
-  useEffect(() => { fetchData() }, [fetchData, selectedBranch, startDate, endDate])
+  useEffect(() => { fetchData() }, [fetchData])
 
   // Live Balance Fetcher
   useEffect(() => {
@@ -208,7 +219,7 @@ export default function TreasuryPage() {
     // Smart Description: Prepend the free-text name (Owner/Expense) if provided
     // BankAccounts no longer use free-text names
     let finalDescription = form.description.trim()
-    const isFreeText = ['GeneralExpense', 'OwnerEquity'].includes(form.entityType)
+    const isFreeText = ['GeneralExpense', 'OwnerEquity', 'OPENING_BALANCE'].includes(form.entityType)
     if (isFreeText && form.entityName) {
       finalDescription = `[${form.entityName}] - ${finalDescription}`
     }
@@ -217,17 +228,19 @@ export default function TreasuryPage() {
     try {
       // Build forex extras if applicable
       const isForexPayment = form.entityType === 'Supplier' && form.type === 'OUT' && form.foreignAmountPaid && form.actualExchangeRate
+      const finalType = form.entityType === 'OPENING_BALANCE' ? 'IN' : form.type
       const res = await fetch('/api/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           amount: Number(form.amount), 
-          type: form.type, 
+          type: finalType, 
           paymentMethod: form.paymentMethod, 
           description: finalDescription, 
           entityType: form.entityType,
           entityId: form.entityId || undefined,
           entityName: form.entityName || undefined,
+          branchId: selectedBranch,
           ...(isForexPayment ? {
             foreignAmountPaid: Number(form.foreignAmountPaid),
             actualExchangeRate: Number(form.actualExchangeRate),
@@ -259,9 +272,13 @@ export default function TreasuryPage() {
     setLedgerModal(true)
     setLedgerLoading(true)
     try {
-      const res = await fetch(`/api/internal-accounts/${ch._id}/ledger?branchId=${selectedBranch || 'all'}&startDate=${startDate}&endDate=${endDate}`)
+      const res = await fetch(`/api/internal-accounts/${ch._id}/ledger?branchId=${selectedBranch}&startDate=${startDate}&endDate=${endDate}`)
       const d = await res.json()
-      if (d.success) setLedgerData(d.ledger ?? [])
+      if (d.success) {
+        setLedgerData(d.transactions ?? [])
+        // Ensure we capture the REAL initial balance from the fresh DB fetch
+        setSelectedLedgerAcc(prev => prev ? { ...prev, initialBalance: d.account?.initialBalance || 0 } : ch)
+      }
     } catch { showToast('فشل تحميل كشف الحساب', 'err') }
     finally { setLedgerLoading(false) }
   }
@@ -334,10 +351,14 @@ export default function TreasuryPage() {
     if (!accForm.name) return showToast('يرجى إدخال اسم الحساب', 'err')
     setLoadingModal(true)
     try {
+      const payload: any = { name: accForm.name, type: accForm.type, initialBalance: Number(accForm.balance) || 0 }
+      if (selectedBranch && selectedBranch !== 'all') {
+        payload.branchId = selectedBranch
+      }
       const res = await fetch('/api/internal-accounts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: accForm.name, type: accForm.type, initialBalance: Number(accForm.balance) || 0 })
+        body: JSON.stringify(payload)
       })
       if (!res.ok) throw new Error()
       showToast('تم إضافة الحساب بنجاح', 'ok')
@@ -377,20 +398,26 @@ export default function TreasuryPage() {
 
   const cardStyle: React.CSSProperties = {
     background: 'rgba(6, 182, 212, 0.03)', borderRadius: 20, padding: '1.75rem',
-    border: '1px solid rgba(6, 182, 212, 0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+    border: '1px solid rgba(6, 182, 212, 0.15)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
   }
 
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '0.8rem 1rem', border: '1px solid rgba(6, 182, 212, 0.15)',
-    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#FFFFFF',
+    borderRadius: 12, fontSize: '0.95rem', fontFamily: 'inherit', color: '#0F172A',
     outline: 'none', background: 'rgba(6, 182, 212, 0.05)', boxSizing: 'border-box'
   }
 
+  // ── Computed totals from the live internalAccounts array ────────
+  // If no accounts are registered yet, fall back to the transaction-computed grandTotal from the API
+  const totalAvailableBalance = internalAccounts.length > 0
+    ? internalAccounts.reduce((sum, account) => sum + (Number(account.currentBalance) || Number(account.balance) || 0), 0)
+    : (data?.grandTotal ?? 0)
+
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#F8FAFC' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
 
       {toast && (
-        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#fff', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
+        <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
           {toast.msg}
         </div>
       )}
@@ -399,34 +426,33 @@ export default function TreasuryPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>النظام المالي المركزي</p>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#FFFFFF' }}>الخزنة والسيولة</h1>
-          <p style={{ color: '#94A3B8', fontSize: '0.9rem', marginTop: '0.2rem' }}>تتبع التدفقات النقدية عبر كافة القنوات</p>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#0F172A' }}>الخزنة والسيولة</h1>
+          <p style={{ color: '#475569', fontSize: '0.9rem', marginTop: '0.2rem' }}>تتبع التدفقات النقدية عبر كافة القنوات</p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(6,182,212,0.05)', padding: '0.75rem 1.5rem', borderRadius: 20, border: '1px solid rgba(6,182,212,0.2)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#ECFEFF', padding: '0.75rem 1.5rem', borderRadius: 20, border: '1px solid rgba(6,182,212,0.2)' }}>
           <Building2 size={20} color="#06B6D4" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.2rem' }}>تصفية حسب الفرع</span>
             <select 
-              style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.95rem', fontWeight: 900, outline: 'none', cursor: 'pointer', minWidth: 120 }}
+              style={{ background: 'transparent', border: 'none', color: '#0F172A', fontSize: '0.95rem', fontWeight: 900, outline: 'none', cursor: 'pointer', minWidth: 120 }}
               value={selectedBranch}
               onChange={(e) => setSelectedBranch(e.target.value)}
             >
-              <option value="all" style={{ background: '#0B1120' }}>الكل (نظرة عامة)</option>
               {branches.map(b => (
-                <option key={b._id} value={b._id} style={{ background: '#0B1120' }}>{b.name}</option>
+                <option key={b._id} value={b._id} style={{ background: '#F8FAFC' }}>{b.name}</option>
               ))}
             </select>
           </div>
         </div>
 
         {/* Date Filters Engine (Phase 139) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(6,182,212,0.05)', padding: '0.75rem 1.5rem', borderRadius: 20, border: '1px solid rgba(6,182,212,0.2)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#ECFEFF', padding: '0.75rem 1.5rem', borderRadius: 20, border: '1px solid rgba(6,182,212,0.2)' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.2rem' }}>من تاريخ</span>
             <input 
               type="date" 
-              style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: 800, outline: 'none', cursor: 'pointer' }}
+              style={{ background: 'transparent', border: 'none', color: '#0F172A', fontSize: '0.85rem', fontWeight: 800, outline: 'none', cursor: 'pointer' }}
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
             />
@@ -436,7 +462,7 @@ export default function TreasuryPage() {
             <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.2rem' }}>إلى تاريخ</span>
             <input 
               type="date" 
-              style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: 800, outline: 'none', cursor: 'pointer' }}
+              style={{ background: 'transparent', border: 'none', color: '#0F172A', fontSize: '0.85rem', fontWeight: 800, outline: 'none', cursor: 'pointer' }}
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />
@@ -452,10 +478,10 @@ export default function TreasuryPage() {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button onClick={fetchData} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, padding: '0.75rem 1.25rem', fontWeight: 700, cursor: 'pointer' }}><RefreshCw size={18} /></button>
-          <button onClick={() => setAccModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 12, padding: '0.75rem 1.2rem', fontWeight: 700, cursor: 'pointer' }}>إدارة الحسابات</button>
+          <button onClick={fetchData} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#F8FAFC', color: '#0F172A', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.75rem 1.25rem', fontWeight: 700, cursor: 'pointer' }}><RefreshCw size={18} /></button>
+          <button onClick={() => setAccModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#ECFEFF', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 12, padding: '0.75rem 1.2rem', fontWeight: 700, cursor: 'pointer' }}>إدارة الحسابات</button>
           <button onClick={() => setXferModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(251,146,60,0.1)', color: '#FB923C', border: '1px solid rgba(251,146,60,0.2)', borderRadius: 12, padding: '0.75rem 1.2rem', fontWeight: 700, cursor: 'pointer' }}><RefreshCw size={16} /> تحويل داخلي</button>
-          <button onClick={() => setModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(6,182,212,0.3)' }}><Plus size={20} /> تسجيل حركة مالية</button>
+          <button onClick={() => setModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 14, padding: '0.85rem 1.8rem', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(6,182,212,0.3)' }}><Plus size={20} /> تسجيل حركة مالية</button>
         </div>
       </div>
 
@@ -468,21 +494,21 @@ export default function TreasuryPage() {
           {/* Main Totals Card */}
           <div style={{ background: 'linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(11,17,32,0.5) 100%)', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 24, padding: '2.5rem', marginBottom: '2rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '2rem', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-              <div style={{ width: 64, height: 64, borderRadius: 18, background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 64, height: 64, borderRadius: 18, background: '#ECFEFF', border: '1px solid rgba(6,182,212,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Wallet size={32} color="#06B6D4" />
               </div>
               <div>
                 <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#06B6D4', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>الرصيد الإجمالي المتوفر</p>
-                <p style={{ fontSize: '3rem', fontWeight: 900, color: '#FFFFFF', direction: 'ltr', lineHeight: 1 }}>{fmt(data?.grandTotal ?? 0)} <span style={{ fontSize: '1.2rem', color: '#94A3B8' }}>ج.م</span></p>
+                <p style={{ fontSize: '3rem', fontWeight: 900, color: '#0F172A', direction: 'ltr', lineHeight: 1 }}>{fmt(totalAvailableBalance)} <span style={{ fontSize: '1.2rem', color: '#475569' }}>ج.م</span></p>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '2.5rem' }}>
               <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 800, marginBottom: '0.5rem' }}>إجمالي اﻟوارد</p>
+                <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 800, marginBottom: '0.5rem' }}>إجمالي اﻟوارد</p>
                 <p style={{ fontSize: '1.4rem', fontWeight: 900, color: '#22C55E', direction: 'ltr' }}>+ {fmt(data?.grandIn ?? 0)}</p>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 800, marginBottom: '0.5rem' }}>إجمالي اﻟصادر</p>
+                <p style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 800, marginBottom: '0.5rem' }}>إجمالي اﻟصادر</p>
                 <p style={{ fontSize: '1.4rem', fontWeight: 900, color: '#EF4444', direction: 'ltr' }}>- {fmt(data?.grandOut ?? 0)}</p>
               </div>
             </div>
@@ -500,9 +526,9 @@ export default function TreasuryPage() {
                 <div key={acc._id} onClick={() => openLedger({ ...acc, totalIn: stats?.totalIn ?? 0, totalOut: stats?.totalOut ?? 0, balance: acc.currentBalance ?? 0, txCount: stats?.txCount ?? 0 })} style={{ ...cardStyle, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', border: `1px solid ${color}20`, cursor: 'pointer', transition: 'transform 0.2s' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{ width: 44, height: 44, borderRadius: 12, background: `${color}10`, border: `1px solid ${color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon size={20} color={color} /></div>
-                    <div><p style={{ fontWeight: 800, color: '#FFFFFF', fontSize: '0.9rem' }}>{meta.labelAr}</p><p style={{ fontSize: '0.7rem', color: '#64748B' }}>{(stats?.txCount ?? 0)} حركة في هذه الفترة</p></div>
+                    <div><p style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.9rem' }}>{meta.labelAr}</p><p style={{ fontSize: '0.7rem', color: '#475569' }}>{(stats?.txCount ?? 0)} حركة في هذه الفترة</p></div>
                   </div>
-                  <p style={{ fontSize: '1.6rem', fontWeight: 900, color: acc.currentBalance >= 0 ? color : '#EF4444', direction: 'ltr' }}>{fmt(acc.currentBalance ?? 0)} <span style={{ fontSize: '0.75rem', color: '#64748B' }}>ج.م</span></p>
+                  <p style={{ fontSize: '1.6rem', fontWeight: 900, color: acc.currentBalance >= 0 ? color : '#EF4444', direction: 'ltr' }}>{fmt(acc.currentBalance ?? 0)} <span style={{ fontSize: '0.75rem', color: '#475569' }}>ج.م</span></p>
                   <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.72rem', fontWeight: 900 }}>
                     <span style={{ color: '#22C55E' }}>↓ {fmt(stats?.totalIn ?? 0)}</span>
                     <span style={{ color: '#EF4444' }}>↑ {fmt(stats?.totalOut ?? 0)}</span>
@@ -514,39 +540,28 @@ export default function TreasuryPage() {
 
           {/* Transactions Feed */}
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '1.25rem' }}>سجل الحركات الأخيرة</h2>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', marginBottom: '1.25rem' }}>سجل الحركات الأخيرة</h2>
             <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
                   <thead>
-                    <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid rgba(6,182,212,0.15)' }}>
-                      {['التاريخ', 'الحركة', 'الفرع', 'القناة', 'المبلغ', 'البيان', ''].map(h => <th key={h} style={{ padding: '1.1rem 1rem', textAlign: 'right', fontWeight: 800, color: '#94A3B8', fontSize: '0.75rem' }}>{h}</th>)}
+                    <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
+                      {['التاريخ', 'الحركة', 'الفرع', 'المبلغ', 'البيان', ''].map(h => <th key={h} style={{ padding: '1.1rem 1rem', textAlign: 'right', fontWeight: 800, color: '#475569', fontSize: '0.75rem' }}>{h}</th>)}
                     </tr>
                   </thead>
                   <tbody>
-                    {recentTxs.map((tx: any) => {
-                      const meta = getAccountMeta(tx.paymentMethod)
+                    {[...recentTxs].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((tx: any) => {
                       const isIN = tx.type === 'IN';
-                      
-                      // Smart Label Logic for Sales & Special Entities
-                      const isSales = tx.entityType === 'Sales' || tx.description.includes('مبيعات') || tx.description.toLowerCase().includes('inv-');
-                      const displayEntity = isSales ? 'مبيعات (Sales)' : (tx.entityName || 'مصاريف عامة');
-                      const entityColor = isSales ? '#22C55E' : '#fff';
-
                       return (
-                        <tr key={tx._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(6,182,212,0.025)'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>
-                          <td style={{ padding: '1rem', color: '#64748B' }}>{new Date(tx.date).toLocaleDateString('ar-EG')}</td>
-                          <td><span style={{ padding: '0.25rem 0.75rem', borderRadius: 50, background: isIN ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: isIN ? '#22C55E' : '#EF4444', fontWeight: 800, fontSize: '0.7rem' }}>{isIN ? 'وارد' : 'صادر'}</span></td>
-                          <td style={{ fontWeight: 800, color: '#06B6D4' }}>{tx.branchId?.name || 'المركز الرئيسي'}</td>
-                          <td>
-                             <div style={{ color: entityColor, fontWeight: 700 }}>{displayEntity}</div>
-                             <div style={{ color: meta.color, fontSize: '0.7rem' }}>{meta.labelAr}</div>
-                          </td>
-                          <td style={{ fontWeight: 900, color: isIN ? '#22C55E' : '#EF4444', direction: 'ltr' }}>{isIN ? '+' : '−'} {fmt(tx.amount)}</td>
-                          <td style={{ color: '#94A3B8' }}>{tx.description}</td>
+                        <tr key={tx._id} style={{ borderBottom: '1px solid #F1F5F9', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background='rgba(6,182,212,0.025)'} onMouseLeave={e => e.currentTarget.style.background='transparent'}>
+                          <td style={{ padding: '1rem', color: '#475569' }}>{new Date(tx.date).toLocaleDateString('ar-EG')}</td>
+                          <td style={{ padding: '0.75rem 1rem' }}><span style={{ padding: '0.25rem 0.75rem', borderRadius: 50, background: isIN ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: isIN ? '#22C55E' : '#EF4444', fontWeight: 800, fontSize: '0.7rem' }}>{isIN ? 'وارد' : 'صادر'}</span></td>
+                          <td style={{ padding: '0.75rem 1rem', fontWeight: 800, color: '#06B6D4' }}>{tx.branchId?.name || 'المركز الرئيسي'}</td>
+                          <td style={{ padding: '0.75rem 1rem', fontWeight: 900, color: isIN ? '#22C55E' : '#EF4444', direction: 'ltr', whiteSpace: 'nowrap', textAlign: 'right' }}>{isIN ? '+' : '−'} {fmt(tx.amount)}</td>
+                          <td style={{ padding: '0.75rem 1rem', color: '#475569' }}>{tx.description || 'بدون بيان'}</td>
                           <td style={{ textAlign: 'center' }}>
                              <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', paddingRight: '1rem' }}>
-                                <button onClick={() => handlePrint(tx)} style={{ background: 'rgba(6,182,212,0.1)', border: 'none', color: '#06B6D4', padding: '0.45rem', borderRadius: 10, cursor: 'pointer' }} title="طباعة إيصال"><Banknote size={16} /></button>
+                                <button onClick={() => handlePrint(tx)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.45rem', borderRadius: 10, cursor: 'pointer' }} title="طباعة إيصال"><Banknote size={16} /></button>
                                 <button onClick={() => handleDelete(tx._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.45rem', borderRadius: 10, cursor: 'pointer' }}><X size={16} /></button>
                              </div>
                           </td>
@@ -557,7 +572,7 @@ export default function TreasuryPage() {
                 </table>
               </div>
             </div>
-          </div>
+        </div>
         </>
       )}
 
@@ -566,45 +581,49 @@ export default function TreasuryPage() {
         {modal && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#0B1120', borderRadius: 28, width: '100%', maxWidth: 480, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 480, padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.15)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#FFFFFF' }}>تسجيل حركة مالية</h2>
-                <button onClick={() => setModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#fff' }}><X size={24} /></button>
+                <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#0F172A' }}>تسجيل حركة مالية</h2>
+                <button onClick={() => setModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.4rem', cursor: 'pointer', color: '#0F172A' }}><X size={24} /></button>
               </div>
 
                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>نوع الحركة *</label>
-                      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '0.25rem' }}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>نوع الحركة *</label>
+                      <div style={{ display: 'flex', background: '#F1F5F9', borderRadius: 12, padding: '0.25rem' }}>
                         {(['IN', 'OUT'] as TxType[]).map(t => (
-                          <button key={t} onClick={() => setForm({...form, type: t})} style={{ flex: 1, padding: '0.6rem', borderRadius: 10, fontWeight: 900, cursor: 'pointer', border: 'none', background: form.type === t ? (t==='IN'?'#22C55E':'#EF4444') : 'transparent', color: form.type === t ? '#fff' : '#64748B' }}>{t==='IN'?'وارد':'صادر'}</button>
+                          <button key={t} onClick={() => setForm({...form, type: t})} style={{ flex: 1, padding: '0.6rem', borderRadius: 10, fontWeight: 900, cursor: 'pointer', border: 'none', background: form.type === t ? (t==='IN'?'#22C55E': '#EF4444') : 'transparent', color: form.type === t ? '#fff' : '#64748B' }}>{t==='IN'?'وارد':'صادر'}</button>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>اﻟجهة اﻟمرتبطة *</label>
-                      <select style={inputStyle} value={form.entityType} onChange={e => setForm({...form, entityType: e.target.value as any, entityId: '', entityName: ''})}>
+                      <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>اﻟجهة اﻟمرتبطة *</label>
+                      <select style={inputStyle} value={form.entityType} onChange={e => {
+                        const val = e.target.value as any;
+                        setForm({...form, entityType: val, entityId: '', entityName: '', type: val === 'OPENING_BALANCE' ? 'IN' : form.type})
+                      }}>
                         <option value="GeneralExpense">مصاريف عامة (General Expense)</option>
                         <option value="Branch">فرع / مندوب (Branch/Rep)</option>
                         <option value="Supplier">مورد (Supplier)</option>
                         <option value="BankAccount">حساب بنكي / محفظة (Bank/Wallet)</option>
                         <option value="OwnerEquity">جاري المالك (Owner Equity)</option>
+                        <option value="OPENING_BALANCE">رصيد افتتاحي (Opening Balance)</option>
                       </select>
                     </div>
                  </div>
 
-                 {['GeneralExpense', 'OwnerEquity'].includes(form.entityType) ? (
+                 {['GeneralExpense', 'OwnerEquity', 'OPENING_BALANCE'].includes(form.entityType) ? (
                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}>
-                     <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>
-                        {form.entityType === 'GeneralExpense' ? 'جهة الصرف / اﻟبيان (Expense Target) *' : 'اسم المالك / الحساب الجاري *'}
+                     <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>
+                        {form.entityType === 'GeneralExpense' ? 'جهة الصرف / اﻟبيان (Expense Target) *' : form.entityType === 'OPENING_BALANCE' ? 'تفاصيل الرصيد الافتتاحي (اختياري)' : 'اسم المالك / الحساب الجاري *'}
                      </label>
-                     <input style={inputStyle} value={form.entityName} onChange={e => setForm({...form, entityName: e.target.value})} placeholder={form.entityType === 'GeneralExpense' ? "مثال: فاتورة الكهرباء..." : "اسم المالك..."} />
+                     <input style={inputStyle} value={form.entityName} onChange={e => setForm({...form, entityName: e.target.value})} placeholder={form.entityType === 'GeneralExpense' ? "مثال: فاتورة الكهرباء..." : form.entityType === 'OPENING_BALANCE' ? "مثال: رصيد مرحل..." : "اسم المالك..."} />
                    </motion.div>
                  ) : (
                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}>
-                     <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>تحديد الاسم / الحساب اﻟمرتبط *</label>
+                     <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>تحديد الاسم / الحساب اﻟمرتبط *</label>
                      <select style={inputStyle} value={form.entityId} onChange={e => setForm({...form, entityId: e.target.value})}>
                         <option value="">— اختر من اﻟقائمة —</option>
                         {form.entityType === 'Branch' && branches.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
@@ -615,11 +634,11 @@ export default function TreasuryPage() {
                  )}
 
                  {entityBalance !== null && (
-                   <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.2)', padding: '1rem', borderRadius: 12, textAlign: 'center' }}>
+                   <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#ECFEFF', border: '1px solid rgba(6,182,212,0.2)', padding: '1rem', borderRadius: 12, textAlign: 'center' }}>
                       <p style={{ fontSize: '0.7rem', color: '#06B6D4', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.2rem' }}>
                          {form.entityType === 'BankAccount' ? 'رصيد اﻟحساب اﻟحالي (Accounts Balance)' : 'اﻟرصيد اﻟحالي المستحق (Live Debt)'}
                       </p>
-                      <h4 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#fff' }}>{fmt(entityBalance)} <span style={{ fontSize: '0.8rem', color: '#06B6D4' }}>ج.م</span></h4>
+                      <h4 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A' }}>{fmt(entityBalance)} <span style={{ fontSize: '0.8rem', color: '#06B6D4' }}>ج.م</span></h4>
                    </motion.div>
                  )}
 
@@ -631,7 +650,7 @@ export default function TreasuryPage() {
                        <p style={{ fontSize: '0.72rem', fontWeight: 900, color: '#FB923C', textTransform: 'uppercase', letterSpacing: '0.12em' }}>{'🌐 دفع بعملة أجنبية (Forex Payment)'}</p>
                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                          <div>
-                           <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748B', marginBottom: '0.4rem', display: 'block' }}>{'الرسالة المرتبطة بالدفعة (اختياري)'}</label>
+                           <label style={{ fontSize: '0.72rem', fontWeight: 800, color: '#475569', marginBottom: '0.4rem', display: 'block' }}>{'الرسالة المرتبطة بالدفعة (اختياري)'}</label>
                            <select style={inputStyle} value={form.shipmentId} onChange={e => setForm({...form, shipmentId: e.target.value})}>
                              <option value="">{'— اختر الرسالة —'}</option>
                              {supplierShipments.map(s => <option key={s._id} value={s._id}>{s.shipmentNumber} ({s.currency} @ {s.exchangeRate})</option>)}
@@ -649,7 +668,7 @@ export default function TreasuryPage() {
                        {forexAutoCalc !== null && (
                          <div style={{ background: 'rgba(251,146,60,0.1)', borderRadius: 10, padding: '0.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                            <span style={{ fontSize: '0.75rem', color: '#FB923C', fontWeight: 800 }}>{'المبلغ المحسوب تلقائياً بالجنيه 🔒'}</span>
-                           <span style={{ fontSize: '1.3rem', fontWeight: 900, color: '#fff', direction: 'ltr' }}>{fmt(forexAutoCalc)}</span>
+                           <span style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0F172A', direction: 'ltr' }}>{fmt(forexAutoCalc)}</span>
                          </div>
                        )}
                      </motion.div>
@@ -658,7 +677,7 @@ export default function TreasuryPage() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1rem' }}>
                       <div>
-                        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>
+                        <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>
                           {forexAutoCalc !== null ? 'المبلغ (ج.م) — محسوب ومقفل 🔒' : 'المبلغ (ج.م) *'}
                         </label>
                         <input
@@ -679,7 +698,7 @@ export default function TreasuryPage() {
                           placeholder="0.00"
                         />
                       </div>
-                      <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>القناة المالية *</label>
+                      <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>القناة المالية *</label>
                         <select style={inputStyle} value={form.paymentMethod || 'Cash'} onChange={e => setForm({...form, paymentMethod: e.target.value})}>
                           <option value="Cash">كاش (نقدي)</option>
                           {internalAccounts.map(acc => (
@@ -689,11 +708,11 @@ export default function TreasuryPage() {
                       </div>
                    </div>
 
-                  <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>البيان / اﻟنثرية *</label><input style={inputStyle} value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="مثال: تحصيل عُهدة، دفعة مورد، مصاريف نقل..." /></div>
+                  <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>البيان / اﻟنثرية *</label><input style={inputStyle} value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="مثال: تحصيل عُهدة، دفعة مورد، مصاريف نقل..." /></div>
                 
                 <button
                   onClick={handleSave} disabled={saving}
-                  style={{ background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
+                  style={{ background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(6,182,212,0.3)' }}
                 >
                   {saving ? <Loader2 className="animate-spin" size={24} style={{ margin: '0 auto' }} /> : 'تأكيد العملية'}
                 </button>
@@ -708,44 +727,69 @@ export default function TreasuryPage() {
         {ledgerModal && selectedLedgerAcc && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#0B1120', borderRadius: 28, width: '100%', maxWidth: 750, maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#F8FAFC', borderRadius: 28, width: '100%', maxWidth: 750, maxHeight: '90vh', display: 'flex', flexDirection: 'column', padding: '2.5rem', border: '1px solid rgba(6,182,212,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.15)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <div>
-                  <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#FFFFFF' }}>كشف حساب تفصيلي</h2>
+                  <h2 style={{ fontWeight: 900, fontSize: '1.5rem', color: '#0F172A' }}>كشف حساب تفصيلي</h2>
                   <p style={{ color: '#06B6D4', fontWeight: 800 }}>حساب: {selectedLedgerAcc.name}</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button onClick={printLedger} style={{ background: 'rgba(6,182,212,0.1)', color: '#06B6D4', border: 'none', borderRadius: 12, padding: '0.6rem 1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}><Printer size={18} /> 🖨️ طباعة الكشف</button>
-                  <button onClick={() => setLedgerModal(false)} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#fff' }}><X size={20} /></button>
+                  <button onClick={printLedger} style={{ background: '#ECFEFF', color: '#06B6D4', border: 'none', borderRadius: 12, padding: '0.6rem 1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}><Printer size={18} /> 🖨️ طباعة الكشف</button>
+                  <button onClick={() => setLedgerModal(false)} style={{ background: '#F8FAFC', border: 'none', borderRadius: 50, padding: '0.5rem', cursor: 'pointer', color: '#0F172A' }}><X size={20} /></button>
                 </div>
               </div>
 
               {ledgerLoading ? (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}><Loader2 size={32} className="animate-spin" color="#06B6D4" /></div>
               ) : (
-                <div style={{ flex: 1, overflowY: 'auto', background: 'rgba(6,182,212,0.02)', borderRadius: 16, border: '1px solid rgba(6,182,212,0.1)' }}>
+                <div style={{ flex: 1, overflowY: 'auto', background: '#F8FAFC', borderRadius: 16, border: '1px solid #F1F5F9' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                    <thead style={{ position: 'sticky', top: 0, background: '#0f172a', zIndex: 10 }}>
-                      <tr style={{ borderBottom: '1px solid rgba(6,182,212,0.15)' }}>
-                        {['التاريخ', 'الحركة', 'البيان', 'المبلغ', 'الرصيد التراكمي'].map(h => <th key={h} style={{ padding: '1rem', textAlign: 'right', fontWeight: 800, color: '#94A3B8' }}>{h}</th>)}
+                    <thead style={{ position: 'sticky', top: 0, background: '#F1F5F9', zIndex: 10 }}>
+                      <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                        {['التاريخ', 'الحركة', 'البيان', 'وارد (+)', 'صادر (−)', 'الرصيد التراكمي'].map(h => <th key={h} style={{ padding: '1rem', textAlign: 'right', fontWeight: 800, color: '#475569' }}>{h}</th>)}
                       </tr>
                     </thead>
                     <tbody>
-                      {ledgerData.map(tx => {
-                        const isIN = tx.type === 'IN'
-                        return (
-                          <tr key={tx._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                            <td style={{ padding: '0.85rem 1rem', color: '#94A3B8' }}>{new Date(tx.date).toLocaleDateString('ar-EG')}</td>
-                            <td style={{ padding: '0.85rem 1rem' }}><span style={{ padding: '0.2rem 0.6rem', borderRadius: 50, background: isIN ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: isIN ? '#22C55E' : '#EF4444', fontWeight: 800, fontSize: '0.7rem' }}>{isIN ? 'وارد' : 'صادر'}</span></td>
-                            <td style={{ padding: '0.85rem 1rem', color: '#E2E8F0' }}>{tx.description}</td>
-                            <td style={{ padding: '0.85rem 1rem', fontWeight: 900, color: isIN ? '#22C55E' : '#EF4444', direction: 'ltr' }}>{isIN ? '+' : '−'} {fmt(tx.amount)}</td>
-                            <td style={{ padding: '0.85rem 1rem', fontWeight: 900, color: '#fff', direction: 'ltr' }}>{fmt(tx.runningBalance || 0)} <span style={{fontSize:'0.65rem', color:'#64748B'}}>ج.م</span></td>
-                          </tr>
-                        )
-                      })}
-                      {ledgerData.length === 0 && <tr><td colSpan={5} style={{ textAlign: 'center', padding: '2rem', color: '#64748B' }}>لا توجد حركات مسجلة لهذا الحساب</td></tr>}
+                      {/* ── Transaction Rows (sorted oldest first) ── */}
+                      {[...ledgerData]
+                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                        .reduce<{ rows: any[]; running: number }>((acc, tx) => {
+                          const amt = Number(tx.amount) || 0
+                          const newBal = tx.type === 'IN' ? acc.running + amt : acc.running - amt
+                          acc.rows.push({ ...tx, computedBalance: newBal })
+                          acc.running = newBal
+                          return acc
+                        }, { rows: [], running: 0 })
+                        .rows
+                        .map(tx => {
+                          const isIN = tx.type === 'IN'
+                          return (
+                            <tr key={tx._id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                              <td style={{ padding: '0.85rem 1rem', color: '#475569' }}>{new Date(tx.date).toLocaleDateString('ar-EG')}</td>
+                              <td style={{ padding: '0.85rem 1rem' }}>
+                                <span style={{ padding: '0.2rem 0.6rem', borderRadius: 50, background: isIN ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: isIN ? '#22C55E' : '#EF4444', fontWeight: 800, fontSize: '0.7rem' }}>{isIN ? 'وارد' : 'صادر'}</span>
+                              </td>
+                              <td style={{ padding: '0.85rem 1rem', color: '#E2E8F0' }}>{tx.description}</td>
+                              {/* وارد (+) */}
+                              <td style={{ padding: '0.85rem 1rem', textAlign: 'center', fontWeight: 800, color: isIN ? '#22C55E' : '#334155' }}>
+                                {isIN ? fmt(tx.amount) : '—'}
+                              </td>
+                              {/* صادر (−) */}
+                              <td style={{ padding: '0.85rem 1rem', textAlign: 'center', fontWeight: 800, color: !isIN ? '#EF4444' : '#334155' }}>
+                                {!isIN ? fmt(tx.amount) : '—'}
+                              </td>
+                              {/* الرصيد التراكمي */}
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 900, direction: 'ltr', color: tx.computedBalance >= 0 ? '#fff' : '#EF4444' }}>
+                                {fmt(tx.computedBalance)} <span style={{fontSize:'0.65rem', color: '#475569'}}>ج.م</span>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      }
+                      {ledgerData.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#475569' }}>لا توجد حركات مسجلة لهذا الحساب</td></tr>}
                     </tbody>
+
                   </table>
                 </div>
               )}
@@ -759,28 +803,28 @@ export default function TreasuryPage() {
         {accModal && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-              style={{ background: '#0B1120', borderRadius: 24, width: '100%', maxWidth: 450, padding: '2rem', border: '1px solid rgba(6,182,212,0.2)' }}
+              style={{ background: '#F8FAFC', borderRadius: 24, width: '100%', maxWidth: 450, padding: '2rem', border: '1px solid rgba(6,182,212,0.2)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontWeight: 900, color: '#FFFFFF' }}>إدارة الحسابات البنكية والمحافظ</h3>
-                <button onClick={() => setAccModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}><X size={20} /></button>
+                <h3 style={{ fontWeight: 900, color: '#0F172A' }}>إدارة الحسابات البنكية والمحافظ</h3>
+                <button onClick={() => setAccModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}><X size={20} /></button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem', maxHeight: 300, overflowY: 'auto', paddingRight: '0.5rem' }}>
                 {internalAccounts.map(acc => (
-                  <div key={acc._id} style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem 1rem', borderRadius: 12, display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div key={acc._id} style={{ background: '#F1F5F9', padding: '0.75rem 1rem', borderRadius: 12, display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid #E2E8F0' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         {accountToDelete === acc._id ? (
                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <button onClick={() => handleDeleteAccount(acc._id)} style={{ background: '#EF4444', color: '#fff', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>تأكيد الحذف</button>
-                              <button onClick={() => setAccountToDelete(null)} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>إلغاء</button>
+                              <button onClick={() => handleDeleteAccount(acc._id)} style={{ background: '#EF4444', color: '#0F172A', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>تأكيد الحذف</button>
+                              <button onClick={() => setAccountToDelete(null)} style={{ background: 'rgba(255,255,255,0.1)', color: '#0F172A', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>إلغاء</button>
                            </div>
                         ) : (
                            <button onClick={() => setAccountToDelete(acc._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: '#EF4444' }} title="حذف الحساب"><X size={14} /></button>
                         )}
                         <div>
                           <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{acc.name}</p>
-                          <p style={{ fontSize: '0.7rem', color: '#64748B' }}>{acc.type === 'Bank' ? 'حساب بنكي' : acc.type === 'Safe' ? 'خزينة' : 'محفظة / وسيط'}</p>
+                          <p style={{ fontSize: '0.7rem', color: '#475569' }}>{acc.type === 'Bank' ? 'حساب بنكي' : acc.type === 'Safe' ? 'خزينة' : 'محفظة / وسيط'}</p>
                         </div>
                       </div>
                       <p style={{ fontWeight: 900, color: acc.currentBalance >= 0 ? '#22C55E' : '#EF4444' }}>{fmt(acc.currentBalance)}</p>
@@ -788,7 +832,7 @@ export default function TreasuryPage() {
                   </div>
                 ))}
               </div>
-              <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem' }} />
+              <hr style={{ border: 'none', borderTop: '1px solid #F8FAFC', marginBottom: '1.5rem' }} />
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <input style={inputStyle} placeholder="اسم الحساب الجديد..." value={accForm.name} onChange={e => setAccForm({...accForm, name: e.target.value})} />
                 <select style={inputStyle} value={accForm.type} onChange={e => setAccForm({...accForm, type: e.target.value})}>
@@ -797,7 +841,7 @@ export default function TreasuryPage() {
                 </select>
               </div>
               <input style={inputStyle} type="number" placeholder="اﻟرصيد الافتتاحي (اختياري)" value={accForm.balance} onChange={e => setAccForm({...accForm, balance: e.target.value})} />
-              <button onClick={handleAddAccount} disabled={loadingModal} style={{ width: '100%', background: '#06B6D4', color: '#fff', border: 'none', borderRadius: 12, padding: '0.9rem', fontWeight: 800, marginTop: '1.5rem', cursor: 'pointer' }}>
+              <button onClick={handleAddAccount} disabled={loadingModal} style={{ width: '100%', background: '#06B6D4', color: '#0F172A', border: 'none', borderRadius: 12, padding: '0.9rem', fontWeight: 800, marginTop: '1.5rem', cursor: 'pointer' }}>
                 {loadingModal ? <Loader2 size={20} className="animate-spin" style={{ margin: '0 auto' }} /> : 'إضافة حساب جديد'}
               </button>
             </motion.div>
@@ -810,15 +854,15 @@ export default function TreasuryPage() {
         {xferModal && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 250, background: 'rgba(8, 12, 20, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', backdropFilter: 'blur(12px)' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              style={{ background: '#0B1120', borderRadius: 24, width: '100%', maxWidth: 450, padding: '2rem', border: '1px solid rgba(251,146,60,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.6)' }}
+              style={{ background: '#F8FAFC', borderRadius: 24, width: '100%', maxWidth: 450, padding: '2rem', border: '1px solid rgba(251,146,60,0.2)', boxShadow: '0 32px 100px rgba(0,0,0,0.15)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
                 <h3 style={{ fontWeight: 900, fontSize: '1.4rem', color: '#FB923C' }}>🔄 تحويل مالي داخلي</h3>
-                <button onClick={() => setXferModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}><X size={24} /></button>
+                <button onClick={() => setXferModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#475569' }}><X size={24} /></button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <div>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>من حساب (اﻟخصم) *</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>من حساب (اﻟخصم) *</label>
                   <select style={inputStyle} value={xferForm.fromId} onChange={e => setXferForm({...xferForm, fromId: e.target.value})}>
                     <option value="">— اختر اﻟحساب —</option>
                     {internalAccounts.map(a => <option key={a._id} value={a._id}>{a.name} ({fmt(a.currentBalance)})</option>)}
@@ -826,17 +870,17 @@ export default function TreasuryPage() {
                 </div>
                 <div style={{ textAlign: 'center' }}><ArrowDownCircle size={32} color="rgba(251,146,60,0.3)" style={{ margin: '0 auto' }} /></div>
                 <div>
-                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>إلى حساب (اﻹضافة) *</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>إلى حساب (اﻹضافة) *</label>
                   <select style={inputStyle} value={xferForm.toId} onChange={e => setXferForm({...xferForm, toId: e.target.value})}>
                     <option value="">— اختر اﻟحساب —</option>
                     {internalAccounts.map(a => <option key={a._id} value={a._id}>{a.name} ({fmt(a.currentBalance)})</option>)}
                   </select>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1rem' }}>
-                   <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>المبلغ *</label><input type="number" style={{...inputStyle, fontWeight: 900, fontSize: '1.2rem'}} value={xferForm.amount} onChange={e => setXferForm({...xferForm, amount: e.target.value})} placeholder="0.00" /></div>
-                   <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', marginBottom: '0.5rem', display: 'block' }}>ملاحظات</label><input style={inputStyle} placeholder="سبب اﻟتحويل..." value={xferForm.notes} onChange={e => setXferForm({...xferForm, notes: e.target.value})} /></div>
+                   <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>المبلغ *</label><input type="number" style={{...inputStyle, fontWeight: 900, fontSize: '1.2rem'}} value={xferForm.amount} onChange={e => setXferForm({...xferForm, amount: e.target.value})} placeholder="0.00" /></div>
+                   <div><label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', marginBottom: '0.5rem', display: 'block' }}>ملاحظات</label><input style={inputStyle} placeholder="سبب اﻟتحويل..." value={xferForm.notes} onChange={e => setXferForm({...xferForm, notes: e.target.value})} /></div>
                 </div>
-                <button onClick={handleTransfer} disabled={loadingModal} style={{ width: '100%', background: '#FB923C', color: '#fff', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(251,146,60,0.3)' }}>
+                <button onClick={handleTransfer} disabled={loadingModal} style={{ width: '100%', background: '#FB923C', color: '#0F172A', border: 'none', borderRadius: 16, padding: '1.1rem', fontWeight: 900, fontSize: '1.1rem', cursor: 'pointer', marginTop: '1rem', boxShadow: '0 8px 32px rgba(251,146,60,0.3)' }}>
                   {loadingModal ? <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto' }} /> : 'إتمام اﻟتحويل اﻟبري'}
                 </button>
               </div>
