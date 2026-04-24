@@ -102,7 +102,10 @@ const blankForm: FormState = {
 }
 
 export default function ProductsPage() {
+  const [activeTab, setActiveTab]   = useState<'models' | 'units'>('models')
   const [items, setItems]           = useState<Product[]>([])
+  const [units, setUnits]           = useState<any[]>([])
+  const [unitsLoading, setUnitsLoading] = useState(false)
   const [loading, setLoading]       = useState(true)
   const [modal, setModal]           = useState(false)
   const [showScanner, setShowScanner] = useState(false)
@@ -129,6 +132,10 @@ export default function ProductsPage() {
 
   useEffect(() => { fetchProducts() }, [])
 
+  useEffect(() => {
+    if (activeTab === 'units' && units.length === 0) fetchUnits()
+  }, [activeTab])
+
   async function fetchProducts() {
     setLoading(true)
     try {
@@ -149,6 +156,16 @@ export default function ProductsPage() {
       if (dataSet.businessType) setBusinessType(dataSet.businessType)
     } catch { showToast('فشل تحميل البيانات', 'err') }
     finally { setLoading(false) }
+  }
+
+  async function fetchUnits() {
+    setUnitsLoading(true)
+    try {
+      const res = await fetch('/api/inventory?status=Available')
+      const data = await res.json()
+      setUnits(data.units ?? data.inventory ?? [])
+    } catch { showToast('فشل تحميل الوحدات', 'err') }
+    finally { setUnitsLoading(false) }
   }
 
   function showToast(msg: string, type: 'ok' | 'err') {
@@ -357,16 +374,23 @@ export default function ProductsPage() {
   const lbl: React.CSSProperties = { fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.45rem' }
   const td: React.CSSProperties = { padding: '1rem', whiteSpace: 'nowrap', verticalAlign: 'middle' }
 
+  const filteredUnits = units.filter(u => {
+    if (!search) return true
+    const name = u.productId?.name || ''
+    const serial = u.serialNumber || ''
+    return name.toLowerCase().includes(search.toLowerCase()) || serial.includes(search)
+  })
+
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#1E293B' }}>
       <PrintHeader title="قائمة الجرد والمنتجات" subtitle={`${items.length} منتج مسجل`} />
       {toast && <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toast.msg}</div>}
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '2.2rem', fontWeight: 900 }}>إدارة المنتجات</h1>
-          <p style={{ color: '#475569' }}>{items.length} {businessType === 'B2B_WHALE' ? 'منتج مسجل بالعملات المحلية والدولية' : 'المنتجات المسجلة'}</p>
+          <p style={{ color: '#475569' }}>{activeTab === 'models' ? `${items.length} موديل مسجل` : `${units.length} وحدة فعلية متاحة`}</p>
         </div>
         
         <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -429,9 +453,90 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div style={{ ...card, padding: '1rem', marginBottom: '1.5rem' }}><input type="text" placeholder="بحث باسم المنتج..." value={search} onChange={e=>setSearch(e.target.value)} style={inp} /></div>
+      {/* ── Tab Switcher ── */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        {([['models', '📦 الموديلات (القوالب)'], ['units', '🔍 الوحدات الفعلية (DNA)']]) .map(([tab, label]) => (
+          <button key={tab} onClick={() => { setActiveTab(tab as any); setSearch('') }}
+            style={{ padding: '0.7rem 1.5rem', borderRadius: 12, fontWeight: 800, fontSize: '0.9rem', border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+              background: activeTab === tab ? 'linear-gradient(135deg, #06B6D4, #3B82F6)' : '#F1F5F9',
+              color: activeTab === tab ? '#0F172A' : '#475569',
+              boxShadow: activeTab === tab ? '0 4px 16px rgba(6,182,212,0.3)' : 'none'
+            }}>{label}</button>
+        ))}
+      </div>
 
-      <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+      <div style={{ ...card, padding: '1rem', marginBottom: '1.5rem' }}>
+        <input type="text" placeholder={activeTab === 'models' ? 'بحث باسم الموديل...' : 'بحث بالاسم أو السيريال...'} value={search} onChange={e=>setSearch(e.target.value)} style={inp} />
+      </div>
+
+      {/* ── Units Tab ── */}
+      {activeTab === 'units' && (
+        <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
+          {unitsLoading ? (
+            <div style={{ padding: '4rem', textAlign: 'center' }}><Loader2 size={36} className="animate-spin" style={{ margin: '0 auto', color: '#06B6D4' }} /></div>
+          ) : (
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+              <thead>
+                <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
+                  {['المنتج', 'السيريال / IMEI', 'اللون', 'المساحة', 'البطارية', 'الحالة', 'الموقع', 'سعر البيع'].map(h => (
+                    <th key={h} style={{ padding: '1rem', textAlign: 'right', fontWeight: 800, color: '#475569', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUnits.length === 0 && (
+                  <tr><td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#94A3B8' }}>لا توجد وحدات متاحة</td></tr>
+                )}
+                {filteredUnits.map((u: any, i) => {
+                  const isSerialized = u.serialNumber && !String(u.serialNumber).startsWith('BULK-')
+                  const battery = u.attributes?.batteryHealth
+                  return (
+                    <tr key={u._id || i} style={{ borderBottom: '1px solid #F1F5F9' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(6,182,212,0.03)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <td style={{ ...td, minWidth: 160 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <Package size={16} style={{ color: '#06B6D4', flexShrink: 0 }} />
+                          <span style={{ fontWeight: 800 }}>{u.productId?.name || '—'}</span>
+                        </div>
+                      </td>
+                      <td style={{ ...td, fontFamily: 'monospace', fontSize: '0.78rem', color: isSerialized ? '#0F172A' : '#94A3B8' }}>
+                        {isSerialized ? u.serialNumber : <span style={{ color: '#A855F7', fontWeight: 700 }}>بلك × {u.quantity}</span>}
+                      </td>
+                      <td style={{ ...td, color: '#7C3AED' }}>{u.attributes?.color || '—'}</td>
+                      <td style={{ ...td, color: '#2563EB' }}>{u.attributes?.storage || '—'}</td>
+                      <td style={{ ...td, color: battery && battery < 80 ? '#F59E0B' : '#10B981', fontWeight: 700 }}>
+                        {battery ? `${battery}%` : '—'}
+                      </td>
+                      <td style={td}>
+                        <span style={{ background: (u.attributes?.condition || '').toLowerCase() === 'used' ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)', color: (u.attributes?.condition || '').toLowerCase() === 'used' ? '#F59E0B' : '#22C55E', padding: '0.2rem 0.6rem', borderRadius: 6, fontSize: '0.75rem', fontWeight: 700 }}>
+                          {u.attributes?.condition || 'New'}
+                        </span>
+                      </td>
+                      <td style={{ ...td, color: '#FCD34D', fontWeight: 700 }}>
+                        {u.locationId?.name || u.locationType === 'MainWarehouse' ? 'المخزن الرئيسي' : '—'}
+                      </td>
+                      <td style={{ ...td, fontWeight: 900, color: '#06B6D4', direction: 'ltr' }}>
+                        {(u.productId?.price || 0).toLocaleString()} <span style={{ fontSize: '0.7rem', color: '#94A3B8' }}>ج.م</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+              <tfoot>
+                <tr style={{ background: 'rgba(6,182,212,0.04)', borderTop: '2px solid #06B6D4' }}>
+                  <td colSpan={7} style={{ padding: '1rem', fontWeight: 900, color: '#06B6D4' }}>إجمالي الوحدات المتاحة:</td>
+                  <td style={{ padding: '1rem', fontWeight: 950, color: '#0F172A' }}>{filteredUnits.length} وحدة</td>
+                </tr>
+              </tfoot>
+            </table>
+          )}
+        </div>
+      )}
+
+      {/* ── Models Tab ── */}
+      {activeTab === 'models' && <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'rgba(6,182,212,0.06)', borderBottom: '1px solid #E2E8F0' }}>
@@ -493,7 +598,7 @@ export default function ProductsPage() {
             ))}
           </tbody>
         </table>
-      </div>
+      </div>}
 
       <AnimatePresence>
         {waModal && (

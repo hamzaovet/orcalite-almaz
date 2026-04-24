@@ -13,33 +13,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'كلمة المرور مطلوبة' }, { status: 400 })
     }
 
-    // 1. Identify the current logged-in user from the cookie
+    // 1. Try to identify the current logged-in user first
     const token = (await cookies()).get('orca_auth')?.value
-    if (!token) {
-      return NextResponse.json({ success: false, message: 'غير مصرح لك بالوصول' }, { status: 401 })
+    let currentUserId: string | null = null
+
+    if (token) {
+      try {
+        const decoded: any = verifyToken(token)
+        currentUserId = decoded.sub || decoded.id || decoded._id || null
+      } catch { /* token invalid/expired — continue */ }
     }
 
-    let decoded: any
-    try {
-      decoded = verifyToken(token)
-    } catch (err) {
-      return NextResponse.json({ success: false, message: 'انتهت صلاحية الجلسة' }, { status: 401 })
+    // 2. Build a list of candidate admin users to verify against
+    //    Priority: current logged-in user → all SuperAdmin/Admin users
+    const adminRoles = ['SuperAdmin', 'Admin', 'مدير', 'سوبر ادمن']
+    const candidates = await User.find({
+      $or: [
+        ...(currentUserId ? [{ _id: currentUserId }] : []),
+        { role: { $in: adminRoles } }
+      ]
+    }).lean() as any[]
+
+    if (candidates.length === 0) {
+      return NextResponse.json({ success: false, message: 'لا يوجد مستخدم إداري في النظام' }, { status: 404 })
     }
 
-    // 2. Fetch the actual user to get the hashed password
-    const user = await User.findById(decoded.sub)
-    if (!user) {
-      return NextResponse.json({ success: false, message: 'المستخدم غير موجود' }, { status: 404 })
+    // 3. Check password against each candidate (stops at first match)
+    for (const user of candidates) {
+      const isMatch = await comparePassword(password, user.password as string)
+      if (isMatch) {
+        return NextResponse.json({ success: true, message: 'تم التحقق بنجاح' })
+      }
     }
 
-    // 3. Verify using bcrypt.compare
-    const isMatch = await comparePassword(password, user.password as string)
-    
-    if (isMatch) {
-      return NextResponse.json({ success: true, message: 'تم التحقق بنجاح' })
-    } else {
-      return NextResponse.json({ success: false, message: 'نعتذر، الرقم السري غير صحيح' }, { status: 403 })
-    }
+    return NextResponse.json({ success: false, message: 'نعتذر، كلمة المرور غير صحيحة' }, { status: 403 })
   } catch (error: any) {
     console.error('[Verify Admin API] Error:', error.message)
     return NextResponse.json({ success: false, message: 'حدث خطأ غير متوقع' }, { status: 500 })

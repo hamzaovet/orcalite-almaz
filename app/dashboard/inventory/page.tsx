@@ -13,12 +13,21 @@ export default function InventoryScannerPage() {
   const [productsInShipment, setProductsInShipment] = useState<any[]>([])
   const [selectedProduct, setSelectedProduct] = useState<string>('')
   const [businessType, setBusinessType] = useState('B2B_WHALE')
-  // DUAL TAB STATE
-  const [activeTab, setActiveTab] = useState<'RECEIVE' | 'AUDIT'>('RECEIVE')
+  // TAB STATE
+  const [activeTab, setActiveTab] = useState<'RECEIVE' | 'AUDIT' | 'PHYSICAL_COUNT'>('RECEIVE')
   const [auditUnits, setAuditUnits] = useState<any[]>([])
   const [branches, setBranches] = useState<any[]>([])
   const [selectedBranchFilter, setSelectedBranchFilter] = useState('all')
   const [auditLoading, setAuditLoading] = useState(false)
+
+  // PHYSICAL COUNT STATE
+  const [pcBranchId, setPcBranchId] = useState('')
+  const [pcInventory, setPcInventory] = useState<any[]>([])
+  const [pcLoading, setPcLoading] = useState(false)
+  const [pcCounts, setPcCounts] = useState<Record<string, number>>({})
+  const [pcVariances, setPcVariances] = useState<any[]>([])
+  const [pcPhase, setPcPhase] = useState<'input' | 'report' | 'done'>('input')
+  const [pcCommitting, setPcCommitting] = useState(false)
   
   const [imei, setImei] = useState('')
   const [loading, setLoading] = useState(false)
@@ -195,9 +204,74 @@ export default function InventoryScannerPage() {
     finally { setAuditLoading(false) }
   }
 
+  async function fetchPhysicalCountInventory(branchId: string) {
+    setPcLoading(true)
+    setPcInventory([])
+    setPcCounts({})
+    setPcVariances([])
+    setPcPhase('input')
+    try {
+      const res = await fetch(`/api/inventory/physical-count?branchId=${branchId || 'null'}`)
+      const data = await res.json()
+      if (data.success) {
+        setPcInventory(data.inventory || [])
+        // Pre-fill counts with current system qty
+        const defaults: Record<string, number> = {}
+        data.inventory.forEach((p: any) => { defaults[p.productId] = p.systemQty })
+        setPcCounts(defaults)
+      }
+    } catch (err) { console.error(err) }
+    finally { setPcLoading(false) }
+  }
+
+  async function runVarianceCheck() {
+    setPcCommitting(true)
+    try {
+      const items = pcInventory.map(p => ({
+        productId: p.productId,
+        physicalQty: pcCounts[p.productId] ?? p.systemQty
+      }))
+      const res = await fetch('/api/inventory/physical-count', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ branchId: pcBranchId || null, items, confirm: false })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setPcVariances(data.variances || [])
+        setPcPhase('report')
+      }
+    } catch (err) { console.error(err) }
+    finally { setPcCommitting(false) }
+  }
+
+  async function commitPhysicalCount() {
+    setPcCommitting(true)
+    try {
+      const items = pcInventory.map(p => ({
+        productId: p.productId,
+        physicalQty: pcCounts[p.productId] ?? p.systemQty
+      }))
+      const res = await fetch('/api/inventory/physical-count', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ branchId: pcBranchId || null, items, confirm: true })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setPcVariances(data.variances || [])
+        setPcPhase('done')
+        // Refresh audit data
+        setAuditUnits([])
+      }
+    } catch (err) { console.error(err) }
+    finally { setPcCommitting(false) }
+  }
+
   useEffect(() => {
-    if (activeTab === 'AUDIT') {
-       fetchAuditData()
+    if (activeTab === 'AUDIT') fetchAuditData()
+    if (activeTab === 'PHYSICAL_COUNT' && pcInventory.length === 0 && !pcLoading) {
+      fetchPhysicalCountInventory(pcBranchId)
     }
   }, [activeTab])
 
@@ -225,41 +299,53 @@ export default function InventoryScannerPage() {
     setProductsInShipment(Array.from(uniqueProductsMap.values()))
   }
 
-  // PHASE 107: FORCED AGGREGATION OVERRIDE
+  // Smart aggregation: serialized = one row per physical unit, bulk = aggregate by product+location
   const aggregatedAuditUnits = useMemo(() => {
-    // 1. First apply the branch filter to the raw data
-    const branchFiltered = selectedBranchFilter === 'all' 
-      ? auditUnits 
+    const branchFiltered = selectedBranchFilter === 'all'
+      ? auditUnits
       : auditUnits.filter(u => String(u.locationId?._id || u.locationId) === selectedBranchFilter || String(u.locationId?.name).includes(selectedBranchFilter))
 
-    // 2. Perform the exact reducer logic requested by CEO
-    const aggregated = branchFiltered.reduce((acc: any, item: any) => {
-      const prodId = String(item.productId?._id || item.productId || 'unknown');
-      const locName = item.locationId?.name || (item.locationType === 'MainWarehouse' ? 'المخزن الرئيسي' : item.locationId || 'Unknown');
-      const key = `${prodId}-${locName}`;
-      
-      const q = Number(item.quantity) || 1; // Must come from InventoryUnit directly!
+    const result: any[] = []
+    const bulkMap: Record<string, any> = {}
 
-      if (!acc[key]) {
-        const unitCost = item.landedCostEGP || item.productId?.costPrice || 0;
-        acc[key] = { 
-          ...item, 
-          aggregatedQty: q,
-          totalCost: unitCost * q,
-          displayLocation: locName
-        };
+    for (const item of branchFiltered) {
+      const isSerialized = item.serialNumber && !String(item.serialNumber).startsWith('BULK-')
+      const locName = item.locationId?.name || (item.locationType === 'MainWarehouse' ? 'المخزن الرئيسي' : 'غير محدد')
+      const unitCost = item.landedCostEGP || item.productId?.costPrice || 0
+      const qty = Number(item.quantity) || 1
+
+      if (isSerialized) {
+        // Each serialized device = its own row (preserve DNA)
+        result.push({
+          ...item,
+          aggregatedQty: 1,
+          totalCost: unitCost,
+          avgCost: unitCost,
+          displayLocation: locName,
+          displaySerial: item.serialNumber,
+          displayColor: item.attributes?.color || '',
+          displayStorage: item.attributes?.storage || '',
+          displayBattery: item.attributes?.batteryHealth ? `${item.attributes.batteryHealth}%` : '',
+          displayCondition: item.attributes?.condition || '',
+        })
       } else {
-        const unitCost = item.landedCostEGP || item.productId?.costPrice || 0;
-        acc[key].aggregatedQty += q;
-        acc[key].totalCost += (unitCost * q);
+        // Bulk: aggregate by product+location
+        const prodId = String(item.productId?._id || item.productId || 'unknown')
+        const key = `${prodId}-${locName}`
+        if (!bulkMap[key]) {
+          bulkMap[key] = { ...item, aggregatedQty: 0, totalCost: 0, displayLocation: locName, displaySerial: '', displayColor: '', displayStorage: '', displayBattery: '', displayCondition: '' }
+        }
+        bulkMap[key].aggregatedQty += qty
+        bulkMap[key].totalCost += unitCost * qty
       }
-      return acc;
-    }, {});
+    }
 
-    return Object.values(aggregated).map((item: any) => ({
-      ...item,
-      avgCost: item.aggregatedQty > 0 ? item.totalCost / item.aggregatedQty : 0
-    }));
+    // Merge bulk aggregated rows
+    for (const bulk of Object.values(bulkMap)) {
+      result.push({ ...bulk, avgCost: bulk.aggregatedQty > 0 ? bulk.totalCost / bulk.aggregatedQty : 0 })
+    }
+
+    return result
   }, [auditUnits, selectedBranchFilter])
 
   const auditTotals = useMemo(() => {
@@ -466,9 +552,148 @@ export default function InventoryScannerPage() {
          >
             <FileText size={20} /> جرد المخزن الفعلي
          </button>
+         <button 
+           onClick={() => setActiveTab('PHYSICAL_COUNT')}
+           style={{ padding: '0.8rem 2.5rem', borderRadius: 16, background: activeTab === 'PHYSICAL_COUNT' ? '#F59E0B' : 'transparent', color: activeTab === 'PHYSICAL_COUNT' ? '#000' : '#F59E0B', fontWeight: 900, fontSize: '1.1rem', border: '1px solid #F59E0B', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+         >
+            📋 الجرد اليدوي (فروق المخزون)
+         </button>
       </div>
 
-      {activeTab === 'AUDIT' ? (
+      {activeTab === 'PHYSICAL_COUNT' ? (
+        <div style={{ padding: '2.5rem', maxWidth: 1100, margin: '0 auto', width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
+            <div>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#F59E0B', margin: 0 }}>📋 الجرد اليدوي</h2>
+              <p style={{ color: '#475569', marginTop: '0.3rem', fontSize: '0.9rem' }}>أدخل الكميات الفعلية لكل منتج — سيظهر تقرير الفروق قبل الحفظ</p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <select
+                value={pcBranchId}
+                onChange={e => { setPcBranchId(e.target.value); fetchPhysicalCountInventory(e.target.value) }}
+                style={{ ...inputStyle, width: 220 }}
+              >
+                <option value="">المخزن الرئيسي</option>
+                {branches.map(b => <option key={b._id} value={b._id}>{b.name}</option>)}
+              </select>
+              {pcPhase === 'input' && (
+                <button
+                  onClick={runVarianceCheck}
+                  disabled={pcCommitting || pcInventory.length === 0}
+                  style={{ padding: '0.9rem 2rem', borderRadius: 14, background: '#F59E0B', color: '#000', border: 'none', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  {pcCommitting ? <Loader2 size={18} className="animate-spin" /> : '🔍'} احسب الفروق
+                </button>
+              )}
+              {pcPhase === 'report' && (
+                <>
+                  <button onClick={() => setPcPhase('input')} style={{ padding: '0.9rem 1.5rem', borderRadius: 14, background: '#F1F5F9', color: '#475569', border: 'none', fontWeight: 800, cursor: 'pointer' }}>تعديل</button>
+                  <button
+                    onClick={commitPhysicalCount}
+                    disabled={pcCommitting}
+                    style={{ padding: '0.9rem 2rem', borderRadius: 14, background: '#EF4444', color: '#fff', border: 'none', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    {pcCommitting ? <Loader2 size={18} className="animate-spin" /> : '✅'} اعتماد الجرد وتحديث المخزون
+                  </button>
+                </>
+              )}
+              {pcPhase === 'done' && (
+                <button onClick={() => { setPcPhase('input'); fetchPhysicalCountInventory(pcBranchId) }} style={{ padding: '0.9rem 2rem', borderRadius: 14, background: '#10B981', color: '#000', border: 'none', fontWeight: 900, cursor: 'pointer' }}>✓ تم الحفظ — جرد جديد</button>
+              )}
+            </div>
+          </div>
+
+          {pcLoading ? (
+            <div style={{ padding: '6rem', textAlign: 'center' }}><Loader2 size={40} className="animate-spin" style={{ margin: '0 auto', color: '#F59E0B' }} /></div>
+          ) : pcPhase === 'input' ? (
+            <div style={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: 20, overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(245,158,11,0.08)', borderBottom: '2px solid rgba(245,158,11,0.2)' }}>
+                    {['المنتج', 'التصنيف', 'رصيد النظام', 'العدد الفعلي (أدخله)'].map(h => (
+                      <th key={h} style={{ padding: '1.1rem', textAlign: 'right', color: '#92400E', fontWeight: 900 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {pcInventory.length === 0 && (
+                    <tr><td colSpan={4} style={{ padding: '3rem', textAlign: 'center', color: '#94A3B8' }}>لا يوجد مخزون في هذا الموقع</td></tr>
+                  )}
+                  {pcInventory.map((p: any) => (
+                    <tr key={p.productId} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>{p.productName}</td>
+                      <td style={{ padding: '0.9rem 1rem', color: '#64748B', fontSize: '0.85rem' }}>{p.category}</td>
+                      <td style={{ padding: '0.9rem 1rem', fontWeight: 900, color: '#06B6D4', textAlign: 'center' }}>{p.systemQty}</td>
+                      <td style={{ padding: '0.5rem 1rem' }}>
+                        <input
+                          type="number" min={0}
+                          value={pcCounts[p.productId] ?? p.systemQty}
+                          onChange={e => setPcCounts(prev => ({ ...prev, [p.productId]: Math.max(0, Number(e.target.value)) }))}
+                          style={{ width: 100, padding: '0.6rem', borderRadius: 10, border: '2px solid rgba(245,158,11,0.4)', background: '#FFFBEB', textAlign: 'center', fontWeight: 900, fontSize: '1.1rem', color: '#92400E', outline: 'none' }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            // Variance Report
+            <div>
+              {pcPhase === 'done' && (
+                <div style={{ padding: '1rem 1.5rem', background: 'rgba(16,185,129,0.1)', border: '1px solid #10B981', borderRadius: 14, marginBottom: '1.5rem', color: '#10B981', fontWeight: 900 }}>✅ تم اعتماد الجرد وتحديث أرصدة المخزون بنجاح</div>
+              )}
+              <div style={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: 20, overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                  <thead>
+                    <tr style={{ background: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
+                      {['المنتج', 'التصنيف', 'رصيد النظام', 'الجرد الفعلي', 'الفرق', 'الحالة', 'الأثر المالي'].map(h => (
+                        <th key={h} style={{ padding: '1rem', textAlign: 'right', color: '#475569', fontWeight: 900 }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pcVariances.map((v: any, i) => (
+                      <tr key={i} style={{
+                        borderBottom: '1px solid #F1F5F9',
+                        background: v.status === 'shortage' ? 'rgba(239,68,68,0.04)' : v.status === 'surplus' ? 'rgba(245,158,11,0.04)' : 'transparent'
+                      }}>
+                        <td style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>{v.productName}</td>
+                        <td style={{ padding: '0.9rem 1rem', color: '#64748B', fontSize: '0.82rem' }}>{v.category}</td>
+                        <td style={{ padding: '0.9rem 1rem', textAlign: 'center', fontWeight: 800, color: '#06B6D4' }}>{v.systemQty}</td>
+                        <td style={{ padding: '0.9rem 1rem', textAlign: 'center', fontWeight: 900 }}>{v.physicalQty}</td>
+                        <td style={{ padding: '0.9rem 1rem', textAlign: 'center', fontWeight: 900, color: v.diff < 0 ? '#EF4444' : v.diff > 0 ? '#F59E0B' : '#10B981', direction: 'ltr' }}>
+                          {v.diff > 0 ? `+${v.diff}` : v.diff}
+                        </td>
+                        <td style={{ padding: '0.9rem 1rem' }}>
+                          <span style={{
+                            padding: '4px 10px', borderRadius: 8, fontWeight: 800, fontSize: '0.78rem',
+                            background: v.status === 'shortage' ? 'rgba(239,68,68,0.12)' : v.status === 'surplus' ? 'rgba(245,158,11,0.12)' : 'rgba(16,185,129,0.12)',
+                            color: v.status === 'shortage' ? '#EF4444' : v.status === 'surplus' ? '#D97706' : '#10B981'
+                          }}>
+                            {v.status === 'shortage' ? '⚠️ عجز' : v.status === 'surplus' ? '📈 فائض' : '✓ مطابق'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '0.9rem 1rem', fontWeight: 800, color: v.status !== 'match' ? '#EF4444' : '#94A3B8' }}>
+                          {v.status !== 'match' ? `${v.impactEGP.toLocaleString()} ج.م` : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr style={{ background: '#F8FAFC', borderTop: '2px solid #E2E8F0' }}>
+                      <td colSpan={5} style={{ padding: '1rem', fontWeight: 900, color: '#475569' }}>إجمالي الأثر المالي للفروق:</td>
+                      <td colSpan={2} style={{ padding: '1rem', fontWeight: 900, color: '#EF4444', fontSize: '1.1rem' }}>
+                        {pcVariances.filter(v => v.status !== 'match').reduce((s: number, v: any) => s + v.impactEGP, 0).toLocaleString()} ج.م
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : activeTab === 'AUDIT' ? (
          <div style={{ padding: '2.5rem', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -498,38 +723,42 @@ export default function InventoryScannerPage() {
                {auditLoading ? (
                   <div style={{ padding: '5rem', textAlign: 'center' }}><Loader2 size={40} className="animate-spin" style={{ margin: '0 auto', color: '#A855F7' }} /></div>
                ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
                     <thead>
                       <tr style={{ background: 'rgba(168,85,247,0.1)', borderBottom: '1px solid rgba(168,85,247,0.2)' }}>
-                        {['المنتج', 'الموقع (الفرع)', 'الكمية', 'متوسط التكلفة (CPA)', 'القيمة الإجمالية'].map(h => <th key={h} style={{ padding: '1.2rem', textAlign: 'right', color: '#A855F7' }}>{h}</th>)}
+                        {['المنتج', 'الموقع (الفرع)', 'السيريال / IMEI', 'اللون', 'المساحة', 'البطارية', 'الكمية', 'متوسط التكلفة (CPA)', 'القيمة الإجمالية'].map(h => <th key={h} style={{ padding: '1rem', textAlign: 'right', color: '#A855F7', whiteSpace: 'nowrap' }}>{h}</th>)}
                       </tr>
                     </thead>
                     <tbody>
                        {aggregatedAuditUnits.length === 0 && (
-                          <tr><td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#475569' }}>لا توجد أجهزة متوفرة في هذا الموقع</td></tr>
+                          <tr><td colSpan={9} style={{ padding: '3rem', textAlign: 'center', color: '#475569' }}>لا توجد أجهزة متوفرة في هذا الموقع</td></tr>
                        )}
-                       {aggregatedAuditUnits.map((u: any, i) => {
-                          return (
-                            <tr key={u._id || `agg-${i}`} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                               <td style={{ padding: '1.2rem', fontWeight: 700 }}>
-                                 <button 
-                                   onClick={() => openLedger(u.productId?._id || u.productId, u.productId?.name, String(u.locationId?._id || u.locationId))}
-                                   style={{ background: 'transparent', border: 'none', color: '#06B6D4', fontWeight: 900, fontSize: '1rem', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
-                                 >
-                                   {u.productId?.name || '---'}
-                                 </button>
-                               </td>
-                               <td style={{ padding: '1.2rem', fontWeight: 800, color: '#FCD34D' }}>{u.displayLocation}</td>
-                               <td style={{ padding: '1.2rem', fontWeight: 900 }}>{u.aggregatedQty}</td>
-                               <td style={{ padding: '1.2rem', color: '#10B981', fontWeight: 800 }}>{u.avgCost.toLocaleString()} ج.م</td>
-                               <td style={{ padding: '1.2rem', color: '#0F172A', fontWeight: 900 }}>{(u.avgCost * u.aggregatedQty).toLocaleString()} ج.م</td>
-                            </tr>
-                          )
-                       })}
+                       {aggregatedAuditUnits.map((u: any, i) => (
+                         <tr key={u._id || `agg-${i}`} style={{ borderBottom: '1px solid #F1F5F9', background: u.displaySerial ? 'transparent' : 'rgba(168,85,247,0.02)' }}>
+                            <td style={{ padding: '0.9rem 1rem', fontWeight: 700 }}>
+                              <button
+                                onClick={() => openLedger(u.productId?._id || u.productId, u.productId?.name, String(u.locationId?._id || u.locationId))}
+                                style={{ background: 'transparent', border: 'none', color: '#06B6D4', fontWeight: 900, fontSize: '0.95rem', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
+                              >
+                                {u.productId?.name || '---'}
+                              </button>
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem', fontWeight: 800, color: '#FCD34D' }}>{u.displayLocation}</td>
+                            <td style={{ padding: '0.9rem 1rem', fontFamily: 'monospace', fontSize: '0.78rem', color: u.displaySerial ? '#0F172A' : '#94A3B8' }}>
+                              {u.displaySerial || <span style={{ color: '#94A3B8', fontSize: '0.8rem' }}>بلك</span>}
+                            </td>
+                            <td style={{ padding: '0.9rem 1rem', color: '#475569' }}>{u.displayColor || '—'}</td>
+                            <td style={{ padding: '0.9rem 1rem', color: '#475569' }}>{u.displayStorage || '—'}</td>
+                            <td style={{ padding: '0.9rem 1rem', color: u.displayBattery && parseInt(u.displayBattery) < 80 ? '#F59E0B' : '#10B981', fontWeight: 700 }}>{u.displayBattery || '—'}</td>
+                            <td style={{ padding: '0.9rem 1rem', fontWeight: 900, textAlign: 'center' }}>{u.aggregatedQty}</td>
+                            <td style={{ padding: '0.9rem 1rem', color: '#10B981', fontWeight: 800 }}>{Math.round(u.avgCost).toLocaleString()} ج.م</td>
+                            <td style={{ padding: '0.9rem 1rem', color: '#0F172A', fontWeight: 900 }}>{Math.round(u.avgCost * u.aggregatedQty).toLocaleString()} ج.م</td>
+                         </tr>
+                       ))}
                     </tbody>
                     <tfoot>
                       <tr style={{ background: 'rgba(16,185,129,0.05)', borderTop: '2px solid #10B981' }}>
-                         <td colSpan={2} style={{ padding: '1.2rem', fontWeight: 900, color: '#10B981', textAlign: 'left' }}>إجمالي المخزون المتاح:</td>
+                         <td colSpan={6} style={{ padding: '1.2rem', fontWeight: 900, color: '#10B981', textAlign: 'left' }}>إجمالي المخزون المتاح:</td>
                          <td style={{ padding: '1.2rem', fontWeight: 950, color: '#0F172A' }}>{auditTotals.totalQty} وحدة</td>
                          <td style={{ padding: '1.2rem', fontWeight: 950, color: '#10B981' }}>{auditTotals.totalValue.toLocaleString()} ج.م</td>
                          <td style={{ padding: '1.2rem' }}></td>

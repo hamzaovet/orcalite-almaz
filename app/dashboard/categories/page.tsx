@@ -204,11 +204,11 @@ export default function CategoriesPage() {
               layout 
               style={{
                 position: 'relative',
-                background: '#111827', // dark slate
+                background: '#FFFFFF', // White background
                 borderRadius: 24, 
                 padding: '2rem',
-                border: '1px solid rgba(6, 182, 212, 0.2)', 
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                border: '1px solid #F1F5F9', 
+                boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease-out',
                 cursor: 'pointer'
@@ -220,7 +220,7 @@ export default function CategoriesPage() {
               }}
               onMouseLeave={(e)=>{
                 e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.3)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.05)';
                 e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.2)';
               }}
             >
@@ -230,7 +230,7 @@ export default function CategoriesPage() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', zIndex: 1 }}>
-                <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(6,182,212,0.05) 100%)', border: '1px solid #CBD5E1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: 64, height: 64, borderRadius: 20, background: '#F8FAFC', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <DynamicIcon name={cat.icon || 'Tag'} size={32} color="#06B6D4" />
                 </div>
                 
@@ -243,7 +243,7 @@ export default function CategoriesPage() {
               
               <div style={{ position: 'relative', zIndex: 1 }}>
                 <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.4rem' }}>{cat.name}</h3>
-                <p style={{ fontSize: '0.9rem', color: 'rgba(6,182,212,0.7)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>{cat.slug}</p>
+                <p style={{ fontSize: '0.9rem', color: '#06B6D4', fontFamily: 'monospace', letterSpacing: '0.05em' }}>{cat.slug}</p>
               </div>
             </motion.div>
           ))}

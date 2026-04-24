@@ -11,6 +11,7 @@ const IMGBB_KEY = '1705736b8f2b46dcbaeec8a6025aca83'
 
 type Product = {
   _id: string
+  productId?: string
   name: string
   price: number
   stock: number
@@ -23,6 +24,12 @@ type Product = {
   taxValue?: number
   taxAmountEGP?: number
   taxPercentage?: number
+  // Per-unit DNA fields (from InventoryUnit.attributes)
+  storage?: string
+  color?: string
+  batteryHealth?: number | null
+  notes?: string
+  isSerialized?: boolean
 }
 
 type Category = {
@@ -90,7 +97,9 @@ export function CategoryClient({ category, products, settings }: { category: Cat
   const filteredProducts = products.filter(p => {
     if (filter === 'All') return true
     const cond = (p.condition || 'new').toLowerCase()
-    return cond === filter.toLowerCase()
+    // CEO Directive: Normalize conditions. Only 'new' or 'جديد' maps to New tab. Everything else (Used, A+, Kaser Zero) maps to Used.
+    const mappedTab = (cond === 'new' || cond === 'جديد') ? 'new' : 'used'
+    return mappedTab === filter.toLowerCase()
   })
 
   const Icon = getIcon(category.icon)

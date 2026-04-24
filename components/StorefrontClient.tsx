@@ -11,16 +11,23 @@ const IMGBB_KEY = '1705736b8f2b46dcbaeec8a6025aca83'
 
 type Product = {
   _id: string
+  productId?: string
   name: string
-  categoryId?: string | { _id: string, name: string }
   price: number
   stock: number
+  condition?: string
   specs?: string
   imageUrl?: string
   badge?: string
   description?: string
   taxPercentage?: number
   taxAmountEGP?: number
+  // Per-unit DNA fields (from InventoryUnit.attributes)
+  storage?: string
+  color?: string
+  batteryHealth?: number | null
+  notes?: string
+  isSerialized?: boolean
 }
 
 type Category = {

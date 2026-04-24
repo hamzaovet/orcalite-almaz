@@ -39,28 +39,43 @@ export async function POST(request: NextRequest) {
     const isMatch = await comparePassword(password, user.password)
     if (!isMatch) return NextResponse.json({ success: false, message: 'كلمة المرور غير صحيحة' }, { status: 403 })
 
-    const validRoles = ['admin', 'Admin', 'superadmin', 'SuperAdmin', 'owner']
-    // Provide a localized error message for forbidden cases
+    const validRoles = ['Admin', 'SuperAdmin', 'Manager', 'owner']
     if (!validRoles.includes(user.role)) {
-      return NextResponse.json({ success: false, message: 'غير مصرح لك (Forbidden)' }, { status: 403 })
+      return NextResponse.json({ success: false, message: 'غير مصرح لك بهذا الإجراء' }, { status: 403 })
     }
+
+    const isGlobal = user.role === 'SuperAdmin' || user.role === 'owner'
+    const branchId = user.branchId
+
+    if (!isGlobal && !branchId) {
+      return NextResponse.json({ success: false, message: 'لا يوجد فرع مرتبط بهذا المستخدم لتنفيذ التصفير المحلي' }, { status: 400 })
+    }
+
+    const filter = isGlobal ? {} : { branchId }
+    const invFilter = isGlobal ? {} : { locationId: branchId }
 
     // DO NOT DELETE: StoreSettings, User accounts, Branches
     await Promise.all([
-      Product.deleteMany({}),
-      Transaction.deleteMany({}),
-      Purchase.deleteMany({}),
-      Sale.deleteMany({}),
-      RepairTicket.deleteMany({}),
-      InventoryUnit.deleteMany({}),
-      DigitalWallet.deleteMany({}),
-      // Zero out Supplier balances (current and initial)
-      Supplier.updateMany({}, { $set: { balance: 0, initialBalance: 0 } }),
-      // Zero out Treasury accounts (current and initial)
-      InternalAccount.updateMany({}, { $set: { balance: 0, currentBalance: 0, initialBalance: 0 } }),
+      Product.deleteMany(filter),
+      Transaction.deleteMany(filter),
+      Purchase.deleteMany(filter),
+      Sale.deleteMany(filter),
+      RepairTicket.deleteMany(filter),
+      InventoryUnit.deleteMany(invFilter),
+      InternalAccount.updateMany(filter, { $set: { balance: 0, currentBalance: 0, initialBalance: 0 } }),
     ])
 
-    return NextResponse.json({ success: true, message: 'تم تصفير بيانات المتجر بنجاح' })
+    if (isGlobal) {
+      await Promise.all([
+        DigitalWallet.deleteMany({}),
+        Supplier.updateMany({}, { $set: { balance: 0, initialBalance: 0 } }),
+      ])
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: isGlobal ? 'تم تصفير كافة بيانات النظام بنجاح' : 'تم تصفير بيانات الفرع الحالي بنجاح' 
+    })
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 })
   }

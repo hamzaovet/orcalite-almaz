@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const units = await InventoryUnit.find(filter)
       .populate({
         path: 'productId', model: Product,
-        select: 'name price sellingPrice wholesalePriceEGP costPrice hasSerialNumbers categoryId category brand stock',
+        select: 'name price sellingPrice wholesalePriceEGP costPrice hasSerialNumbers isSerialized categoryId category brand stock condition imageUrl badge',
         populate: { path: 'categoryId', model: Category, select: 'name' }
       })
       .populate({ path: 'shipmentId', model: Shipment, select: 'shipmentNumber' })

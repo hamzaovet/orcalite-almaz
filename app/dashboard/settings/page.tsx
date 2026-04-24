@@ -472,7 +472,7 @@ export default function SettingsPage() {
           <AnimatePresence>
             {showAddForm && (
               <motion.form initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
-                onSubmit={handleAddUser} style={{ background: 'rgba(8,12,20,0.5)', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', border: '1px solid rgba(168,85,247,0.2)', overflow: 'hidden' }}>
+                onSubmit={handleAddUser} style={{ background: '#FFFFFF', borderRadius: 16, padding: '1.5rem', marginBottom: '2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', border: '1px solid rgba(168,85,247,0.2)', overflow: 'hidden' }}>
                 {[{ label: 'الاسم الكامل', key: 'name' }, { label: 'البريد الإلكتروني', key: 'email', type: 'email' }, { label: 'اسم المستخدم', key: 'username' }, { label: 'كلمة المرور', key: 'password', type: 'password' }].map((f) => (
                   <div key={f.key}>
                     <label style={lbl}>{f.label}</label>

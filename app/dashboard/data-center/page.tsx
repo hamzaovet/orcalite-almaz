@@ -12,13 +12,14 @@ type ParsedItem = {
   name: string
   categoryId: string
   qty: number
-  cost: number
-  price: number // Sale Price
-  serial: string
+  buyPrice: number
+  sellPrice: number
+  sku: string
   storage: string
   battery: string
   color: string
   notes: string
+  _isBulk?: boolean      // internal parser flag — true = accessory/bulk
   isDuplicate?: boolean
   dbProductId?: string
   status?: 'new' | 'existing'
@@ -30,6 +31,13 @@ type ParsedItem = {
 type PipeStatus = 'pending' | 'running' | 'done' | 'error'
 
 const BULK_CATEGORIES = ['إكسسوارات', 'قطع غيار', 'خدمات وشحن']
+// Normalize Arabic: remove hamza variants, taa marbuta, alef maqsoura differences
+const normAr = (s: string) => s.trim()
+  .replace(/[أإآ]/g, 'ا')
+  .replace(/ة$/, 'ه')
+  .replace(/ى$/, 'ي')
+  .replace(/\s+/g, ' ')
+const BULK_NORM = BULK_CATEGORIES.map(normAr)
 
 export default function DataCenterPage() {
   const [items, setItems] = useState<ParsedItem[]>([])
@@ -79,23 +87,52 @@ export default function DataCenterPage() {
     setToast({ msg, type }); setTimeout(() => setToast(null), 3500)
   }
 
+  // Flexible column reader — tries every key variant until one has a value
+  function col(row: any, ...keys: string[]): string {
+    // 1. Exact match priority
+    for (const k of keys) {
+      const v = row[k]
+      if (v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim()
+    }
+    // 2. Fuzzy match (e.g. 'الكمية او Qty' matches 'الكمية')
+    const rowKeys = Object.keys(row)
+    for (const k of keys) {
+      const fuzzyKey = rowKeys.find(rk => rk.toLowerCase().includes(k.toLowerCase()))
+      if (fuzzyKey) {
+        const v = row[fuzzyKey]
+        if (v !== undefined && v !== null && String(v).trim() !== '') return String(v).trim()
+      }
+    }
+    return ''
+  }
+
   function transformProductName(raw: string): string {
     if (!raw) return 'منتج غير معروف'
     let val = raw.trim()
-    
-    // Phase 37: Name Sanitization - Strip person names and 'جديد'
-    const namesToStrip = ['عبد العزيز', 'خالد', 'حاتم', 'جديد'];
-    const pattern = new RegExp(namesToStrip.join('|'), 'gi');
-    val = val.replace(pattern, '').replace(/\s+/g, ' ').trim();
 
-    // iPhone shorthand
-    if (/^(\d{2}|X|XR|XS|XS Max)$/i.test(val)) return `أيفون ${val}`
-    // Samsung (A series, S series, Note)
+    // Strip unwanted tokens
+    const namesToStrip = ['عبد العزيز', 'خالد', 'حاتم', 'جديد']
+    val = val.replace(new RegExp(namesToStrip.join('|'), 'gi'), '').replace(/\s+/g, ' ').trim()
+
+    // iPhone — handles both 'iPhone 14 Pro Max' and legacy shorthand '14'
+    const iphoneMatch = val.match(/^(?:iphone|ايفون|أيفون)\s*(.+)$/i)
+    if (iphoneMatch) return `أيفون ${iphoneMatch[1].trim()}`
+    if (/^(\d{2}|X|XR|XS|XS\s*Max|Pro\s*Max)$/i.test(val)) return `أيفون ${val}`
+
+    // Samsung
+    const samsungMatch = val.match(/^samsung\s*(.+)$/i)
+    if (samsungMatch) return `سامسونج ${samsungMatch[1].trim()}`
     if (/^(A|S|Note)\s?\d{1,2}/i.test(val)) return `سامسونج ${val}`
-    // Xiaomi / Poco (Note, Poco)
-    if (/^(Poco)\s?\w{1,3}/i.test(val)) return `بوكو ${val}`
+
+    // Xiaomi / Poco
+    const pocoMatch = val.match(/^poco\s*(.+)$/i)
+    if (pocoMatch) return `بوكو ${pocoMatch[1].trim()}`
     if (/^(Note)\s?\w{1,3}/i.test(val) && !val.toLowerCase().includes('samsung')) return `شاومي ${val}`
-    
+
+    // Huawei
+    const huaweiMatch = val.match(/^huawei\s*(.+)$/i)
+    if (huaweiMatch) return `هواوي ${huaweiMatch[1].trim()}`
+
     return val || 'منتج غير معروف'
   }
 
@@ -108,58 +145,77 @@ export default function DataCenterPage() {
 
       if (ext === 'xlsx' || ext === 'xls' || ext === 'csv') {
         const data = await selectedFile.arrayBuffer();
-        const workbook = XLSX.read(data);
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(worksheet) as any[];
-        
-        extracted = rows.map(r => {
-          const rawCat = String(r['التصنيف'] || r['القسم'] || r['Category'] || 'أجهزة محمولة').trim();
-          const matchedDbCat = dbCategories.find(c => c.name.toLowerCase() === rawCat.toLowerCase());
-          
-          // CEO PHASE 70: Dynamic Schema Detection
-          const isBulk = BULK_CATEGORIES.includes(rawCat) || (matchedDbCat && BULK_CATEGORIES.includes(matchedDbCat.name));
-
-          const rawName = String(r['اسم المنتج'] || r['البيان'] || r['الاسم'] || r['Product'] || '').trim();
-          const name = transformProductName(rawName);
-          
-          // If bulk, serial/storage/battery are ignored. Expected: 'الكمية'
-          const serial = isBulk ? 'لا يوجد' : (String(r['السيريال'] || r['السريال'] || r['Serial'] || r['IMEI'] || '').trim() || 'لا يوجد');
-          const storage = isBulk ? '' : String(r['المساحة'] || r['المساحه'] || r['Storage'] || '').trim();
-          
-          const rawBattery = isBulk ? '' : String(r['البطارية'] || r['Battery'] || '');
-          const batteryValue = rawBattery.replace(/\D/g, ''); 
-          const battery = batteryValue ? batteryValue + '%' : '';
-          
-          const color = String(r['اللون'] || r['Color'] || '').trim();
-          
-          const cost = Number(String(r['سعر الشراء'] || r['التكلفة'] || r['Cost'] || '0').replace(/,/g, '')) || 0;
-          const salePrice = Number(String(r['سعر البيع'] || r['السعر'] || r['Sale Price'] || '0').replace(/,/g, '')) || 0;
-          const finalSalePrice = (salePrice === 0) ? (cost + 2000) : salePrice;
-          
-          const rawNotes = String(r['الملاحظات'] || r['ملاحظات'] || r['Notes'] || r['البيان'] || '').trim();
-          const hasBox = rawNotes.toLowerCase().includes('علبة') || rawNotes.toLowerCase().includes('box');
-          const finalNotes = rawNotes + (hasBox && !rawNotes.toLowerCase().includes('علبة') ? ' (علبة)' : '');
-          
-          const rawCondition = String(r['الحالة'] || r['حالة الجهاز'] || r['Condition'] || '').trim();
-          const condition = rawCondition === 'جديد' ? 'New' : (rawCondition === 'مستعمل' ? 'Used' : 'New');
-
-          // Quantity Logic: use 'الكمية' for bulk, 1 for serialized
-          const qty = isBulk ? (Number(r['الكمية'] || r['الكميه'] || r['Qty'] || 1) || 1) : 1;
-
-          return {
-            categoryId: matchedDbCat ? matchedDbCat._id : (categoryId || ''),
-            name,
-            serial,
-            storage,
-            battery,
-            color,
-            cost,
-            price: finalSalePrice,
-            notes: finalNotes || 'تسوية جرد',
-            condition,
-            qty
-          }
+        const workbook = XLSX.read(data, {
+          // raw:false → reads numbers as their display string (prevents IMEI float-precision loss)
+          // cellText:true → ensures text cells come through as-is
+          raw: false, cellText: true
         });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        // defval:'' → fills missing cells with '' so no row is accidentally dropped
+        const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' }) as any[];
+
+        console.log(`[DataCenter] Raw rows from Excel: ${rows.length}`);
+
+        extracted = rows
+          .filter(r => Object.values(r).some(v => v !== '' && v !== null && v !== undefined))
+          .map(r => {
+            // ── Category ─────────────────────────────────────────────────────
+            const rawCat = col(r, 'التصنيف', 'القسم', 'Category', 'تصنيف');
+            // Fuzzy-match category: handles hamza/alef variants in Excel
+            const matchedDbCat = dbCategories.find((c: any) => normAr(c.name) === normAr(rawCat));
+
+            // ── Serial / IMEI ──────────────────────────────────────────────
+            const sku = col(r,
+              'السيريال', 'السريال', 'Serial', 'IMEI',
+              'IMEI / السيريال', 'السيريال / IMEI', 'IMEI/السيريال',
+              'IMEI / السريال', 'السيريال / IMEI',
+              'رقم السيريال', 'الإيمي', 'رقم تسلسلي', 'IMEI Number', 'serial number'
+            );
+
+            // ── DEFINITIVE bulk flag: determined by sku presence ──────────────────
+            const finalIsBulk = !sku;
+
+            // ── Device-only fields (blank for bulk) ────────────────────────
+            const storage = finalIsBulk ? '' : col(r, 'المساحة', 'المساحه', 'Storage', 'الذاكرة', 'السعة');
+            const rawBattery = finalIsBulk ? '' : col(r, 'البطارية', 'Battery', 'البطارية %', 'نسبة البطارية');
+            const batteryValue = rawBattery.replace(/\D/g, '');
+            const battery = batteryValue ? (parseInt(batteryValue, 10) + '%') : '';
+            const color = finalIsBulk ? '' : col(r, 'اللون', 'Color', 'اللون / Color');
+
+            // ── Prices ────────────────────────────────────────────────────
+            const rawBuy  = col(r, 'سعر الشراء', 'التكلفة', 'Cost', 'سعر الشراء (ج.م)', 'سعر الشراء (EGP)');
+            const rawSell = col(r, 'سعر البيع', 'السعر', 'Sale Price', 'سعر البيع (ج.م)', 'سعر البيع (EGP)');
+            const buyPrice  = Number(rawBuy.replace(/[,+A-Za-z\s]/g, ''))  || 0;
+            const sellPrice = Number(rawSell.replace(/[,+A-Za-z\s]/g, '')) || 0;
+
+            // ── Notes ─────────────────────────────────────────────────────
+            const rawNotes = col(r, 'الملاحظات', 'ملاحظات', 'Notes', 'البيان');
+            const finalNotes = rawNotes || 'تسوية جرد';
+
+            // ── Condition (devices only) ──────────────────────────────────
+            const rawCondition = finalIsBulk ? '' : col(r, 'الحالة', 'حالة الجهاز', 'Condition', 'الحاله');
+            const condition = rawCondition.includes('مستعمل') || rawCondition.toLowerCase().includes('used') ? 'Used' : 'New';
+
+            // ── Quantity ──────────────────────────────────────────────────
+            // Devices always 1; Bulk reads from qty column
+            const qtyRaw = col(r, 'الكمية', 'الكميه', 'Qty', 'العدد', 'الكمية المتاحة', 'الكمية الكلية');
+            const qty = finalIsBulk ? (Number(qtyRaw.replace(/[^\d.]/g, '')) || 1) : 1;
+
+            // ── Product Name ──────────────────────────────────────────────
+            const rawName = col(r, 'اسم المنتج', 'البيان', 'الاسم', 'Product', 'المنتج');
+            // Bulk: skip phone-name transformation (accessories aren't phones)
+            const name = finalIsBulk ? (rawName || 'منتج غير معروف') : transformProductName(rawName);
+
+            return {
+              categoryId: matchedDbCat ? matchedDbCat._id : (categoryId || ''),
+              _isBulk: finalIsBulk,
+              name, sku, storage, battery, color,
+              buyPrice, sellPrice,
+              notes: finalNotes,
+              condition, qty
+            }
+          })
+          .filter(e => e.name && e.name !== 'منتج غير معروف');
       } else if (ext === 'pdf') {
         const formData = new FormData();
         formData.append('file', selectedFile);
@@ -169,8 +225,9 @@ export default function DataCenterPage() {
           extracted = json.data.map((d: any) => ({ 
             ...d, 
             categoryId, 
-            serial: d.serial || 'لا يوجد',
-            price: d.price || (d.cost + 2000),
+            sku: d.sku || d.serial || '',
+            sellPrice: d.sellPrice || d.price || 0,
+            buyPrice: d.buyPrice || d.cost || 0,
             notes: d.notes || 'تسوية جرد',
             condition: d.condition === 'New' || d.condition === 'Used' ? d.condition : 'New'
           }));
@@ -187,7 +244,7 @@ export default function DataCenterPage() {
         setDbProducts(existingProds)
 
         // 2. Duplicate Serial Check
-        const serials = extracted.map(e => e.serial).filter(s => s && s.length > 5)
+        const serials = extracted.map(e => e.sku).filter(s => s && s.length > 5)
         let dupSet = new Set<string>()
         if (serials.length > 0) {
           const checkRes = await fetch('/api/products/check-serials', {
@@ -209,7 +266,7 @@ export default function DataCenterPage() {
             ...e,
             dbProductId: match?._id,
             status: match ? 'existing' : 'new',
-            isDuplicate: dupSet.has(e.serial)
+            isDuplicate: dupSet.has(e.sku)
           }
         })
 
@@ -235,73 +292,90 @@ export default function DataCenterPage() {
     setProcessedCount(0)
     
     try {
-      const reconciledItems = []
-      
-      // Pipe 1: Create/Match Products (Global Master Establishment)
+      const reconciledItems: any[] = []
+      // Cache: modelKey → productId  (prevents duplicate Product creation within the same batch)
+      const modelProductCache: Record<string, string> = {}
+
+      // ── Pipe 1: Find-or-Create Product PER MODEL (not per serial) ─────────────
       for (const [idx, it] of items.entries()) {
-        if (it.isDuplicate) {
-          setProcessedCount(idx + 1)
-          continue
+        if (it.isDuplicate) { setProcessedCount(idx + 1); continue }
+
+        // A serialized item is one explicitly NOT bulk (has a real IMEI/serial)
+        const isSerialized = !it._isBulk
+
+        // Model key = name + categoryId + serialized flag
+        const modelKey = `${it.name.toLowerCase().trim()}|${it.categoryId}|${isSerialized}`
+
+        let productId: string | undefined = modelProductCache[modelKey] || it.dbProductId
+
+        // If no cached/matched product → try to find by name+category in the global list first
+        if (!productId) {
+          const existingModel = dbProducts.find((p: any) =>
+            p.name.toLowerCase().trim() === it.name.toLowerCase().trim() &&
+            String(p.categoryId?._id || p.categoryId) === String(it.categoryId) &&
+            Boolean(p.isSerialized ?? p.hasSerialNumbers) === isSerialized
+          )
+          if (existingModel) productId = existingModel._id
         }
 
-        let productId = it.dbProductId
-        
-        // Local cache check for same-batch duplicates
-        const localMatch = reconciledItems.find(fi => 
-          fi.name.toLowerCase().trim() === it.name.toLowerCase().trim() && 
-          String(fi.categoryId) === String(it.categoryId)
-        )
-        if (localMatch?.productId) {
-          productId = localMatch.productId
-        }
-
-        if (!productId && it.status === 'new') {
+        // Still not found → create the model Product (once per model, no serialNumber stored here)
+        if (!productId) {
+          const catName = dbCategories.find((c: any) => c._id === it.categoryId)?.name || 'أجهزة محمولة'
           const pRes = await fetch('/api/products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               name: it.name,
-              categoryId: (it.categoryId && it.categoryId.length === 24) ? it.categoryId : (dbCategories[0]?._id),
-              category: dbCategories.find(c => c._id === it.categoryId)?.name || 'أجهزة محمولة',
-              price: it.price,
-              costPrice: it.cost,
+              categoryId: (it.categoryId && it.categoryId.length === 24) ? it.categoryId : dbCategories[0]?._id,
+              category: catName,
+              price: it.sellPrice,
+              costPrice: it.buyPrice,
               stock: 0,
               condition: (it.condition || 'New').toLowerCase(),
-              isSerialized: it.serial !== 'لا يوجد',
-              hasSerialNumbers: it.serial !== 'لا يوجد',
-              serialNumber: it.serial !== 'لا يوجد' ? it.serial : undefined,
-              storage: it.storage,
-              color: it.color,
-              batteryHealth: it.battery,
+              isSerialized,
+              hasSerialNumbers: isSerialized,
+              // IMPORTANT: Do NOT attach serialNumber to the Product model
+              // Individual unit serials live on InventoryUnit.serialNumber
               description: it.notes
             })
           })
           const pData = await pRes.json()
           if (!pData.success) {
-             setPipe1('error')
-             return showToast(`فشل Pipe 1: ${pData.message}`, 'err')
+            setPipe1('error')
+            return showToast(`فشل Pipe 1: ${pData.message}`, 'err')
           }
           productId = pData.product._id
         }
 
+        // Cache so the next row with the same model reuses it
+        if (productId) modelProductCache[modelKey] = productId
+
+        // Build the payload the reconcile API expects
         reconciledItems.push({
-          ...it,
-          productId: productId
+          productId,
+          // Correct field names expected by reconcile/route.ts
+          serial: it.sku,          // ← was wrongly sent as 'sku'
+          cost: it.buyPrice,       // ← was wrongly sent as 'buyPrice'
+          sellPrice: it.sellPrice,
+          qty: it.qty,
+          storage: it.storage,
+          color: it.color,
+          battery: it.battery,
+          condition: it.condition,
+          notes: it.notes,
+          isSerialized,            // ← tells the API how to handle this unit
         })
 
         setProcessedCount(idx + 1)
       }
       setPipe1('done')
 
-      // Pipe 3: Reconciliation Engine (Direct Inventory Adjustment)
+      // ── Pipe 3: Reconciliation Engine ──────────────────────────────────────────
       setPipe3('running')
       const reconRes = await fetch('/api/inventory/reconcile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: reconciledItems,
-          branchId: branchId
-        })
+        body: JSON.stringify({ items: reconciledItems, branchId })
       })
       const reconData = await reconRes.json()
       if (!reconData.success) {
@@ -419,7 +493,12 @@ export default function DataCenterPage() {
             <div style={{ ...cardStyle, background: 'rgba(34,197,94,0.03)', borderColor: 'rgba(34,197,94,0.2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ color: '#22C55E', fontWeight: 900, fontSize: '1.3rem' }}>مطابقة الجرد الفعلي</h3>
-                <p style={{ color: '#475569', marginTop: '0.3rem' }}>تم استخراج {items.length} عنصر للمطابقة. الكميات الموضحة ستصبح هي الكميات النهائية في المخزن.</p>
+                <p style={{ color: '#475569', marginTop: '0.3rem' }}>
+                  تم استخراج <strong style={{ color: '#22C55E' }}>{items.length}</strong> عنصر
+                  {' · '}مسلسل: <strong style={{ color: '#06B6D4' }}>{items.filter(i => i.sku).length}</strong>
+                  {' · '}بدون سيريال: <strong style={{ color: '#A855F7' }}>{items.filter(i => !i.sku).length}</strong>
+                  {items.some(i => i.isDuplicate) && (<span style={{ color: '#EF4444', marginRight: '0.5rem' }}> · ⚠️ مكرر: {items.filter(i => i.isDuplicate).length}</span>)}
+                </p>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <button onClick={() => setStep(1)} style={{ padding: '0.8rem 1.5rem', borderRadius: 12, background: '#F8FAFC', color: '#475569', border: 'none', fontWeight: 700, cursor: 'pointer' }}>تراجع</button>
@@ -429,49 +508,100 @@ export default function DataCenterPage() {
 
             <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', tableLayout: 'fixed' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.88rem' }}>
                   <thead>
-                    <tr style={{ background: '#ECFEFF', borderBottom: '1px solid rgba(6,182,212,0.2)' }}>
-                      <th style={{ padding: '1.25rem', width: '130px' }}>التصنيف</th>
-                      <th style={{ padding: '1.25rem', width: '220px' }}>اسم المنتج</th>
-                      <th style={{ padding: '1.25rem', width: '90px' }}>العدد الفعلي</th>
-                      <th style={{ padding: '1.25rem', width: '180px' }}>السيريال / SKU</th>
-                      <th style={{ padding: '1.25rem', width: '180px' }}>تكلفة الوحدة</th>
-                      <th style={{ padding: '1.25rem', width: '250px' }}>البيان / ملاحظات التسوية</th>
-                      <th style={{ padding: '1.25rem', width: '100px' }}>الحالة</th>
+                    <tr style={{ background: '#ECFEFF', borderBottom: '2px solid rgba(6,182,212,0.2)' }}>
+                      <th style={{ padding: '1rem', width: '50px', color: '#94A3B8' }}>#</th>
+                      <th style={{ padding: '1rem', width: '120px' }}>التصنيف</th>
+                      <th style={{ padding: '1rem', minWidth: '200px' }}>اسم المنتج</th>
+                      <th style={{ padding: '1rem', width: '80px' }}>الكمية</th>
+                      {/* Device-only columns — shown only when at least one serialized row exists */}
+                      {items.some(x => !(x as any)._isBulk) && (<>
+                        <th style={{ padding: '1rem', width: '170px' }}>السيريال / IMEI</th>
+                        <th style={{ padding: '1rem', width: '90px' }}>اللون</th>
+                        <th style={{ padding: '1rem', width: '75px' }}>البطارية</th>
+                        <th style={{ padding: '1rem', width: '75px' }}>المساحة</th>
+                        <th style={{ padding: '1rem', width: '100px' }}>الحالة</th>
+                      </>)}
+                      <th style={{ padding: '1rem', width: '100px' }}>سعر الشراء</th>
+                      <th style={{ padding: '1rem', width: '100px' }}>سعر البيع</th>
+                      <th style={{ padding: '1rem', minWidth: '160px' }}>البيان</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {items.map((it, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #F1F5F9', background: i % 2 === 0 ? 'transparent' : 'transparent' }}>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                          <select value={it.categoryId} onChange={e => updateItem(i, 'categoryId', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem' }}>
-                            <option value="">-- التصنيف --</option>
-                            {dbCategories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                          </select>
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                           <input value={it.name} onChange={e => updateItem(i, 'name', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.9rem', width: '100%' }} />
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                          <input type="number" value={it.qty} onChange={e => updateItem(i, 'qty', Number(e.target.value))} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.9rem', textAlign: 'center' }} />
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                          <input disabled={it.serial === 'لا يوجد'} value={it.serial} onChange={e => updateItem(i, 'serial', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem', fontFamily: 'monospace' }} />
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                          <input type="number" value={it.cost} onChange={e => updateItem(i, 'cost', Number(e.target.value))} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem', textAlign: 'right' }} />
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                          <input value={it.notes} onChange={e => updateItem(i, 'notes', e.target.value)} style={{ ...inpStyle, padding: '0.6rem', fontSize: '0.85rem' }} placeholder="البيان..." />
-                        </td>
-                        <td style={{ padding: '0.75rem 1rem' }}>
-                           <span style={{ fontSize: '0.75rem', background: '#ECFEFF', color: '#06B6D4', padding: '4px 8px', borderRadius: 8, fontWeight: 800 }}>
-                              {it.status === 'existing' ? 'موجود' : 'جديد'}
-                           </span>
-                        </td>
-                      </tr>
-                    ))}
+                    {items.map((it, i) => {
+                      const isBulkRow = (it as any)._isBulk
+                      const hasSerialized = items.some(x => !(x as any)._isBulk)
+                      const rowBg = isBulkRow ? 'rgba(168,85,247,0.03)' : 'transparent'
+                      return (
+                        <tr key={i} style={{ borderBottom: '1px solid #F1F5F9', background: rowBg }}>
+                          <td style={{ padding: '0.6rem 0.5rem', textAlign: 'center', color: '#94A3B8', fontSize: '0.75rem' }}>
+                            {isBulkRow
+                              ? <span style={{ background: 'rgba(168,85,247,0.1)', color: '#A855F7', padding: '0.2rem 0.5rem', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700 }}>بلك</span>
+                              : <span style={{ background: 'rgba(6,182,212,0.1)', color: '#06B6D4', padding: '0.2rem 0.5rem', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700 }}>جهاز</span>
+                            }
+                          </td>
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            <select value={it.categoryId} onChange={e => updateItem(i, 'categoryId', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem' }}>
+                              <option value="">-- التصنيف --</option>
+                              {dbCategories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                            </select>
+                          </td>
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            <input value={it.name} onChange={e => updateItem(i, 'name', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.83rem' }} />
+                          </td>
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            {isBulkRow
+                              ? <input type="number" min={1} value={it.qty || ''} onChange={e => updateItem(i, 'qty', parseFloat(e.target.value) || 1)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.9rem', textAlign: 'center', fontWeight: 800 }} />
+                              : <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, color: '#475569' }}>1</span>
+                            }
+                          </td>
+                          {/* Device-only cells */}
+                          {hasSerialized && (<>
+                            <td style={{ padding: '0.6rem 0.5rem' }}>
+                              {isBulkRow
+                                ? <span style={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block', textAlign: 'center' }}>—</span>
+                                : <input value={it.sku || ''} placeholder="IMEI..." onChange={e => updateItem(i, 'sku', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem', fontFamily: 'monospace' }} />}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.5rem' }}>
+                              {isBulkRow
+                                ? <span style={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block', textAlign: 'center' }}>—</span>
+                                : <input value={it.color || ''} placeholder="اللون" onChange={e => updateItem(i, 'color', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem' }} />}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.5rem' }}>
+                              {isBulkRow
+                                ? <span style={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block', textAlign: 'center' }}>—</span>
+                                : <input value={it.battery || ''} placeholder="%" onChange={e => updateItem(i, 'battery', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem', textAlign: 'center' }} />}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.5rem' }}>
+                              {isBulkRow
+                                ? <span style={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block', textAlign: 'center' }}>—</span>
+                                : <input value={it.storage || ''} placeholder="GB" onChange={e => updateItem(i, 'storage', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem', textAlign: 'center' }} />}
+                            </td>
+                            <td style={{ padding: '0.6rem 0.5rem' }}>
+                              {isBulkRow
+                                ? <span style={{ color: '#94A3B8', fontSize: '0.75rem', display: 'block', textAlign: 'center' }}>—</span>
+                                : <select value={it.condition} onChange={e => updateItem(i, 'condition', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.8rem', background: '#F0FDF4', borderColor: '#BBF7D0' }}>
+                                    <option value="New">جديد</option>
+                                    <option value="Used">مستعمل</option>
+                                    <option value="Kaser Zero">كسر زيرو</option>
+                                    <option value="A+">A+</option>
+                                  </select>
+                              }
+                            </td>
+                          </>)}
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            <input type="number" value={it.buyPrice || ''} onChange={e => updateItem(i, 'buyPrice', parseFloat(e.target.value) || 0)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.83rem', textAlign: 'center' }} />
+                          </td>
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            <input type="number" value={it.sellPrice || ''} onChange={e => updateItem(i, 'sellPrice', parseFloat(e.target.value) || 0)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.83rem', textAlign: 'center' }} />
+                          </td>
+                          <td style={{ padding: '0.6rem 0.5rem' }}>
+                            <input value={it.notes} onChange={e => updateItem(i, 'notes', e.target.value)} style={{ ...inpStyle, padding: '0.5rem', fontSize: '0.82rem' }} placeholder="البيان..." />
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>

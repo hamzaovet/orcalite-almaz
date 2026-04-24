@@ -14,90 +14,114 @@ export async function POST(request: NextRequest) {
     }
 
     const { Types } = mongoose;
-    const locId = (branchId && branchId !== 'all' && branchId !== 'null') ? new Types.ObjectId(branchId) : null;
+    const locId = (branchId && branchId !== 'all' && branchId !== 'null')
+      ? new Types.ObjectId(branchId)
+      : null;
     const locType = locId ? 'Branch' : 'MainWarehouse';
 
     const modifiedProductIds = new Set<string>();
 
     for (const item of items) {
+      if (!item.productId) continue;
       const productId = new Types.ObjectId(item.productId);
       modifiedProductIds.add(item.productId);
 
-      const isBulk = item.serial === 'لا يوجد' || !item.serial || String(item.serial).startsWith('BULK-');
-      
-      if (!isBulk) {
-        // --- SERIALIZED RECONCILIATION ---
-        // Overwrite or Create based on Serial Number
+      // ── Determine if this unit is serialized ─────────────────────────────────
+      // Priority: explicit flag sent by the frontend, then fall back to serial presence
+      const isSerialized: boolean =
+        item.isSerialized !== undefined
+          ? Boolean(item.isSerialized)
+          : Boolean(item.serial && String(item.serial).trim().length > 3);
+
+      const serial: string = isSerialized ? String(item.serial || '').trim() : '';
+
+      // Normalise battery: "85%" → 85, 85 → 85
+      const rawBattery = String(item.battery || '').replace(/\D/g, '');
+      const batteryHealth = rawBattery ? parseInt(rawBattery, 10) : undefined;
+
+      // Normalise condition (DB enum: 'New' | 'Used')
+      const rawCond = String(item.condition || 'New');
+      const condition: 'New' | 'Used' = rawCond === 'Used' ? 'Used' : 'New';
+
+      const landedCost = Number(item.cost) || 0;
+
+      if (isSerialized && serial) {
+        // ── SERIALIZED UNIT: one InventoryUnit per physical device ──────────────
+        // Each has a unique serialNumber that IS its identity.
         await InventoryUnit.findOneAndUpdate(
-          { serialNumber: item.serial },
+          { serialNumber: serial },
           {
             $set: {
-              productId: productId,
+              productId,
+              serialNumber: serial,
               status: 'Available',
               locationType: locType,
               locationId: locId,
-              landedCostEGP: Number(item.cost) || 0,
-              quantity: 1,
-              'attributes.condition': item.condition || 'New',
+              landedCostEGP: landedCost,
+              quantity: 1,                       // Always 1 for a serialized unit
+              'attributes.condition': condition,
               'attributes.storage': item.storage || undefined,
               'attributes.color': item.color || undefined,
-              'attributes.batteryHealth': item.battery ? parseInt(String(item.battery).replace(/\D/g, ''), 10) : undefined,
-              'attributes.notes': item.notes
+              'attributes.batteryHealth': batteryHealth,
+              'attributes.notes': item.notes || undefined,
             }
           },
           { upsert: true, new: true }
         );
       } else {
-        // --- BULK RECONCILIATION (ACCESSORIES) ---
-        // Overwrite quantity for the matching set (Product + Location + Spec)
+        // ── BULK UNIT (Accessories / Non-serialized) ────────────────────────────
+        // One InventoryUnit per (Product + Location + Spec combo).
         const filter: any = {
-          productId: productId,
+          productId,
           locationId: locId,
           'attributes.storage': item.storage || undefined,
           'attributes.color': item.color || undefined,
-          'attributes.condition': item.condition || 'New'
+          'attributes.condition': condition,
         };
 
         const existing = await InventoryUnit.findOne(filter);
+        const physicalQty = Number(item.qty) || 0;
 
         if (existing) {
-          // STRICT OVERWRITE: The physical count is the final truth
-          existing.quantity = Number(item.qty) || 0;
-          existing.landedCostEGP = Number(item.cost) || existing.landedCostEGP;
+          // STRICT OVERWRITE: the physical count is the final truth
+          existing.quantity = physicalQty;
+          existing.landedCostEGP = landedCost || existing.landedCostEGP;
           existing.attributes.notes = item.notes;
           existing.status = 'Available';
           await existing.save();
         } else {
-          // CREATE NEW BULK UNIT
+          // Create a new bulk InventoryUnit with a synthetic serial key
           await InventoryUnit.create({
             serialNumber: 'BULK-' + new Types.ObjectId().toString(),
-            productId: productId,
+            productId,
             status: 'Available',
             locationType: locType,
             locationId: locId,
-            landedCostEGP: Number(item.cost) || 0,
-            quantity: Number(item.qty) || 0,
+            landedCostEGP: landedCost,
+            quantity: physicalQty,
             attributes: {
-              condition: item.condition || 'New',
+              condition,
               storage: item.storage || undefined,
               color: item.color || undefined,
-              notes: item.notes
+              notes: item.notes || undefined,
             }
           });
         }
       }
     }
 
-    // --- ATOMIC STOCK RECOVERY ---
-    // Recalculate global Product.stock for all affected products
+    // ── Recalculate Product.stock for every affected product ──────────────────
     for (const pId of modifiedProductIds) {
-      const units = await InventoryUnit.find({ productId: new Types.ObjectId(pId), status: 'Available' });
+      const units = await InventoryUnit.find({
+        productId: new Types.ObjectId(pId),
+        status: 'Available'
+      });
       const totalStock = units.reduce((sum, u) => sum + (u.quantity || 0), 0);
       await Product.findByIdAndUpdate(pId, { $set: { stock: totalStock } });
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Physical reconciliation complete. Stock totals recalculated.',
       itemCount: items.length
     });

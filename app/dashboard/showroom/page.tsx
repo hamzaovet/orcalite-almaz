@@ -29,16 +29,54 @@ export default function ShowroomPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch('/api/inventory?status=Available')
       .then(res => res.json())
       .then(data => {
-        setProducts(data.products || [])
+        const units: any[] = data.units ?? data.inventory ?? []
+        
+        // Build per-unit listings exactly like app/page.tsx
+        const listingMap = new Map<string, Product>()
+        
+        for (const unit of units) {
+          const prod = unit.productId
+          if (!prod) continue
+          
+          const isSerialized = prod.isSerialized !== false && prod.hasSerialNumbers !== false
+          const hasFakeSerial = String(unit.serialNumber || '').startsWith('BULK-')
+          
+          if (isSerialized && !hasFakeSerial) {
+            // Each unit = its own card
+            listingMap.set(String(unit._id), {
+              _id: String(unit._id),
+              name: prod.name,
+              price: prod.price ?? 0,
+              stock: 1,
+              category: prod.categoryId || prod.category || '',
+              imageUrl: prod.imageUrl || '',
+              color: unit.attributes?.color || '',
+              storage: unit.attributes?.storage || '',
+              batteryHealth: unit.attributes?.batteryHealth ? `${unit.attributes.batteryHealth}%` : '',
+              condition: unit.attributes?.condition || prod.condition || 'new',
+              description: '',
+            })
+          } else {
+            // Bulk: aggregate by productId
+            const pid = String(prod._id)
+            if (!listingMap.has(pid)) {
+              listingMap.set(pid, {
+                _id: pid, name: prod.name, price: prod.price ?? 0,
+                stock: 0, category: prod.categoryId || prod.category || '',
+                imageUrl: prod.imageUrl || '', condition: prod.condition || 'new',
+              })
+            }
+            listingMap.get(pid)!.stock += (unit.quantity || 0)
+          }
+        }
+        
+        setProducts(Array.from(listingMap.values()).filter(l => l.stock > 0))
         setLoading(false)
       })
-      .catch(err => {
-        console.error('Failed to load products:', err)
-        setLoading(false)
-      })
+      .catch(err => { console.error('Failed to load inventory:', err); setLoading(false) })
   }, [])
 
   const filtered = products.filter(p => 

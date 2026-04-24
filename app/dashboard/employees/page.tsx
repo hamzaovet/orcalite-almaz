@@ -119,7 +119,7 @@ export default function EmployeesPage() {
 
   /* ── UI Elements ── */
   const inpProps = { style: {
-    width: '100%', padding: '0.8rem 1rem', borderRadius: 12, border: '1px solid #E2E8F0', background: '#0a0a0a', color: '#0F172A', outline: 'none', fontFamily: 'inherit', marginTop: '0.35rem'
+    width: '100%', padding: '0.8rem 1rem', borderRadius: 12, border: '1px solid #E2E8F0', background: '#ECFEFF', color: '#0F172A', outline: 'none', fontFamily: 'inherit', marginTop: '0.35rem'
   }}
   const lblStyle = { fontSize: '0.8rem', fontWeight: 600, color: '#475569' }
 
@@ -151,13 +151,13 @@ export default function EmployeesPage() {
            <Loader2 size={24} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
         </div>
       ) : (
-        <div style={{ background: '#111111', borderRadius: 16, border: '1px solid #F1F5F9', overflow: 'hidden' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: 16, border: '1px solid #F1F5F9', overflow: 'hidden' }}>
           {users.length === 0 ? (
             <div style={{ padding: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>لا توجد موظفين حتى الآن.</div>
           ) : (
             <table style={{ width: '100%', textAlign: 'right', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
-                <tr style={{ background: '#0a0a0a', borderBottom: '1px solid #F1F5F9' }}>
+                <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #F1F5F9' }}>
                   <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600 }}>الاسم بالكامل</th>
                   <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600 }}>إسم الدخول</th>
                   <th style={{ padding: '1rem 1.5rem', color: '#475569', fontWeight: 600 }}>الصلاحية</th>
@@ -169,7 +169,7 @@ export default function EmployeesPage() {
                 {users.map(u => (
                   <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.2s', ...({ ':hover': { background: '#F8FAFC' } } as any) }}>
                     <td style={{ padding: '1.25rem 1.5rem', fontWeight: 600, color: '#0F172A' }}>{u.name}</td>
-                    <td style={{ padding: '1.25rem 1.5rem', color: 'rgba(255,255,255,0.7)', fontFamily: 'monospace' }}>@{u.username}</td>
+                    <td style={{ padding: '1.25rem 1.5rem', color: '#475569', fontFamily: 'monospace' }}>@{u.username}</td>
                     <td style={{ padding: '1.25rem 1.5rem' }}>
                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.8rem', borderRadius: 50, fontSize: '0.75rem', fontWeight: 700, 
                           background: u.role === 'SuperAdmin' || u.role === 'Admin' ? 'rgba(239,68,68,0.1)' : u.role === 'Manager' ? 'rgba(14,165,233,0.1)' : 'rgba(34,197,94,0.1)',
@@ -186,7 +186,7 @@ export default function EmployeesPage() {
                            {u.branchName}
                          </span>
                        ) : (
-                         <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem' }}>عالمي (Global Access)</span>
+                         <span style={{ color: '#64748B', fontSize: '0.8rem' }}>عالمي (Global Access)</span>
                        )}
                     </td>
                     <td style={{ padding: '1.25rem 1.5rem' }}>
@@ -206,7 +206,7 @@ export default function EmployeesPage() {
       {/* Modal */}
       {modal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '1rem' }}>
-          <form style={{ background: '#111', border: '1px solid #E2E8F0', width: '100%', maxWidth: 480, borderRadius: 20, padding: '2rem' }} onSubmit={handleSave}>
+          <form style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', width: '100%', maxWidth: 480, borderRadius: 20, padding: '2rem' }} onSubmit={handleSave}>
              <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0F172A', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                <Shield size={20} color="#0ea5e9" />
                {form.id ? 'تعديل بيانات الموظف' : 'تسجيل موظف جديد'}
@@ -229,7 +229,7 @@ export default function EmployeesPage() {
                     {form.id && <span style={{ color: '#f59e0b', fontSize: '0.7rem', marginRight: '0.5rem' }}>(اتركه فارغاً إذا لم ترغب بتغييره)</span>}
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <KeyRound size={16} color="rgba(255,255,255,0.4)" style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)' }} />
+                    <KeyRound size={16} color="#64748B" style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)' }} />
                     <input type="password" required={!form.id} value={form.password} onChange={e => setForm({...form, password: e.target.value})} style={{...inpProps.style, direction: 'ltr', paddingLeft: '2.5rem'}} />
                   </div>
                 </div>

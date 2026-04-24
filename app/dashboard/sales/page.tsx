@@ -93,6 +93,7 @@ export default function SalesPage() {
   const [dbBranches,    setDbBranches]    = useState<{_id: string, name: string}[]>([])
   const [storeSettings, setStoreSettings] = useState<{ storeName?: string; storeLogoUrl?: string }>({})
   const [branchInventoryMap, setBranchInventoryMap] = useState<Record<string, number>>({})
+  const [availableUnits, setAvailableUnits] = useState<any[]>([])
   const [inventoryLoading, setInventoryLoading] = useState(false)
 
   const loadData = useCallback(async () => {
@@ -125,10 +126,11 @@ export default function SalesPage() {
       setBranchInventoryMap({});
       return;
     }
-    fetch(`/api/inventory?locationId=${selectedBranch}&status=Available`)
+    fetch(`/api/inventory?locationId=${selectedBranch}\u0026status=Available`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.units) {
+          setAvailableUnits(data.units);
           const newMap: Record<string, number> = {};
           data.units.forEach((u: any) => {
             const pId = String(u.productId?._id || u.productId);
@@ -144,10 +146,32 @@ export default function SalesPage() {
     setToast({ msg, type }); setTimeout(() => setToast(null), 3500)
   }
 
-  function addToCart(product: ApiProduct) {
+  function addToCart(product: ApiProduct | any) {
     if (!selectedBranch || selectedBranch === 'all') {
       showToast('يرجى تحديد الفرع أولاً لإتمام البيع', 'err');
       return;
+    }
+
+    // If it's a specific unit from disaggregated view
+    if (product.isUnit && product.inventoryUnitId) {
+      setCart(prev => {
+        if (prev.some(i => i.inventoryUnitId === product.inventoryUnitId)) {
+          showToast('هذا الجهاز موجود بالفعل في السلة', 'err')
+          return prev
+        }
+        return [...prev, {
+          product: product,
+          qty: 1,
+          actualUnitPrice: product.price,
+          inventoryUnitId: product.inventoryUnitId,
+          serialNumber: product.serialNumber,
+          landedCost: product.landedCost || product.costPrice,
+          profit: product.price - (product.landedCost || product.costPrice || 0),
+          fulfillmentLocation: selectedBranch
+        }]
+      })
+      showToast(`تمت إضافة الجهاز: ${product.name}`, 'ok')
+      return
     }
 
     const localStock = branchInventoryMap[String(product._id)] || 0
@@ -288,17 +312,57 @@ export default function SalesPage() {
   }
 
   // 2. Filter the UI array
-  const displayedProducts = products.filter(p => {
-    // 1. Branch Filter Check
-    if (selectedBranch && selectedBranch !== 'all') {
-      if (!branchInventoryMap[String(p._id)] || branchInventoryMap[String(p._id)] <= 0) {
-        return false; // Hide if not in this branch or out of stock
+  const displayedItems: any[] = [];
+  
+  products.forEach(p => {
+    const isPhone = p.category?.includes('محمولة') || p.category?.includes('ذكية');
+    
+    if (isPhone && selectedBranch && selectedBranch !== 'all') {
+      // Disaggregation Phase: Find all units for this phone in this branch
+      const units = availableUnits.filter(u => String(u.productId?._id || u.productId) === String(p._id));
+      units.forEach(u => {
+        // Search Filter at Unit Level
+        const searchMatch = p.name.toLowerCase().includes(search.toLowerCase()) || 
+                           (u.serialNumber ?? '').toLowerCase().includes(search.toLowerCase());
+        
+        if (searchMatch) {
+          displayedItems.push({
+            ...p,
+            _id: u._id,
+            masterId: p._id,
+            serialNumber: u.serialNumber,
+            attributes: {
+              capacity: u.storage,
+              color: u.color,
+              battery: u.batteryHealth
+            },
+            batteryHealth: u.batteryHealth,
+            color: u.color,
+            storage: u.storage,
+            price: u.sellPrice || p.price,
+            isUnit: true,
+            inventoryUnitId: u._id,
+            landedCost: u.landedCostEGP
+          });
+        }
+      });
+    } else {
+      // Aggregation Phase: Accessories, Spare Parts, or No Branch Selected
+      const searchMatch = p.name.toLowerCase().includes(search.toLowerCase()) || (p.serialNumber ?? '').includes(search);
+      if (!searchMatch) return;
+
+      const currentStock = (selectedBranch && selectedBranch !== 'all') ? (branchInventoryMap[String(p._id)] || 0) : p.stock;
+      if (currentStock > 0 || !selectedBranch || selectedBranch === 'all') {
+         displayedItems.push({ ...p, currentStock });
       }
     }
-    // 2. Add your existing Category/Search filters here...
-    const catMatch = activeCategory === 'All' || (activeCategory === 'Mobiles' && (p.category?.includes('محمولة') || p.category?.includes('ذكية'))) || (activeCategory === 'Accessories' && p.category?.includes('إكسسوار')) || (activeCategory === 'Spare Parts' && p.category?.includes('غيار'))
-    const searchMatch = p.name.toLowerCase().includes(search.toLowerCase()) || (p.serialNumber ?? '').includes(search)
-    return catMatch && searchMatch; 
+  });
+
+  const finalDisplayed = displayedItems.filter(item => {
+    if (activeCategory === 'All') return true;
+    return (activeCategory === 'Mobiles' && (item.category?.includes('محمولة') || item.category?.includes('ذكية'))) || 
+           (activeCategory === 'Accessories' && item.category?.includes('إكسسوار')) || 
+           (activeCategory === 'Spare Parts' && item.category?.includes('غيار'));
   });
 
   /* ── Styles ── */
@@ -369,19 +433,36 @@ export default function SalesPage() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem' }}>
-            {displayedProducts.map(p => {
-              const currentStock = (selectedBranch && selectedBranch !== 'all') ? (branchInventoryMap[String(p._id)] || 0) : p.stock;
+            {finalDisplayed.map(p => {
+              const currentStock = p.isUnit ? 1 : p.currentStock;
               return (
               <motion.div key={p._id} whileHover={{ y: -5 }} onClick={() => addToCart(p)}
-                style={{ ...card, padding: '1rem', cursor: 'pointer', borderColor: cart.some(c=>c.product._id===p._id) ? '#06B6D4' : 'rgba(6,182,212,0.15)' }}
+                style={{ ...card, padding: '1rem', cursor: 'pointer', borderColor: (p.isUnit ? cart.some(c=>c.inventoryUnitId===p._id) : cart.some(c=>c.product._id===p._id)) ? '#06B6D4' : 'rgba(6,182,212,0.15)' }}
               >
                 <div style={{ height: 100, background: '#ECFEFF', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', position: 'relative' }}>
                   {p.imageUrl ? <img src={p.imageUrl} style={{ maxHeight: '80%', objectFit: 'contain' }} /> : <Package size={32} color="#06B6D4" />}
-                  <span style={{ position: 'absolute', top: 8, left: 8, background: '#06B6D4', color: '#0F172A', fontSize: '0.65rem', fontWeight: 900, padding: '0.2rem 0.5rem', borderRadius: 50 }}>
-                    {currentStock} وحدة
-                  </span>
+                  {!p.isUnit && (
+                    <span style={{ position: 'absolute', top: 8, left: 8, background: '#06B6D4', color: '#0F172A', fontSize: '0.65rem', fontWeight: 900, padding: '0.2rem 0.5rem', borderRadius: 50 }}>
+                      {currentStock} وحدة
+                    </span>
+                  )}
+                  {p.isUnit && (
+                    <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end' }}>
+                       {p.attributes?.battery && <span style={{ background: '#22C55E', color: '#0F172A', fontSize: '0.55rem', fontWeight: 900, padding: '0.1rem 0.3rem', borderRadius: 4 }}>{p.attributes.battery}%</span>}
+                    </div>
+                  )}
                 </div>
-                <p style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0F172A', marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</p>
+                <p style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0F172A', marginBottom: '0.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.name}</p>
+                {p.isUnit && (
+                  <>
+                    <p className="text-xs text-gray-500">
+                      {p.attributes?.capacity || ''} | {p.attributes?.color || ''} | {p.attributes?.battery ? p.attributes.battery + '%' : ''}
+                    </p>
+                    <div className="mt-1">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">IMEI: {p.serialNumber}</span>
+                    </div>
+                  </>
+                )}
                 <p style={{ fontWeight: 900, fontSize: '1.1rem', color: '#06B6D4', direction: 'ltr', textAlign: 'right' }}>{fmt(p.price)} <small style={{ fontSize: '0.6rem' }}>ج.م</small></p>
               </motion.div>
             )})}
