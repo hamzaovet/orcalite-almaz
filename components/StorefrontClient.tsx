@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, X, Upload, Loader2, CheckCircle, Sparkles, Smartphone, Wrench } from 'lucide-react'
+import { ChevronLeft, X, Upload, Loader2, CheckCircle, Sparkles, Smartphone, Wrench, MapPin } from 'lucide-react'
 import * as LucideIcons from 'lucide-react'
 import Link from 'next/link'
 import { getWhatsAppURL } from '@/lib/whatsapp'
@@ -67,6 +67,10 @@ export function StorefrontClient({
 
   // ── C2B Evaluation Modal State ──
   const [evalModal, setEvalModal] = useState(false)
+
+  // ── Marketing Popup State ──
+  const [popupVisible, setPopupVisible] = useState(false)
+  const [currentAd, setCurrentAd] = useState<any>(null)
   const [evalForm, setEvalForm] = useState({ deviceModel: '', storage: '', condition: 'Kaser Zero', customerName: '', whatsapp: '' })
   const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([])
   const [uploading, setUploading] = useState(false)
@@ -112,6 +116,47 @@ export function StorefrontClient({
     finally { setUploading(false) }
     setTimeout(() => setEvalToast(null), 3000)
   }
+
+  // ── Marketing Popup Timer Engine ──
+  useEffect(() => {
+    const rawAds = landingPageData?.marketingAds
+    const activeAds = Array.isArray(rawAds) ? rawAds.filter((a: any) => a.isActive) : []
+    if (activeAds.length === 0) return
+
+    let adIndex = 0
+    let showTimer: ReturnType<typeof setTimeout>
+    let cycleTimer: ReturnType<typeof setTimeout>
+
+    function displayAd() {
+      const ad = activeAds[adIndex % activeAds.length]
+      setCurrentAd(ad)
+      setPopupVisible(true)
+      adIndex++
+      // Play audio - browser may block autoplay without user gesture
+      try {
+        const audio = new Audio('/assets/notification.mp3')
+        audio.volume = 0.4
+        const playPromise = audio.play()
+        if (playPromise !== undefined) {
+          playPromise.catch(() => { /* autoplay blocked - silent fail */ })
+        }
+      } catch { /* silent fail */ }
+
+      showTimer = setTimeout(() => {
+        setPopupVisible(false)
+        cycleTimer = setTimeout(displayAd, 55000)
+      }, 5000)
+    }
+
+    // Show first ad after 2 seconds
+    const initialTimer = setTimeout(displayAd, 2000)
+    return () => {
+      clearTimeout(initialTimer)
+      clearTimeout(showTimer)
+      clearTimeout(cycleTimer)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(landingPageData?.marketingAds)])
 
   const inp: React.CSSProperties = { width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: 12, padding: '0.85rem 1rem', color: '#0F172A', outline: 'none', fontSize: '0.95rem', fontFamily: 'inherit', boxSizing: 'border-box' as const }
   const lbl: React.CSSProperties = { fontSize: '0.8rem', fontWeight: 800, color: '#475569', display: 'block', marginBottom: '0.5rem' }
@@ -340,9 +385,9 @@ export function StorefrontClient({
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
                   style={{
-                    background: 'rgba(30, 41, 59, 0.4)',
+                    background: 'rgba(15, 23, 42, 0.85)',
                     backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: '2rem',
                     padding: '3rem 2.5rem',
                     textAlign: 'right',
@@ -370,10 +415,10 @@ export function StorefrontClient({
                     <Icon size={32} color="#06B6D4" strokeWidth={2.2} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.75rem' }}>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#FFFFFF', marginBottom: '0.75rem' }}>
                       {adv.title}
                     </h3>
-                    <p style={{ fontSize: '1rem', color: '#475569', lineHeight: 1.6 }}>
+                    <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
                       {adv.description}
                     </p>
                   </div>
@@ -449,7 +494,7 @@ export function StorefrontClient({
         </div>
       </section>
       {/* ── C2B: Sell Your Device Section ── */}
-      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 50%, #EFF6FF 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '20%', right: '10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ position: 'absolute', bottom: '10%', left: '5%', width: 300, height: 300, background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
@@ -484,7 +529,7 @@ export function StorefrontClient({
         </div>
       </section>
       {/* ── Online Maintenance Clinic Section ── */}
-      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #F0FDF4 0%, #F0F9FF 50%, #F0FDF4 100%)', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ padding: '7rem 2rem', background: 'linear-gradient(135deg, #0f2027 0%, #0c1a2e 50%, #0f2027 100%)', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '15%', left: '8%', width: 350, height: 350, background: 'radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
         <div style={{ position: 'absolute', bottom: '15%', right: '8%', width: 280, height: 280, background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)', pointerEvents: 'none', borderRadius: '50%' }} />
 
@@ -707,6 +752,55 @@ export function StorefrontClient({
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+      {/* ── Marketing Popup ── */}
+      <AnimatePresence>
+        {popupVisible && currentAd && (
+          <motion.div
+            initial={{ opacity: 0, y: 60, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 60, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            style={{
+              position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 9500,
+              width: 300, borderRadius: 24, overflow: 'hidden',
+              background: 'rgba(11, 17, 32, 0.88)',
+              backdropFilter: 'blur(24px)',
+              border: '1px solid rgba(6,182,212,0.35)',
+              boxShadow: '0 24px 64px rgba(6,182,212,0.2), 0 0 0 1px rgba(255,255,255,0.05)'
+            }}
+          >
+            {/* Close */}
+            <button
+              onClick={() => setPopupVisible(false)}
+              style={{ position: 'absolute', top: 10, left: 10, zIndex: 2, background: 'rgba(0,0,0,0.4)', border: 'none', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}
+            >
+              <X size={14} />
+            </button>
+            {/* Image */}
+            {currentAd.imageUrl && (
+              <img src={currentAd.imageUrl} alt={currentAd.title} style={{ width: '100%', height: 150, objectFit: 'cover', display: 'block' }} />
+            )}
+            {/* Content */}
+            <div style={{ padding: '1rem 1.1rem 1.1rem' }}>
+              <p style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.15em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.3rem' }}>عرض حصري ✦</p>
+              <p style={{ fontWeight: 900, color: '#fff', fontSize: '0.95rem', lineHeight: 1.3, marginBottom: currentAd.description ? '0.4rem' : 0 }}>{currentAd.title}</p>
+              {currentAd.description && (
+                <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.78rem', lineHeight: 1.5, marginBottom: '0.75rem' }}>{currentAd.description}</p>
+              )}
+              {currentAd.locationLink && (
+                <a
+                  href={currentAd.locationLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(6,182,212,0.15)', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 50, padding: '0.4rem 1rem', color: '#06B6D4', fontWeight: 700, fontSize: '0.78rem', textDecoration: 'none', marginTop: '0.5rem' }}
+                >
+                  <MapPin size={13} /> عرض على الخريطة
+                </a>
+              )}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>

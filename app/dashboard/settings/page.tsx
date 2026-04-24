@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const IMGBB_KEY = '1705736b8f2b46dcbaeec8a6025aca83'
 
-type AdminUser = { id: string; name: string; username: string; role: 'مدير' | 'كاشير'; email: string }
+type AdminUser = { id: string; name: string; username: string; role: string; email: string }
 
 export default function SettingsPage() {
   const [users, setUsers] = useState<AdminUser[]>([])
@@ -141,7 +141,7 @@ export default function SettingsPage() {
   const [pwError, setPwError] = useState('')
 
   /* ── Add user form ── */
-  const [addForm, setAddForm]   = useState({ name: '', email: '', username: '', password: '', role: 'كاشير' as AdminUser['role'] })
+  const [addForm, setAddForm]   = useState({ name: '', email: '', username: '', password: '', role: 'Cashier' })
   const [showAddForm, setShowAddForm] = useState(false)
   const [userSaved, setUserSaved]     = useState(false)
 
@@ -168,7 +168,7 @@ export default function SettingsPage() {
       const data = await res.json()
       if (res.ok) {
         setUsers([data.user, ...users])
-        setAddForm({ name: '', email: '', username: '', password: '', role: 'كاشير' })
+        setAddForm({ name: '', email: '', username: '', password: '', role: 'Cashier' })
         setShowAddForm(false)
         setUserSaved(true)
         setTimeout(() => setUserSaved(false), 3000)
@@ -482,8 +482,12 @@ export default function SettingsPage() {
                 <div>
                   <label style={lbl}>الصلاحية</label>
                   <select value={addForm.role} onChange={e => setAddForm({...addForm, role: e.target.value as any})} style={inp}>
-                    <option value="مدير">مدير نظام</option>
-                    <option value="كاشير">كاشير / مبيعات</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Cashier">Cashier</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Marketer">Marketer</option>
+                    <option value="Inventory">Inventory</option>
+                    <option value="Technician">Technician</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem' }}>
@@ -498,7 +502,7 @@ export default function SettingsPage() {
             {users.map((u) => (
               <div key={u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.25rem', borderRadius: 16, background: '#F8FAFC', border: '1px solid #E2E8F0', transition: 'all 0.2s' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: u.role.trim()==='مدير' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', border: `1px solid ${u.role.trim()==='مدير'?'#06B6D4': '#A855F7'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: u.role.trim()==='مدير'?'#06B6D4': '#A855F7' }}>{u.name.charAt(0)}</div>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: ['SuperAdmin','Admin'].includes(u.role) ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', border: `1px solid ${['SuperAdmin','Admin'].includes(u.role)?'#06B6D4': '#A855F7'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: ['SuperAdmin','Admin'].includes(u.role)?'#06B6D4': '#A855F7' }}>{u.name.charAt(0)}</div>
                   <div>
                     <p style={{ fontWeight: 800, color: '#0F172A' }}>{u.name}</p>
                     <p style={{ fontSize: '0.78rem', color: '#475569' }}>@{u.username}</p>

@@ -37,6 +37,7 @@ export async function proxy(request: NextRequest) {
     const ADMIN_ONLY_PATHS = [
       '/dashboard/employees',
       '/dashboard/settings',
+      '/dashboard/godfather-calc',
     ]
     const isAdminRole = role === 'SuperAdmin' || role === 'Admin'
     if (isDashboard && !isAdminRole && ADMIN_ONLY_PATHS.some((p2) => path.startsWith(p2))) {

@@ -1,14 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Save, Plus, Trash2, Layout, Zap, Star, Shield, ArrowRight, Loader2, Smartphone, Phone, MapPin, TrendingUp, Box } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Save, Plus, Trash2, Layout, Zap, Star, Shield, ArrowRight, Loader2, Smartphone, Phone, MapPin, TrendingUp, Box, Megaphone, Upload, ToggleLeft, ToggleRight, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+
+const IMGBB_KEY = '1705736b8f2b46dcbaeec8a6025aca83'
 
 export default function ContentEditorPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<any>(null)
   const [message, setMessage] = useState('')
+  const [newAd, setNewAd] = useState({ title: '', description: '', imageUrl: '', locationLink: '', isActive: true })
+  const [uploadingAdImg, setUploadingAdImg] = useState(false)
+  const adImgRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch('/api/landing-page')
@@ -36,6 +41,39 @@ export default function ContentEditorPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handleAdImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingAdImg(true)
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: fd })
+      const result = await res.json()
+      if (result?.data?.display_url) {
+        setNewAd(prev => ({ ...prev, imageUrl: result.data.display_url }))
+      }
+    } catch {} finally { setUploadingAdImg(false) }
+  }
+
+  function addAd() {
+    if (!newAd.title.trim()) return
+    setData({ ...data, marketingAds: [...(data.marketingAds || []), { ...newAd }] })
+    setNewAd({ title: '', description: '', imageUrl: '', locationLink: '', isActive: true })
+  }
+
+  function removeAd(i: number) {
+    const ads = [...(data.marketingAds || [])]
+    ads.splice(i, 1)
+    setData({ ...data, marketingAds: ads })
+  }
+
+  function toggleAd(i: number) {
+    const ads = [...(data.marketingAds || [])]
+    ads[i] = { ...ads[i], isActive: !ads[i].isActive }
+    setData({ ...data, marketingAds: ads })
   }
 
   function addAdvantage() {
@@ -68,7 +106,7 @@ export default function ContentEditorPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', fontFamily: 'var(--font-tajawal)' }}>إدارة المحتوى الديناميكي</h1>
-          <p style={{ color: '#475569', fontWeight: 500 }}>تحكم في هوية "فري زون" البصرية والنصوص الأساسية للموقع</p>
+          <p style={{ color: '#475569', fontWeight: 500 }}>تحكم في هوية "ORCA ألمظ" البصرية والنصوص الأساسية للموقع</p>
         </div>
         <button
           onClick={handleSave}
@@ -109,7 +147,7 @@ export default function ContentEditorPage() {
               <input 
                 value={data.heroTitle} 
                 onChange={e => setData({...data, heroTitle: e.target.value})}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1.1rem', fontWeight: 800, outline: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1.1rem', fontWeight: 800, outline: 'none' }}
               />
             </div>
             <div>
@@ -118,7 +156,7 @@ export default function ContentEditorPage() {
                 value={data.heroSubtitle} 
                 onChange={e => setData({...data, heroSubtitle: e.target.value})}
                 rows={3}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
               />
             </div>
           </div>
@@ -136,7 +174,7 @@ export default function ContentEditorPage() {
               <input 
                 value={data.brandPromiseTitle} 
                 onChange={e => setData({...data, brandPromiseTitle: e.target.value})}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1.1rem', fontWeight: 800, outline: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1.1rem', fontWeight: 800, outline: 'none' }}
               />
             </div>
             <div>
@@ -145,7 +183,7 @@ export default function ContentEditorPage() {
                 value={data.brandPromiseDescription} 
                 onChange={e => setData({...data, brandPromiseDescription: e.target.value})}
                 rows={2}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
               />
             </div>
           </div>
@@ -180,16 +218,16 @@ export default function ContentEditorPage() {
                     <div style={{ display: 'flex', gap: '1rem' }}>
                       <div style={{ flex: 2 }}>
                         <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.8rem', color: '#475569' }}>العنوان</label>
-                        <input value={adv.title} onChange={e => updateAdvantage(i, 'title', e.target.value)} style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.95rem', fontWeight: 800, outline: 'none' }} />
+                        <input value={adv.title} onChange={e => updateAdvantage(i, 'title', e.target.value)} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.95rem', fontWeight: 800, outline: 'none' }} />
                       </div>
                       <div style={{ flex: 1 }}>
                         <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.8rem', color: '#475569' }}>الأيقونة (Lucide)</label>
-                        <input value={adv.icon} onChange={e => updateAdvantage(i, 'icon', e.target.value)} style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.95rem', fontWeight: 500, outline: 'none' }} />
+                        <input value={adv.icon} onChange={e => updateAdvantage(i, 'icon', e.target.value)} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.95rem', fontWeight: 500, outline: 'none' }} />
                       </div>
                     </div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.8rem', color: '#475569' }}>الوصف</label>
-                      <textarea value={adv.description} onChange={e => updateAdvantage(i, 'description', e.target.value)} rows={2} style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.9rem', fontWeight: 500, outline: 'none', resize: 'none' }} />
+                      <textarea value={adv.description} onChange={e => updateAdvantage(i, 'description', e.target.value)} rows={2} style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '0.75rem', borderRadius: 8, color: '#0F172A', fontSize: '0.9rem', fontWeight: 500, outline: 'none', resize: 'none' }} />
                     </div>
                   </div>
                   <button 
@@ -216,7 +254,7 @@ export default function ContentEditorPage() {
               <input 
                 value={data.contact?.phone} 
                 onChange={e => setData({...data, contact: { ...data.contact, phone: e.target.value }})}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 800, outline: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 800, outline: 'none' }}
               />
             </div>
             <div>
@@ -224,7 +262,7 @@ export default function ContentEditorPage() {
               <input 
                 value={data.contact?.whatsapp} 
                 onChange={e => setData({...data, contact: { ...data.contact, whatsapp: e.target.value }})}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 800, outline: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 800, outline: 'none' }}
               />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
@@ -232,9 +270,80 @@ export default function ContentEditorPage() {
               <input 
                 value={data.contact?.address} 
                 onChange={e => setData({...data, contact: { ...data.contact, address: e.target.value }})}
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none' }}
               />
             </div>
+          </div>
+        </div>
+
+        {/* ── Marketing Ads Section ── */}
+        <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 24px rgba(0,0,0,0.2)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#A855F7' }}>
+              <Megaphone size={24} />
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800 }}>الإعلانات المنبثقة (Marketing Popups)</h2>
+            </div>
+          </div>
+
+          {/* Existing Ads */}
+          <div style={{ display: 'grid', gap: '1rem', marginBottom: '2rem' }}>
+            {(data.marketingAds || []).map((ad: any, i: number) => (
+              <div key={i} style={{ display: 'flex', gap: '1rem', background: '#FFFFFF', borderRadius: 16, padding: '1rem', border: `1px solid ${ad.isActive ? 'rgba(168,85,247,0.2)' : '#E2E8F0'}`, alignItems: 'center' }}>
+                {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title} style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 12, flexShrink: 0 }} />}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 800, color: '#0F172A', fontSize: '0.95rem' }}>{ad.title}</p>
+                  {ad.description && <p style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.2rem' }}>{ad.description}</p>}
+                  {ad.locationLink && <p style={{ fontSize: '0.72rem', color: '#06B6D4', marginTop: '0.2rem' }}>📍 {ad.locationLink.substring(0, 40)}...</p>}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                  <button onClick={() => toggleAd(i)} title={ad.isActive ? 'تعطيل' : 'تفعيل'} style={{ background: ad.isActive ? 'rgba(168,85,247,0.1)' : 'rgba(100,116,139,0.1)', border: 'none', borderRadius: 8, padding: '0.4rem 0.8rem', cursor: 'pointer', color: ad.isActive ? '#A855F7' : '#64748B', fontWeight: 700, fontSize: '0.75rem' }}>
+                    {ad.isActive ? 'مفعّل' : 'معطّل'}
+                  </button>
+                  <button onClick={() => removeAd(i)} style={{ background: 'rgba(239,68,68,0.08)', border: 'none', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: '#EF4444' }}><Trash2 size={16} /></button>
+                </div>
+              </div>
+            ))}
+            {(data.marketingAds || []).length === 0 && (
+              <p style={{ color: '#94A3B8', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>لا توجد إعلانات حتى الآن.</p>
+            )}
+          </div>
+
+          {/* Add New Ad Form */}
+          <div style={{ background: 'rgba(168,85,247,0.04)', border: '1px dashed rgba(168,85,247,0.3)', borderRadius: 16, padding: '1.5rem' }}>
+            <p style={{ fontWeight: 800, color: '#A855F7', fontSize: '0.85rem', marginBottom: '1rem' }}>➕ إضافة إعلان جديد</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>عنوان الإعلان *</label>
+                <input value={newAd.title} onChange={e => setNewAd(p => ({...p, title: e.target.value}))} placeholder="مثال: عرض خاص على iPhone 15" style={{ width: '100%', background: '#fff', border: '1px solid #E2E8F0', borderRadius: 10, padding: '0.7rem', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' as const }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>رابط خرائط جوجل (اختياري)</label>
+                <input value={newAd.locationLink} onChange={e => setNewAd(p => ({...p, locationLink: e.target.value}))} placeholder="https://maps.google.com/..." style={{ width: '100%', background: '#fff', border: '1px solid #E2E8F0', borderRadius: 10, padding: '0.7rem', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' as const, direction: 'ltr' }} />
+              </div>
+              <div style={{ gridColumn: '1/-1' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>وصف الإعلان</label>
+                <input value={newAd.description} onChange={e => setNewAd(p => ({...p, description: e.target.value}))} placeholder="تفاصيل العرض الخاص..." style={{ width: '100%', background: '#fff', border: '1px solid #E2E8F0', borderRadius: 10, padding: '0.7rem', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' as const }} />
+              </div>
+            </div>
+            {/* Image upload */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <input ref={adImgRef} type="file" accept="image/*" onChange={handleAdImageUpload} style={{ display: 'none' }} />
+              {newAd.imageUrl ? (
+                <div style={{ position: 'relative' }}>
+                  <img src={newAd.imageUrl} alt="ad preview" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 10, border: '2px solid rgba(168,85,247,0.3)' }} />
+                  <button onClick={() => setNewAd(p => ({...p, imageUrl: ''}))} style={{ position: 'absolute', top: -6, right: -6, background: '#EF4444', border: 'none', borderRadius: '50%', width: 20, height: 20, cursor: 'pointer', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={11} /></button>
+                </div>
+              ) : (
+                <button onClick={() => adImgRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#fff', border: '1px dashed rgba(168,85,247,0.4)', borderRadius: 10, padding: '0.6rem 1.2rem', cursor: 'pointer', color: '#A855F7', fontWeight: 700, fontSize: '0.85rem' }}>
+                  {uploadingAdImg ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Upload size={16} />}
+                  {uploadingAdImg ? 'جاري الرفع...' : 'رفع صورة'}
+                </button>
+              )}
+              <button onClick={addAd} disabled={!newAd.title.trim()} style={{ flex: 1, background: newAd.title.trim() ? '#A855F7' : '#E2E8F0', color: newAd.title.trim() ? '#fff' : '#94A3B8', border: 'none', borderRadius: 10, padding: '0.7rem 1.5rem', fontWeight: 800, cursor: newAd.title.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem' }}>
+                <Plus size={16} style={{ display: 'inline', marginLeft: '0.3rem' }} /> إضافة الإعلان
+              </button>
+            </div>
+            <p style={{ fontSize: '0.72rem', color: '#94A3B8' }}>الإعلان سيظهر في الصفحة الرئيسية لمدة 5 ثوانٍ ثم يختفي لمدة 55 ثانية. تأكد من وجود ملف الصوت notification.mp3 في public/assets/</p>
           </div>
         </div>
 
@@ -252,7 +361,7 @@ export default function ContentEditorPage() {
                 onChange={e => setData({...data, footerDescription: e.target.value})}
                 rows={3}
                 placeholder="أدخل النص التعريفي الذي سيظهر في فوتر الموقع..."
-                style={{ width: '100%', background: '#080C14', border: '1px solid #F1F5F9', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
+                style={{ width: '100%', background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 12, color: '#0F172A', fontSize: '1rem', fontWeight: 500, outline: 'none', resize: 'none' }}
               />
             </div>
           </div>

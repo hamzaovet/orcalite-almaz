@@ -19,6 +19,15 @@ export async function GET() {
       })
     }
 
+    // Migrate old documents: ensure marketingAds field exists
+    if (landingPage && !landingPage.marketingAds) {
+      landingPage = await LandingPage.findOneAndUpdate(
+        {},
+        { $set: { marketingAds: [] } },
+        { new: true }
+      )
+    }
+
     return NextResponse.json(landingPage)
   } catch (error) {
     console.error('[LandingPage API GET] Error:', error)
@@ -34,7 +43,7 @@ export async function PUT(req: Request) {
     const landingPage = await LandingPage.findOneAndUpdate(
       {},
       { $set: body },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after', runValidators: false }
     )
 
     return NextResponse.json({ success: true, data: landingPage })

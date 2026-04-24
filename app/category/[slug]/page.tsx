@@ -43,12 +43,14 @@ export default async function CategoryPage(props: { params: Promise<{ slug: stri
     const isSerialized = prod.isSerialized !== false && prod.hasSerialNumbers !== false
 
     if (isSerialized) {
+      const unitStock = unit.quantity ?? 1
+      if (unitStock <= 0) continue
       listingMap.set(String(unit._id), {
         _id: String(unit._id),
         productId: String(prod._id),
         name: prod.name,
         price: prod.price,
-        stock: unit.quantity ?? 1,
+        stock: unitStock,
         condition: unit.attributes?.condition || prod.condition || 'New',
         storage: unit.attributes?.storage || '',
         color: unit.attributes?.color || '',

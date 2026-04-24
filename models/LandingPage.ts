@@ -6,6 +6,14 @@ export interface IFeatureCard {
   icon: string
 }
 
+export interface IMarketingAd {
+  title: string
+  description: string
+  imageUrl: string
+  locationLink?: string
+  isActive: boolean
+}
+
 export interface ILandingPage extends mongoose.Document {
   heroTitle: string
   heroSubtitle: string
@@ -13,6 +21,7 @@ export interface ILandingPage extends mongoose.Document {
   brandPromiseDescription: string
   footerDescription: string
   advantages: IFeatureCard[]
+  marketingAds: IMarketingAd[]
   contact: {
     phone: string
     whatsapp: string
@@ -38,6 +47,15 @@ const landingPageSchema = new mongoose.Schema<ILandingPage>(
         icon: { type: String, required: true, default: 'Zap' },
       },
     ],
+    marketingAds: [
+      {
+        title: { type: String, required: true },
+        description: { type: String, default: '' },
+        imageUrl: { type: String, default: '' },
+        locationLink: { type: String, default: '' },
+        isActive: { type: Boolean, default: true },
+      },
+    ],
     contact: {
       phone: { type: String, default: '01129592916' },
       whatsapp: { type: String, default: '01129592916' },
@@ -48,6 +66,11 @@ const landingPageSchema = new mongoose.Schema<ILandingPage>(
   },
   { timestamps: true }
 )
+
+// Clear stale cached model in dev so schema changes (like marketingAds) take effect immediately
+if (process.env.NODE_ENV === 'development') {
+  delete (mongoose.models as any).LandingPage
+}
 
 export const LandingPage =
   mongoose.models.LandingPage ||

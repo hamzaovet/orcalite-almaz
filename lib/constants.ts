@@ -6,7 +6,8 @@ export const SYSTEM_ROLES = {
   Manager: 'مدير فرع',
   Sales: 'مسؤول مبيعات',
   Technician: 'فني صيانة',
-  Cashier: 'كاشير'
+  Cashier: 'كاشير',
+  Marketer: 'مسوق'
 } as const;
 
 export type SystemRole = keyof typeof SYSTEM_ROLES;

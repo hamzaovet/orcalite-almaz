@@ -96,10 +96,11 @@ export function CategoryClient({ category, products, settings }: { category: Cat
 
   const filteredProducts = products.filter(p => {
     if (filter === 'All') return true
-    const cond = (p.condition || 'new').toLowerCase()
-    // CEO Directive: Normalize conditions. Only 'new' or 'جديد' maps to New tab. Everything else (Used, A+, Kaser Zero) maps to Used.
-    const mappedTab = (cond === 'new' || cond === 'جديد') ? 'new' : 'used'
-    return mappedTab === filter.toLowerCase()
+    const cond = (p.condition || 'New').trim()
+    // Normalize: Only exact 'New' or 'جديد' maps to New tab. A+, Kaser Zero, Used, etc → Used tab.
+    const isNew = cond === 'New' || cond === 'جديد'
+    const mappedTab = isNew ? 'New' : 'Used'
+    return mappedTab === filter
   })
 
   const Icon = getIcon(category.icon)
@@ -259,16 +260,22 @@ export function CategoryClient({ category, products, settings }: { category: Cat
                       </div>
                     )}
                     <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: '0.4rem', flexDirection: 'column', alignItems: 'flex-end' }}>
-                      {(p.condition?.toLowerCase() === 'used') && (
-                        <span style={{
-                          background: 'rgba(255,255,255,0.05)',
-                          color: 'rgba(255,255,255,0.6)',
-                          fontSize: '0.65rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: 50,
-                          border: '1px solid rgba(255,255,255,0.1)'
-                        }}>
-                          مستعمل
-                        </span>
-                      )}
+                      {(() => {
+                        const cond = p.condition?.trim() || ''
+                        const isNew = cond === 'New' || cond === 'جديد' || cond === '' 
+                        if (isNew) return null
+                        const isAPlus = cond === 'A+' || cond.toLowerCase() === 'kaser zero' || cond.toLowerCase() === 'كسر زيرو'
+                        return (
+                          <span style={{
+                            background: isAPlus ? 'rgba(250,204,21,0.12)' : 'rgba(255,255,255,0.05)',
+                            color: isAPlus ? '#FBBF24' : 'rgba(255,255,255,0.6)',
+                            fontSize: '0.65rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: 50,
+                            border: isAPlus ? '1px solid rgba(251,191,36,0.3)' : '1px solid rgba(255,255,255,0.1)'
+                          }}>
+                            {isAPlus ? '★ كسر زيرو' : 'مستعمل'}
+                          </span>
+                        )
+                      })()}
                       {p.badge && (
                         <span style={{ background: 'rgba(14,165,233,0.15)', color: '#38bdf8', fontSize: '0.65rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: 50, border: '1px solid rgba(56,189,248,0.2)' }}>
                           {p.badge}
