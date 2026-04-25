@@ -72,16 +72,56 @@ export async function GET(request: NextRequest) {
     // C. Live Debts (Global - Excludes Technical Opening Balances)
     const supplierAgg = await Supplier.aggregate([
         { $match: { name: { $not: /افتتاحي/ } } },
-        { $group: { _id: null, totalDebt: { $sum: { $toDecimal: "$balance" } } } }
+        { 
+            $group: { 
+                _id: null,
+                totalLiabilities: { 
+                    $sum: { 
+                        $cond: [
+                            { $and: [{ $in: ["$type", ["Supplier", "Both", null]] }, { $gt: [{ $toDecimal: "$balance" }, 0] }] },
+                            { $toDecimal: "$balance" },
+                            { $cond: [
+                                { $and: [{ $eq: ["$type", "Customer"] }, { $lt: [{ $toDecimal: "$balance" }, 0] }] },
+                                { $abs: { $toDecimal: "$balance" } },
+                                0
+                            ]}
+                        ] 
+                    } 
+                },
+                totalAssets: {
+                    $sum: {
+                        $cond: [
+                            { $and: [{ $eq: ["$type", "Customer"] }, { $gt: [{ $toDecimal: "$balance" }, 0] }] },
+                            { $toDecimal: "$balance" },
+                            { $cond: [
+                                { $and: [{ $in: ["$type", ["Supplier", "Both", null]] }, { $lt: [{ $toDecimal: "$balance" }, 0] }] },
+                                { $abs: { $toDecimal: "$balance" } },
+                                0
+                            ]}
+                        ]
+                    }
+                }
+            } 
+        }
     ]);
-    const totalSupplierDebts = Number(supplierAgg[0]?.totalDebt || 0);
+    const totalSupplierLiabilities = Number(supplierAgg[0]?.totalLiabilities || 0);
+    const totalSupplierAssets = Number(supplierAgg[0]?.totalAssets || 0);
 
-    const customerAgg = await Customer.aggregate([{ $group: { _id: null, totalDebt: { $sum: { $toDecimal: "$balance" } } } }]);
-    const totalCustomerDebts = Number(customerAgg[0]?.totalDebt || 0);
+    const customerAgg = await Customer.aggregate([
+        { 
+            $group: { 
+                _id: null, 
+                totalAssets: { $sum: { $cond: [{ $gt: [{ $toDecimal: "$balance" }, 0] }, { $toDecimal: "$balance" }, 0] } },
+                totalLiabilities: { $sum: { $cond: [{ $lt: [{ $toDecimal: "$balance" }, 0] }, { $abs: { $toDecimal: "$balance" } }, 0] } }
+            } 
+        }
+    ]);
+    const totalCustomerAssets = Number(customerAgg[0]?.totalAssets || 0);
+    const totalCustomerLiabilities = Number(customerAgg[0]?.totalLiabilities || 0);
 
     // D. Capital Calculation
-    const totalAssets = treasuryBalance + endingInventoryValue + totalCustomerDebts;
-    const totalLiabilities = totalSupplierDebts;
+    const totalAssets = treasuryBalance + endingInventoryValue + totalSupplierAssets + totalCustomerAssets;
+    const totalLiabilities = totalSupplierLiabilities + totalCustomerLiabilities;
     const workingCapital = totalAssets - totalLiabilities;
 
     // E. P&L / COGS Engine
@@ -120,8 +160,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        assets: { treasury: treasuryBalance, inventory: endingInventoryValue, customers: totalCustomerDebts, total: totalAssets },
-        liabilities: { suppliers: totalSupplierDebts, total: totalLiabilities },
+        assets: { treasury: treasuryBalance, inventory: endingInventoryValue, customers: totalSupplierAssets + totalCustomerAssets, total: totalAssets },
+        liabilities: { suppliers: totalSupplierLiabilities + totalCustomerLiabilities, total: totalLiabilities },
         capital: { workingCapital },
         pnl: { openingStock, purchases: periodPurchases, cogs, revenues: periodRevenues, grossProfit }
       }

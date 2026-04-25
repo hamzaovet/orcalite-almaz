@@ -33,7 +33,6 @@ function BalanceBadge({ balance, type }: { balance: number; type: SupplierType }
   // Supplier with balance > 0  → we OWE them → they are CREDITOR (دائن)
   // Customer with balance > 0  → they OWE us  → they are DEBTOR  (مدين)
   const isSupplier = type === 'Supplier' || type === 'Both'
-  const isCustomer = type === 'Customer' || type === 'Both'
 
   let label = 'مسوّى'
   let color = '#22C55E'
@@ -41,31 +40,31 @@ function BalanceBadge({ balance, type }: { balance: number; type: SupplierType }
   let Icon  = Wallet
 
   if (isPositive) {
-    if (isSupplier && !isCustomer) {
+    if (isSupplier) {
       // We owe supplier → they are creditor
-      label = 'دائن (مستحق له)'
+      label = 'دائن (مستحق علينا)'
       color = '#FB923C'
       bg    = 'rgba(251,146,60,0.1)'
       Icon  = TrendingUp
     } else {
       // Customer owes us → they are debtor
-      label = 'مدين (مستحق علينا)'
-      color = '#EF4444'
-      bg    = 'rgba(239,68,68,0.1)'
+      label = 'مدين (مستحق لنا)'
+      color = '#22C55E'
+      bg    = 'rgba(34,197,94,0.1)'
       Icon  = TrendingDown
     }
   } else if (isNegative) {
-    if (isSupplier && !isCustomer) {
+    if (isSupplier) {
       // Supplier owes us (overpaid) → they are debtor
-      label = 'مدين (له رصيد لنا)'
+      label = 'مدين (مستحق لنا)'
       color = '#22C55E'
       bg    = 'rgba(34,197,94,0.1)'
       Icon  = TrendingDown
     } else {
       // We owe customer (credit balance) → creditor
-      label = 'دائن (مستحق لهم)'
-      color = '#A855F7'
-      bg    = 'rgba(168,85,247,0.1)'
+      label = 'دائن (مستحق علينا)'
+      color = '#EF4444'
+      bg    = 'rgba(239,68,68,0.1)'
       Icon  = TrendingUp
     }
   }
@@ -189,8 +188,16 @@ export default function SuppliersPage() {
     }
   }
 
-  const totalOwedByUs  = items.filter(s => s.balance > 0).reduce((acc, s) => acc + s.balance, 0)
-  const totalOwedToUs  = items.filter(s => s.balance < 0).reduce((acc, s) => acc + Math.abs(s.balance), 0)
+  const totalOwedByUs = items.reduce((acc, s) => {
+    if ((s.type === 'Supplier' || s.type === 'Both') && s.balance > 0) return acc + s.balance;
+    if (s.type === 'Customer' && s.balance < 0) return acc + Math.abs(s.balance);
+    return acc;
+  }, 0)
+  const totalOwedToUs = items.reduce((acc, s) => {
+    if ((s.type === 'Supplier' || s.type === 'Both') && s.balance < 0) return acc + Math.abs(s.balance);
+    if (s.type === 'Customer' && s.balance > 0) return acc + s.balance;
+    return acc;
+  }, 0)
   const filtered     = items.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || (s.phone ?? '').includes(search))
 
   /* ── Styles ──────────────────────────────────────────────── */
