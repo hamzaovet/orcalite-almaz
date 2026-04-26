@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // Phase 80: Auto-Establish Supplier if NEW
     let resolvedSupplierId = data.supplierId
-    let resolvedSupplierName = data.supplierName
+    let resolvedSupplierName = data.supplierName ? data.supplierName.trim() : undefined
 
     if (!data.walkInName && !resolvedSupplierId && resolvedSupplierName) {
       // Logic for new supplier name typed in CreatableSelect

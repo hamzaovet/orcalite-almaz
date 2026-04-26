@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, X, GitBranch, Loader2, MapPin, Building2, UserChe
 import { motion, AnimatePresence } from 'framer-motion'
 import { TransferModal } from './components/TransferModal'
 import { generateLedgerHTML, generateTransferReceiptHTML, generateMasterLedgerHTML } from '@/utils/printGenerator'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 type BranchType = 'Branch' | 'Warehouse' | 'Distributor' | 'Representative' | 'Internal'
 
@@ -49,6 +50,7 @@ export default function BranchesPage() {
   const [saving, setSaving]     = useState(false)
   const [toast, setToast]       = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
   const [form, setForm]         = useState({ _id: '', name: '', type: 'Internal' as BranchType, address: '' })
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   useEffect(() => { load() }, [])
 
@@ -112,13 +114,22 @@ export default function BranchesPage() {
     finally { setSaving(false) }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('هل أنت متأكد من الحذف؟')) return
+  async function handleDelete(password: string) {
+    if (!deleteId) return
     try {
-      await fetch(`/api/branches?id=${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/branches?id=${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.message || 'فشل الحذف')
+      }
       showToast('تم الحذف بنجاح', 'ok')
-      setBranches(prev => prev.filter(b => b._id !== id))
-    } catch { showToast('فشل الحذف', 'err') }
+      setBranches(prev => prev.filter(b => b._id !== deleteId))
+    } catch (err: any) { showToast(err.message, 'err') }
+    finally { setDeleteId(null) }
   }
 
   /* ── Print/Ledger Handlers ── */
@@ -202,7 +213,7 @@ export default function BranchesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
       
       {toast && (
         <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
@@ -240,7 +251,7 @@ export default function BranchesPage() {
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button onClick={() => openEdit(b)} style={{ background: '#F8FAFC', border: 'none', color: '#475569', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Pencil size={18} /></button>
-                  <button onClick={() => handleDelete(b._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Trash2 size={18} /></button>
+                  <button onClick={() => setDeleteId(b._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Trash2 size={18} /></button>
                 </div>
               </div>
 
@@ -405,6 +416,14 @@ export default function BranchesPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف الفرع/الكيان"
+        description="تحذير: سيتم حذف هذا الكيان نهائياً. تأكد من خلوه من العُهد والمخزون قبل الحذف."
+      />
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg) } }

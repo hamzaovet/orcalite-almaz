@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit2, Trash2, Shield, Loader2, MapPin, KeyRound, AlertTriangle } from 'lucide-react'
 import { SYSTEM_ROLES, type SystemRole } from '@/lib/constants'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 type Branch = {
   _id: string
@@ -29,6 +30,7 @@ export default function EmployeesPage() {
   const [currentUser, setCurrentUser] = useState<{role: string} | null>(null)
   const [accessDenied, setAccessDenied] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   useEffect(() => { fetchAll() }, [])
 
@@ -105,15 +107,24 @@ export default function EmployeesPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!window.confirm('هل أنت متأكد من حذف هذا الموظف؟')) return
+  async function handleDelete(password: string) {
+    if (!deleteId) return
     try {
-      const res = await fetch(`/api/users?id=${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error()
+      const res = await fetch(`/api/users?id=${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.message || 'فشل الحذف')
+      }
       showToast('تم حذف الموظف بنجاح', 'ok')
       fetchAll()
-    } catch {
-      showToast('فشل الحذف', 'err')
+    } catch (err: any) {
+      showToast(err.message, 'err')
+    } finally {
+      setDeleteId(null)
     }
   }
 
@@ -134,7 +145,7 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.2em', color: '#0ea5e9', textTransform: 'uppercase', marginBottom: '0.3rem' }}>الإدارة والأمان</p>
@@ -192,7 +203,7 @@ export default function EmployeesPage() {
                     <td style={{ padding: '1.25rem 1.5rem' }}>
                        <div style={{ display: 'flex', gap: '0.5rem' }}>
                          <button onClick={() => openEdit(u)} style={{ background: 'rgba(255,255,255,0.06)', border: 'none', padding: '0.5rem', borderRadius: 8, cursor: 'pointer', color: '#0F172A' }}><Edit2 size={16} /></button>
-                         <button onClick={() => handleDelete(u.id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', padding: '0.5rem', borderRadius: 8, cursor: 'pointer', color: '#ef4444' }}><Trash2 size={16} /></button>
+                         <button onClick={() => setDeleteId(u.id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', padding: '0.5rem', borderRadius: 8, cursor: 'pointer', color: '#ef4444' }}><Trash2 size={16} /></button>
                        </div>
                     </td>
                   </tr>
@@ -282,6 +293,14 @@ export default function EmployeesPage() {
           {toast.msg}
         </div>
       )}
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف الموظف"
+        description="تحذير: سيتم حذف هذا الموظف نهائياً. تأكد من إغلاق جميع العُهد المرتبطة به قبل الحذف."
+      />
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>

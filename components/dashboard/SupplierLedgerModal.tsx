@@ -18,7 +18,7 @@ export default function SupplierLedgerModal({ supplier, onClose }: Props) {
     async function fetchData() {
       setLoading(true)
       try {
-        const txRes = await fetch('/api/transactions?limit=all&includeSupplierLedger=true')
+        const txRes = await fetch(`/api/transactions?limit=all&includeSupplierLedger=true&t=${Date.now()}`)
         if (!txRes.ok) throw new Error('Failed to fetch transactions')
         const txData = await txRes.json()
 

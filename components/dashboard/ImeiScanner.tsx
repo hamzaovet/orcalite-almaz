@@ -69,7 +69,7 @@ export function ImeiScanner({ onScanSuccess, onClose }: ImeiScannerProps) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Scan size={24} color="#0ea5e9" />
             <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#0F172A', margin: 0 }}>
-              الرادار الذكي (Free Zone Radar)
+              الرادار الذكي (ORCA Radar)
             </h2>
           </div>
           <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 50, padding: '0.4rem', color: '#0F172A', cursor: 'pointer' }}>

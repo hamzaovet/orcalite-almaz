@@ -14,6 +14,7 @@ export interface IStoreSettings extends mongoose.Document {
   maxUsers: number
   maxBranches: number
   storeId?: string
+  adminPassword?: string
 }
 
 const storeSettingsSchema = new mongoose.Schema<IStoreSettings>(
@@ -30,6 +31,7 @@ const storeSettingsSchema = new mongoose.Schema<IStoreSettings>(
     currentOpeningInventoryValue: { type: Number, default: 0 },
     maxUsers: { type: Number, default: 5 },
     maxBranches: { type: Number, default: 2 },
+    adminPassword: { type: String, default: '' },
   },
   { timestamps: true }
 )

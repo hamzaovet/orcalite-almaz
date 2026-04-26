@@ -116,7 +116,7 @@ export default function DashboardPage() {
         <p style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.22em', color: '#06B6D4', textTransform: 'uppercase', marginBottom: '0.4rem' }}>لوحة التحكم الذكية</p>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#0F172A', marginBottom: '0.25rem' }}>نظرة عامة</h1>
         <p style={{ color: '#475569', fontSize: '0.9rem' }}>
-          {mounted ? `مرحباً بك في فري زون استور — ${today}` : 'مرحباً بك في لوحة تحكم فري زون استور'}
+          {mounted ? `مرحباً بك في أوركا — ${today}` : 'مرحباً بك في لوحة تحكم أوركا'}
         </p>
       </div>
 

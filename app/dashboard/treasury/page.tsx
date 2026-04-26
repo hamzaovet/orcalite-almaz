@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { generateTransactionReceiptHTML } from '@/utils/printGenerator'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 /* ── Types ──────────────────────────────────────────────────── */
 type TxType = 'IN' | 'OUT'
@@ -92,6 +93,7 @@ export default function TreasuryPage() {
   const [selectedLedgerAcc, setSelectedLedgerAcc] = useState<Channel | null>(null)
   const [ledgerData, setLedgerData] = useState<RecentTx[]>([])
   const [ledgerLoading, setLedgerLoading] = useState(false)
+  const [ledgerBF,      setLedgerBF]      = useState(0)
 
   // Entity Lists
   const [branches,  setBranches]  = useState<any[]>([])
@@ -107,6 +109,8 @@ export default function TreasuryPage() {
   const [xferForm, setXferForm] = useState({ fromId: '', toId: '', amount: '', notes: '' })
   const [loadingModal, setLoadingModal] = useState(false)
   const [accountToDelete, setAccountToDelete] = useState<string | null>(null)
+  const [deleteType, setDeleteType] = useState<'TX' | 'ACC' | null>(null)
+  const [targetId, setTargetId] = useState<string | null>(null)
 
   // Forex / Supplier-Shipment States
   const [supplierShipments, setSupplierShipments] = useState<any[]>([])
@@ -276,6 +280,7 @@ export default function TreasuryPage() {
       const d = await res.json()
       if (d.success) {
         setLedgerData(d.transactions ?? [])
+        setLedgerBF(d.balanceBF || 0)
         // Ensure we capture the REAL initial balance from the fresh DB fetch
         setSelectedLedgerAcc(prev => prev ? { ...prev, initialBalance: d.account?.initialBalance || 0 } : ch)
       }
@@ -287,18 +292,29 @@ export default function TreasuryPage() {
     if (!selectedLedgerAcc) return
     const win = window.open('', '_blank')
     if (!win) return
-    let tableRows = ledgerData.slice().reverse().map(tx => {
+    let runningBalance = ledgerBF
+    let tableRows = ledgerData.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(tx => {
       const isIN = tx.type === 'IN'
+      runningBalance = isIN ? runningBalance + tx.amount : runningBalance - tx.amount
       return `
         <tr>
           <td>${new Date(tx.date).toLocaleDateString('ar-EG')}</td>
           <td style="color: ${isIN ? 'green' : 'red'};">${isIN ? 'وارد' : 'صادر'}</td>
           <td>${tx.description || ''}</td>
           <td style="color: ${isIN ? 'green' : 'red'};" dir="ltr">${isIN ? '+' : '−'} ${fmt(tx.amount)}</td>
-          <td dir="ltr" style="font-weight:bold;">${fmt(tx.runningBalance || 0)}</td>
+          <td dir="ltr" style="font-weight:bold;">${fmt(runningBalance)}</td>
         </tr>
       `
     }).join('')
+
+    const bfRow = `
+      <tr style="background: #f0fdf4; font-weight: 900;">
+        <td>${startDate || '---'}</td>
+        <td colspan="2">رصيد مرحل (Balance Brought Forward)</td>
+        <td colspan="2">---</td>
+        <td dir="ltr">${fmt(ledgerBF)}</td>
+      </tr>
+    `
 
     win.document.write(`
       <html dir="rtl">
@@ -309,12 +325,14 @@ export default function TreasuryPage() {
             table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: right; }
             th, td { border: 1px solid #ddd; padding: 10px; }
             th { background: #f5f5f5; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 3px solid #06B6D4; padding-bottom: 20px; }
           </style>
         </head>
         <body>
-          <h2>كشف حساب: ${selectedLedgerAcc.name}</h2>
-          <p>نوع الحساب: ${selectedLedgerAcc.type}</p>
-          <p>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</p>
+          <div class="header">
+             <h2>كشف حساب تفصيلي: ${selectedLedgerAcc.name}</h2>
+             <p>الفترة: ${startDate || 'البداية'} إلى ${endDate || 'اليوم'}</p>
+          </div>
           <table>
             <thead>
               <tr>
@@ -326,6 +344,7 @@ export default function TreasuryPage() {
               </tr>
             </thead>
             <tbody>
+              ${bfRow}
               ${tableRows}
             </tbody>
           </table>
@@ -337,14 +356,43 @@ export default function TreasuryPage() {
     setTimeout(() => win.print(), 500)
   }
 
+  async function confirmDelete(password: string) {
+    if (!targetId || !deleteType) return
+    if (deleteType === 'TX') {
+      setDeletingId(targetId)
+      try {
+        const res = await fetch(`/api/transactions?id=${targetId}`, { 
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        })
+        const d = await res.json()
+        if (!res.ok) throw new Error(d.message || 'فشل الحذف')
+        setRecentTxs(prev => prev.filter(t => t._id !== targetId)); fetchData()
+        showToast('تم حذف الحركة', 'ok')
+      } catch (err: any) { showToast(err.message || 'فشل الحذف', 'err') }
+      finally { setDeletingId(null); setTargetId(null); setDeleteType(null) }
+    } else if (deleteType === 'ACC') {
+      setLoadingModal(true)
+      try {
+        const res = await fetch(`/api/internal-accounts/${targetId}`, { 
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        })
+        const d = await res.json()
+        if (!res.ok) throw new Error(d.message || 'فشل الحذف')
+        showToast('تم حذف الحساب بنجاح', 'ok')
+        setInternalAccounts(prev => prev.filter(a => a._id !== targetId))
+        fetchData() 
+      } catch (err: any) { showToast(err.message || 'فشل حذف الحساب', 'err') }
+      finally { setLoadingModal(false); setTargetId(null); setDeleteType(null) }
+    }
+  }
+
   async function handleDelete(id: string) {
-    setDeletingId(id)
-    try {
-      await fetch(`/api/transactions?id=${id}`, { method: 'DELETE' })
-      setRecentTxs(prev => prev.filter(t => t._id !== id)); fetchData()
-      showToast('تم حذف الحركة', 'ok')
-    } catch { showToast('فشل الحذف', 'err') }
-    finally { setDeletingId(null) }
+    setTargetId(id)
+    setDeleteType('TX')
   }
 
   async function handleAddAccount() {
@@ -368,16 +416,8 @@ export default function TreasuryPage() {
   }
 
   async function handleDeleteAccount(id: string) {
-    setLoadingModal(true)
-    try {
-      const res = await fetch(`/api/internal-accounts/${id}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error()
-      showToast('تم حذف الحساب بنجاح', 'ok')
-      setInternalAccounts(prev => prev.filter(a => a._id !== id))
-      setAccountToDelete(null)
-      fetchData() 
-    } catch { showToast('فشل حذف الحساب', 'err') }
-    finally { setLoadingModal(false) }
+    setTargetId(id)
+    setDeleteType('ACC')
   }
 
   async function handleTransfer() {
@@ -414,7 +454,7 @@ export default function TreasuryPage() {
     : (data?.grandTotal ?? 0)
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
 
       {toast && (
         <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
@@ -760,7 +800,7 @@ export default function TreasuryPage() {
                           acc.rows.push({ ...tx, computedBalance: newBal })
                           acc.running = newBal
                           return acc
-                        }, { rows: [], running: 0 })
+                        }, { rows: [], running: ledgerBF })
                         .rows
                         .map(tx => {
                           const isIN = tx.type === 'IN'
@@ -770,7 +810,7 @@ export default function TreasuryPage() {
                               <td style={{ padding: '0.85rem 1rem' }}>
                                 <span style={{ padding: '0.2rem 0.6rem', borderRadius: 50, background: isIN ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', color: isIN ? '#22C55E' : '#EF4444', fontWeight: 800, fontSize: '0.7rem' }}>{isIN ? 'وارد' : 'صادر'}</span>
                               </td>
-                              <td style={{ padding: '0.85rem 1rem', color: '#E2E8F0' }}>{tx.description}</td>
+                              <td style={{ padding: '0.85rem 1rem', color: '#475569' }}>{tx.description}</td>
                               {/* وارد (+) */}
                               <td style={{ padding: '0.85rem 1rem', textAlign: 'center', fontWeight: 800, color: isIN ? '#22C55E' : '#334155' }}>
                                 {isIN ? fmt(tx.amount) : '—'}
@@ -780,13 +820,20 @@ export default function TreasuryPage() {
                                 {!isIN ? fmt(tx.amount) : '—'}
                               </td>
                               {/* الرصيد التراكمي */}
-                              <td style={{ padding: '0.85rem 1rem', fontWeight: 900, direction: 'ltr', color: tx.computedBalance >= 0 ? '#fff' : '#EF4444' }}>
+                              <td style={{ padding: '0.85rem 1rem', fontWeight: 900, direction: 'ltr', color: tx.computedBalance >= 0 ? '#22C55E' : '#EF4444' }}>
                                 {fmt(tx.computedBalance)} <span style={{fontSize:'0.65rem', color: '#475569'}}>ج.م</span>
                               </td>
                             </tr>
                           )
                         })
                       }
+                      {/* Balance B/F Row */}
+                      <tr style={{ background: 'rgba(6,182,212,0.05)', fontWeight: 900 }}>
+                        <td style={{ padding: '0.85rem 1rem' }}>{startDate || '---'}</td>
+                        <td colSpan={2} style={{ padding: '0.85rem 1rem', color: '#06B6D4' }}>رصيد مرحل (Balance Brought Forward)</td>
+                        <td colSpan={2} style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>---</td>
+                        <td style={{ padding: '0.85rem 1rem', direction: 'ltr', color: '#06B6D4' }}>{fmt(ledgerBF)} ج.م</td>
+                      </tr>
                       {ledgerData.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#475569' }}>لا توجد حركات مسجلة لهذا الحساب</td></tr>}
                     </tbody>
 
@@ -814,14 +861,7 @@ export default function TreasuryPage() {
                   <div key={acc._id} style={{ background: '#F1F5F9', padding: '0.75rem 1rem', borderRadius: 12, display: 'flex', flexDirection: 'column', gap: '0.75rem', border: '1px solid #E2E8F0' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        {accountToDelete === acc._id ? (
-                           <div style={{ display: 'flex', gap: '0.5rem' }}>
-                              <button onClick={() => handleDeleteAccount(acc._id)} style={{ background: '#EF4444', color: '#0F172A', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>تأكيد الحذف</button>
-                              <button onClick={() => setAccountToDelete(null)} style={{ background: 'rgba(255,255,255,0.1)', color: '#0F172A', border: 'none', borderRadius: 6, padding: '0.3rem 0.6rem', fontSize: '0.7rem', fontWeight: 900, cursor: 'pointer' }}>إلغاء</button>
-                           </div>
-                        ) : (
-                           <button onClick={() => setAccountToDelete(acc._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: '#EF4444' }} title="حذف الحساب"><X size={14} /></button>
-                        )}
+                        <button onClick={() => handleDeleteAccount(acc._id)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', borderRadius: 8, padding: '0.4rem', cursor: 'pointer', color: '#EF4444' }} title="حذف الحساب"><X size={14} /></button>
                         <div>
                           <p style={{ fontWeight: 700, fontSize: '0.9rem' }}>{acc.name}</p>
                           <p style={{ fontSize: '0.7rem', color: '#475569' }}>{acc.type === 'Bank' ? 'حساب بنكي' : acc.type === 'Safe' ? 'خزينة' : 'محفظة / وسيط'}</p>
@@ -888,6 +928,14 @@ export default function TreasuryPage() {
           </div>
         )}
       </AnimatePresence>
+      
+      <DeleteConfirmModal
+        isOpen={!!targetId}
+        onClose={() => { setTargetId(null); setDeleteType(null); }}
+        onConfirm={confirmDelete}
+        title={deleteType === 'TX' ? "حذف حركة مالية" : "حذف حساب مالي"}
+        description={deleteType === 'TX' ? "تحذير: سيتم حذف هذه الحركة المالية نهائياً وتعديل الأرصدة المرتبطة بها. هذه العملية لا يمكن التراجع عنها." : "تحذير: سيتم حذف الحساب المالي نهائياً. تأكد من عدم وجود أرصدة أو حركات مرتبطة بهذا الحساب."}
+      />
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>

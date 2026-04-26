@@ -42,7 +42,7 @@ function fmt(n: number) {
 export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: InvoiceData; storeName?: string; storeLogoUrl?: string }) {
   return (
     <div
-      id="freezone-invoice"
+      id="orca-invoice"
       dir="rtl"
       className="invoice-container"
       style={{
@@ -62,7 +62,7 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
         @media print {
           /* Hide everything except the invoice */
           body > * { visibility: hidden !important; }
-          #freezone-invoice {
+          #orca-invoice {
             visibility: visible !important;
             position: fixed !important;
             left: 0 !important;
@@ -74,7 +74,7 @@ export function InvoiceTemplate({ data, storeName, storeLogoUrl }: { data: Invoi
             padding: 12mm !important;
             box-sizing: border-box !important;
           }
-          #freezone-invoice * { visibility: visible !important; }
+          #orca-invoice * { visibility: visible !important; }
           @page { size: A4; margin: 0; }
         }
       `}</style>

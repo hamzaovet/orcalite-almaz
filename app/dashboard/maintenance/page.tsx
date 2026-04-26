@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Search, Wrench, Smartphone, User, Phone, CheckCircle, Clock, Truck, FileText, Printer, PackagePlus, Loader2, X, Globe, Camera, MessageCircle, Trash2 } from 'lucide-react'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 type StatusType = 'Pending' | 'Diagnosing' | 'In Repair' | 'Ready for Pickup' | 'Delivered'
 
@@ -55,6 +56,8 @@ export default function MaintenancePage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentTicket, setCurrentTicket] = useState<Partial<RepairTicket> | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [deleteType, setDeleteType] = useState<'ticket' | 'onlineRequest' | null>(null)
 
   // Products for Spare Parts
   const [products, setProducts] = useState<any[]>([])
@@ -148,11 +151,58 @@ export default function MaintenancePage() {
     } finally { setReqSaving(false) }
   }
 
-  async function deleteOnlineRequest(id: string) {
-    if (!confirm('حذف هذا الطلب؟')) return
-    await fetch(`/api/repair-requests/${id}`, { method: 'DELETE' })
-    setOnlineRequests(prev => prev.filter(r => r._id !== id))
-    setSelectedRequest(null)
+  async function deleteOnlineRequest(password: string) {
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/repair-requests/${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'فشل الحذف')
+      
+      setOnlineRequests(prev => prev.filter(r => r._id !== deleteId))
+      setSelectedRequest(null)
+      setReqToast({ msg: 'تم الحذف بنجاح', type: 'ok' })
+      setTimeout(() => setReqToast(null), 2500)
+    } catch (err: any) {
+      setReqToast({ msg: err.message, type: 'err' })
+      setTimeout(() => setReqToast(null), 3000)
+    } finally {
+      setDeleteId(null)
+      setDeleteType(null)
+    }
+  }
+
+  async function deleteTicket(password: string) {
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/maintenance/${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || data.message || 'فشل الحذف')
+      
+      setTickets(prev => prev.filter(t => t._id !== deleteId))
+      setIsModalOpen(false)
+      // trigger toast? don't have a global toast for tickets but we can use alert or something
+    } catch (err: any) {
+      alert(err.message)
+    } finally {
+      setDeleteId(null)
+      setDeleteType(null)
+    }
+  }
+
+  function handleDeleteConfirm(password: string) {
+    if (deleteType === 'ticket') {
+      deleteTicket(password)
+    } else if (deleteType === 'onlineRequest') {
+      deleteOnlineRequest(password)
+    }
   }
 
   async function handleSaveTicket(e: React.FormEvent) {
@@ -568,7 +618,7 @@ export default function MaintenancePage() {
                         style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.9rem', background: '#22C55E', borderRadius: 14, color: '#0F172A', fontWeight: 800, textDecoration: 'none', fontSize: '0.9rem' }}>
                         <MessageCircle size={18} /> تواصل عبر واتساب
                       </a>
-                      <button onClick={() => deleteOnlineRequest(selectedRequest._id)} style={{ padding: '0.9rem 1rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 14, color: '#EF4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
+                      <button onClick={() => { setDeleteId(selectedRequest._id); setDeleteType('onlineRequest'); }} style={{ padding: '0.9rem 1rem', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 14, color: '#EF4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
                       <button onClick={() => {
                         setActiveTab('kanban')
                         setCurrentTicket({ status: 'Pending', customerName: selectedRequest.customerName, phoneNumber: selectedRequest.whatsapp, deviceModel: selectedRequest.deviceModel, imeiPasscode: '', issueDescription: selectedRequest.issueDescription, estimatedCost: selectedRequest.quote || 0, deposit: 0 })
@@ -807,6 +857,11 @@ export default function MaintenancePage() {
               </div>
 
               <div style={{ position: 'sticky', bottom: 0, background: 'rgba(15,23,42,0.95)', backdropFilter: 'blur(10px)', padding: '1.5rem 2rem', borderTop: '1px solid #F8FAFC', display: 'flex', justifyContent: 'flex-end', gap: '1rem', zIndex: 20 }}>
+                {currentTicket._id && (
+                  <button type="button" onClick={() => { setDeleteId(currentTicket._id as string); setDeleteType('ticket'); }} style={{ background: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 12, padding: '0.8rem 2rem', fontWeight: 700, cursor: 'pointer', marginRight: 'auto' }}>
+                    حذف التذكرة
+                  </button>
+                )}
                 <button type="button" onClick={() => setIsModalOpen(false)} style={{ background: 'transparent', color: '#475569', border: '1px solid #E2E8F0', borderRadius: 12, padding: '0.8rem 2rem', fontWeight: 700, cursor: 'pointer' }}>
                   إلغاء
                 </button>
@@ -819,6 +874,14 @@ export default function MaintenancePage() {
           </div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => { setDeleteId(null); setDeleteType(null); }}
+        onConfirm={handleDeleteConfirm}
+        title={deleteType === 'ticket' ? "حذف تذكرة الصيانة" : "حذف طلب التسعير"}
+        description={deleteType === 'ticket' ? "تحذير: سيتم حذف هذه التذكرة نهائياً. تأكد من أن هذا الإجراء مطلوب قبل الاستمرار." : "تحذير: سيتم حذف طلب التسعير ولن يمكنك التراجع عن هذه العملية."}
+      />
     </div>
   )
 }

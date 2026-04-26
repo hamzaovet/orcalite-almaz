@@ -151,7 +151,7 @@ export function generateTransferReceiptHTML(data: ConsignmentData): string {
       <div class="page">
         <div class="header">
           <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="font-size: 22px; font-weight: 950; color: #000;">FREE ZONE</div>
+            <div style="font-size: 22px; font-weight: 950; color: #000;">ORCA</div>
             <div style="font-size: 9px; font-weight: 800; color: #6c757d; letter-spacing: 0.1em; border-right: 2px solid #dee2e6; padding-right: 12px;">
               DISTRIBUTION HUB<br>إدارة التوزيع المركزية
             </div>
@@ -245,7 +245,7 @@ export function generateLedgerHTML(branch: any, orders: any[], totalDebt: number
       <div class="page">
         <div class="header" style="border-bottom: 4px solid #000;">
           <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="font-size: 26px; font-weight: 950;">FREE ZONE</div>
+            <div style="font-size: 26px; font-weight: 950;">ORCA</div>
             <div style="font-size: 9px; font-weight: 900; color: #666; border-right: 2px solid #000; padding-right: 15px;">
               DISTRIBUTION HUB<br>إدارة التوزيع المركزية
             </div>
@@ -322,7 +322,7 @@ export function generateTransactionReceiptHTML(tx: any): string {
       <div class="page" style="min-height: 140mm; padding: 10mm; border: 4px double #000; height: auto;">
         <div class="header">
           <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="font-size: 22px; font-weight: 950;">FREE ZONE</div>
+            <div style="font-size: 22px; font-weight: 950;">ORCA</div>
             <div style="font-size: 8px; font-weight: 900; color: #666; border-right: 2px solid #000; padding-right: 12px; text-align: right;">
               FINANCIAL SERVICES<br>الإدارة المالية
             </div>
@@ -364,7 +364,7 @@ export function generateTransactionReceiptHTML(tx: any): string {
         </div>
 
         <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; font-size: 9px; color: #999; text-align: center;">
-          * يعتبر هذا الإيصال لاغياً في حال وجود أي كشط أو تعديل يدوي. تم استخراجه آلياً من نظام FREE ZONE.
+          * يعتبر هذا الإيصال لاغياً في حال وجود أي كشط أو تعديل يدوي. تم استخراجه آلياً من نظام ORCA.
         </div>
       </div>
     </body>
@@ -398,7 +398,7 @@ export function generateMasterLedgerHTML(branchName: string, statement: any[]): 
       <div class="page" style="width: 210mm; margin: 0 auto; padding: 10mm; background: #fff;">
         <div class="header">
           <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="font-size: 24px; font-weight: 950;">FREE ZONE</div>
+            <div style="font-size: 24px; font-weight: 950;">ORCA</div>
             <div style="font-size: 10px; color: #666; border-right: 2px solid #000; padding-right: 15px;">
               SYSTEMS & DISTRIBUTION<br>كشف حساب مجمع (بضاعة + نقدية)
             </div>

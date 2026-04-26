@@ -7,6 +7,7 @@ import { PrintHeader } from '@/components/dashboard/PrintHeader'
 import { motion, AnimatePresence } from 'framer-motion'
 import { jsPDF } from 'jspdf'
 import html2canvas from 'html2canvas'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 const IMGBB_KEY = '1705736b8f2b46dcbaeec8a6025aca83'
 
@@ -271,15 +272,27 @@ export default function ProductsPage() {
     return data.data.display_url
   }
 
-  async function handleDelete(id: string) {
-    try { await fetch(`/api/products?id=${id}`, { method: 'DELETE' }); fetchProducts(); showToast('تم الحذف', 'ok') }
-    catch { showToast('فشل الحذف', 'err') } finally { setDeleteId(null) }
+  async function handleDelete(password: string) {
+    if (!deleteId) return
+    try { 
+      const res = await fetch(`/api/products?id=${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      }); 
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || data.error || 'فشل الحذف')
+      
+      fetchProducts(); 
+      showToast('تم الحذف بنجاح', 'ok') 
+    }
+    catch (err: any) { showToast(err.message, 'err') } finally { setDeleteId(null) }
   }
 
   function exportToWhatsApp() {
     if (items.length === 0) return alert('لا توجد منتجات لتصديرها')
     
-    let text = "🟦 FREE ZONE | فري زون للإستيراد 🟦\n\n"
+    let text = "🟦 ORCA | أوركا للإستيراد 🟦\n\n"
     
     items.forEach(p => {
       const price = p.wholesalePriceEGP || 0
@@ -316,7 +329,7 @@ export default function ProductsPage() {
     }
 
     const today = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    let message = `🟦 *FREE ZONE | فري زون للإستيراد* 🟦\n`
+    let message = `🟦 *ORCA | أوركا للإستيراد* 🟦\n`
     message += `🗓️ تاريخ: ${today}\n\n`
     
     items.forEach(p => {
@@ -357,7 +370,7 @@ export default function ProductsPage() {
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
       
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-      pdf.save(`FreeZone_PriceList_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`)
+      pdf.save(`ORCA_PriceList_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`)
       showToast('تم تحميل PDF بنجاح', 'ok')
     } catch (err) {
       console.error(err)
@@ -382,7 +395,7 @@ export default function ProductsPage() {
   })
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
       <PrintHeader title="قائمة الجرد والمنتجات" subtitle={`${items.length} منتج مسجل`} />
       {toast && <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>{toast.msg}</div>}
 
@@ -589,10 +602,10 @@ export default function ProductsPage() {
                 </td>
                 {/* Actions */}
                 <td style={{ ...td, textAlign: 'center' }}>
-                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                    <button onClick={() => openEdit(p)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Pencil size={15} /></button>
-                    <button onClick={async () => { if(confirm('متأكد من الحذف؟')) { await fetch('/api/products?id=' + p._id, { method: 'DELETE' }); window.location.reload(); } }} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trash2 size={15} /></button>
-                  </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+                      <button onClick={() => openEdit(p)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Pencil size={15} /></button>
+                      <button onClick={() => setDeleteId(p._id || null)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.4rem 0.6rem', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trash2 size={15} /></button>
+                    </div>
                 </td>
               </tr>
             ))}
@@ -868,7 +881,7 @@ export default function ProductsPage() {
         >
           {/* PDF Branding */}
           <div style={{ textAlign: 'center', borderBottom: '4px solid #06B6D4', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
-            <img src="/assets/logo.png" alt="FREE ZONE" style={{ height: '80px', marginBottom: '1rem', objectFit: 'contain' }} />
+            <img src="/assets/logo.png" alt="ORCA" style={{ height: '80px', marginBottom: '1rem', objectFit: 'contain' }} />
             <p style={{ fontSize: '1.5rem', fontWeight: 700, color: '#06B6D4' }}>قائمة أسعار الجملة المعتمدة</p>
             <p style={{ fontSize: '1rem', color: '#475569', marginTop: '0.5rem' }}>
                بتاريخ: {new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -906,10 +919,17 @@ export default function ProductsPage() {
           </table>
 
           <div style={{ marginTop: '3rem', textAlign: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '1.5rem' }}>
-            <p style={{ color: '#475569', fontSize: '0.9rem' }}>فري زون للإستيراد - السراج مول، مكرم عبيد، مدينة نصر - القاهرة - الأسعار قابلة للتغيير دون إشعار مسبق</p>
+            <p style={{ color: '#475569', fontSize: '0.9rem' }}>أوركا للإستيراد - السراج مول، مكرم عبيد، مدينة نصر - القاهرة - الأسعار قابلة للتغيير دون إشعار مسبق</p>
           </div>
         </div>
       </div>
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف المنتج"
+        description="تحذير: سيتم حذف هذا المنتج نهائياً من النظام، ولن تظهر بياناته في الجرد أو التقارير القادمة."
+      />
     </div>
   )
 }

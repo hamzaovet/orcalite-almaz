@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import MerchantContact from '@/models/MerchantContact'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,6 +41,13 @@ export async function DELETE(request: NextRequest) {
   try {
     await connectDB()
     const id = request.nextUrl.searchParams.get('id')
+
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ success: false, message: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
+
     await MerchantContact.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch (error: any) {

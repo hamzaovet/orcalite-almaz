@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Plus, Pencil, Trash2, X, Search, Loader2, TrendingUp, TrendingDown, Wallet, ExternalLink } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SupplierLedgerModal from '@/components/dashboard/SupplierLedgerModal'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 type SupplierType = 'Supplier' | 'Customer' | 'Both'
 
@@ -108,7 +109,7 @@ export default function SuppliersPage() {
   async function fetchSuppliers() {
     setLoading(true)
     try {
-      const res  = await fetch('/api/suppliers')
+      const res  = await fetch('/api/suppliers?t=' + Date.now())
       const data = await res.json()
       setItems(data.suppliers ?? [])
     } catch {
@@ -176,13 +177,21 @@ export default function SuppliersPage() {
     }
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(password: string) {
+    if (!deleteId) return
     try {
-      await fetch(`/api/suppliers?id=${id}`, { method: 'DELETE' })
-      setItems(prev => prev.filter(s => s._id !== id))
+      const res = await fetch(`/api/suppliers?id=${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || data.error || 'فشل الحذف')
+
+      setItems(prev => prev.filter(s => s._id !== deleteId))
       showToast('تم الحذف', 'ok')
-    } catch {
-      showToast('فشل الحذف', 'err')
+    } catch (err: any) {
+      showToast(err.message, 'err')
     } finally {
       setDeleteId(null)
     }
@@ -215,7 +224,7 @@ export default function SuppliersPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
 
       {toast && (
         <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.65rem 1.5rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)', whiteSpace: 'nowrap' }}>
@@ -308,7 +317,7 @@ export default function SuppliersPage() {
                     <td style={{ padding: '1.2rem 1rem' }}>
                       <div style={{ display: 'flex', gap: '0.6rem' }}>
                         <button onClick={() => openEdit(s)} style={{ background: '#ECFEFF', border: 'none', color: '#06B6D4', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Pencil size={18} /></button>
-                        <button onClick={async () => { if(confirm('متأكد من الحذف؟')) { await fetch('/api/suppliers?id=' + s._id, { method: 'DELETE' }); window.location.reload(); } }} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Trash2 size={18} /></button>
+                        <button onClick={() => setDeleteId(s._id || null)} style={{ background: 'rgba(239,68,68,0.1)', border: 'none', color: '#EF4444', padding: '0.5rem', borderRadius: 8, cursor: 'pointer' }}><Trash2 size={18} /></button>
                       </div>
                     </td>
                   </tr>
@@ -362,6 +371,14 @@ export default function SuppliersPage() {
           <SupplierLedgerModal supplier={ledgerModal as any} onClose={() => setLedgerModal(null)} />
         )}
       </AnimatePresence>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف الحساب"
+        description="تحذير: سيتم حذف هذا الحساب نهائياً، ولن يمكنك التراجع عن هذه العملية."
+      />
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>

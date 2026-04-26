@@ -13,7 +13,7 @@ export async function GET() {
   try {
     await connectDB()
 
-    // Nuke whatever is in the collection (Free Zone-contaminated documents)
+    // Nuke whatever is in the collection (ORCA-contaminated documents)
     await LandingPage.deleteMany({})
 
     // Re-create with clean ORCA defaults

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import Currency from '@/models/Currency'
 import { StoreSettings } from '@/models/StoreSettings'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 export async function GET(req: NextRequest) {
   try {
@@ -60,6 +61,12 @@ export async function DELETE(req: NextRequest) {
     await connectDB()
     const id = req.nextUrl.searchParams.get('id')
     if (!id) return NextResponse.json({ success: false, error: 'ID is required.' }, { status: 400 })
+
+    const body = await req.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ success: false, error: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
     
     await Currency.findByIdAndDelete(id)
     return NextResponse.json({ success: true })

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import CustomerDeviceOffer from '@/models/CustomerDeviceOffer'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -32,6 +33,13 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   try {
     await connectDB()
     const { id } = await params
+
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ success: false, message: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
+
     await CustomerDeviceOffer.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch (error) {

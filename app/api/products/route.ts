@@ -5,6 +5,7 @@ import Category from '@/models/Category'
 import Branch from '@/models/Branch'
 import Supplier from '@/models/Supplier'
 import { StoreSettings } from '@/models/StoreSettings'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 /** Shared error response for any DB failure */
 function dbError(detail?: string) {
@@ -142,6 +143,12 @@ export async function DELETE(request: NextRequest) {
         { success: false, message: 'معرّف المنتج (id) مطلوب' },
         { status: 400 }
       )
+    }
+
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ success: false, message: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
     }
 
     await Product.findByIdAndDelete(id)

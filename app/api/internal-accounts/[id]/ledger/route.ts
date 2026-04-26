@@ -58,10 +58,24 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     // Bulletproof Date Logic (Phase 140)
+    let balanceBF = Number(account.initialBalance) || 0;
+    
     if ((startDate && startDate !== 'undefined' && startDate !== '') || 
         (endDate && endDate !== 'undefined' && endDate !== '')) {
-        match.date = {};
         
+        // 1. Compute Balance B/F (sum of all transactions BEFORE startDate)
+        if (startDate && startDate !== 'undefined' && startDate !== '') {
+            const bfMatch = { ...match, date: { $lt: new Date(startDate) } };
+            const bfAgg = await Transaction.aggregate([
+                { $match: bfMatch },
+                { $group: { _id: null, totalIn: { $sum: { $cond: [{ $eq: ["$type", "IN"] }, "$amount", 0] } }, totalOut: { $sum: { $cond: [{ $eq: ["$type", "OUT"] }, "$amount", 0] } } } }
+            ]);
+            if (bfAgg.length > 0) {
+                balanceBF += (bfAgg[0].totalIn - bfAgg[0].totalOut);
+            }
+        }
+
+        match.date = {};
         if (startDate && startDate !== 'undefined' && startDate !== '') {
             match.date.$gte = new Date(startDate);
         }
@@ -77,7 +91,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       .sort({ date: 1, createdAt: 1 }) // Chronological ascending
       .lean()
 
-    return NextResponse.json({ success: true, account, transactions })
+    return NextResponse.json({ success: true, account, transactions, balanceBF })
   } catch (err: any) {
     return NextResponse.json({ success: false, message: err.message }, { status: 500 })
   }

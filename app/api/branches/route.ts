@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import Branch from '@/models/Branch'
 import InventoryUnit from '@/models/InventoryUnit'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 function fail(msg: string, status = 400) {
   return NextResponse.json({ success: false, message: msg }, { status })
@@ -66,6 +67,13 @@ export async function DELETE(req: NextRequest) {
     await connectDB()
     const id = req.nextUrl.searchParams.get('id')
     if (!id) return fail('معرّف الفرع مطلوب')
+
+    const body = await req.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return fail('كلمة مرور الإدارة غير صحيحة', 401)
+    }
+
     await Branch.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch (err: any) {

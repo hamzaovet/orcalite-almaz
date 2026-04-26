@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server'
 import mongoose from 'mongoose'
 import { connectDB } from '@/lib/db'
@@ -7,6 +8,7 @@ import Branch from '@/models/Branch'
 import Supplier from '@/models/Supplier'
 import Customer from '@/models/Customer'
 import InternalAccount from '@/models/InternalAccount'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 function dbError(detail?: string) {
   return NextResponse.json(
@@ -215,6 +217,13 @@ export async function DELETE(request: NextRequest) {
     await connectDB()
     const id = request.nextUrl.searchParams.get('id')
     if (!id) return NextResponse.json({ success: false, message: 'ID required' }, { status: 400 })
+
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ success: false, message: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
+
     await Transaction.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch (error) {

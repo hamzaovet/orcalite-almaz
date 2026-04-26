@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Plus, Trash2, Save, ShoppingBag, Loader2, Scan, Database, Printer, CheckCircle2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExcelPurchaseModal } from '@/components/dashboard/ExcelPurchaseModal'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 import CreatableSelect from 'react-select/creatable'
 import Link from 'next/link'
 
@@ -29,6 +30,7 @@ export default function PurchasesPage() {
   const [magicOpen, setMagicOpen] = useState(false)
   const [recentPurchases, setRecentPurchases] = useState<any[]>([])
   const [completedPurchase, setCompletedPurchase] = useState<any>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   // Current Item Form
   const [currProduct, setCurrProduct] = useState<any>(null)
@@ -54,6 +56,25 @@ export default function PurchasesPage() {
       const data = await res.json()
       setRecentPurchases((data.purchases || []).slice(0, 10))
     } catch { /* silent fail */ }
+  }
+
+  async function handleDelete(password: string) {
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/purchases/${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'فشل الحذف')
+      showToast('تم حذف الفاتورة بنجاح', 'ok')
+      fetchRecent()
+    } catch (err: any) {
+      showToast(err.message, 'err')
+    } finally {
+      setDeleteId(null)
+    }
   }
 
   async function fetchData() {
@@ -262,7 +283,7 @@ export default function PurchasesPage() {
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}><Loader2 className="animate-spin text-cyan-500" size={48} /></div>
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
       {toast && (
         <div style={{ position: 'fixed', top: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 999, background: toast.type === 'ok' ? '#06B6D4' : '#EF4444', color: '#0F172A', padding: '0.7rem 1.6rem', borderRadius: 50, fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
           {toast.msg}
@@ -285,7 +306,7 @@ export default function PurchasesPage() {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(350px, 1fr) 2fr', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(380px, 420px) 1fr', gap: '2rem' }}>
         {/* Left Column: Supplier & Financials */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
@@ -583,6 +604,7 @@ export default function PurchasesPage() {
               </div>
             )}
           </div>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -603,51 +625,56 @@ export default function PurchasesPage() {
         {recentPurchases.length === 0 ? (
           <p style={{ color: '#475569', textAlign: 'center', padding: '2rem' }}>لا توجد مشتريات مسجلة مؤخراً</p>
         ) : (
-          <div style={{ overflowX: 'visible', width: '100%' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem', tableLayout: 'auto' }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <th style={{ padding: '1rem', color: '#475569', width: '150px' }}>التاريخ</th>
-                  <th style={{ padding: '1rem', color: '#475569' }}>المورد / العميل</th>
-                  <th style={{ padding: '1rem', color: '#475569', width: '120px' }}>الإجمالي</th>
-                  <th style={{ padding: '1rem', color: '#475569', width: '120px' }}>الحالة</th>
-                  <th style={{ padding: '1rem', color: '#475569', width: '150px', textAlign: 'center' }}>الإجراءات</th>
+                <tr style={{ borderBottom: '2px solid #E2E8F0', background: '#F8FAFC' }}>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800, whiteSpace: 'nowrap', borderRadius: '0 12px 12px 0' }}>التاريخ</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>المورد / العميل</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>الإجمالي</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>الحالة</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800, textAlign: 'center', borderRadius: '12px 0 0 12px' }}>الإجراءات</th>
                 </tr>
               </thead>
               <tbody>
                 {recentPurchases.map((p, idx) => (
                   <tr key={p._id} style={{ borderBottom: '1px solid #F1F5F9', verticalAlign: 'middle' }}>
-                    <td style={{ padding: '1rem', color: '#475569' }}>{new Date(p.createdAt).toLocaleDateString('ar-EG')}</td>
-                    <td style={{ padding: '1rem', fontWeight: 800 }}>
+                    <td style={{ padding: '1.1rem 1rem', color: '#475569', whiteSpace: 'nowrap' }}>{new Date(p.createdAt).toLocaleDateString('ar-EG')}</td>
+                    <td style={{ padding: '1.1rem 1rem', fontWeight: 800, color: '#0F172A' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         {p.walkInName || p.supplierName}
                         {p.walkInName && <span style={{ fontSize: '0.65rem', background: 'rgba(168,85,247,0.15)', color: '#A855F7', padding: '0.1rem 0.4rem', borderRadius: 4, whiteSpace: 'nowrap' }}>طياري</span>}
                       </div>
                     </td>
-                    <td style={{ padding: '1rem', fontWeight: 900 }}>{p.totalAmount.toLocaleString()} ج.م</td>
-                    <td style={{ padding: '1rem' }}>
-                      <span style={{ fontSize: '0.75rem', color: p.isOpeningBalance ? '#FB923C' : '#06B6D4' }}>
+                    <td style={{ padding: '1.1rem 1rem', fontWeight: 900, color: '#0F172A', fontSize: '1rem' }}>{p.totalAmount.toLocaleString()} ج.م</td>
+                    <td style={{ padding: '1.1rem 1rem' }}>
+                      <span style={{ fontSize: '0.75rem', color: p.isOpeningBalance ? '#FB923C' : '#06B6D4', fontWeight: 800 }}>
                         {p.isOpeningBalance ? 'رصيد افتتاحي' : (p.walkInName ? 'مبايعة شراء' : 'فاتورة مورد')}
                       </span>
                     </td>
-                    <td style={{ padding: '1rem', textAlign: 'center' }}>
-                      {p.walkInName ? (
+                    <td style={{ padding: '1.1rem 1rem', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
                         <Link 
-                          href={`/dashboard/purchase-contract?purchaseId=${p._id}`}
+                          href={p.walkInName ? `/dashboard/purchase-contract?purchaseId=${p._id}` : `/dashboard/purchase-invoice?purchaseId=${p._id}`}
                           target="_blank"
-                          className="bg-purple-600 hover:bg-purple-700 text-slate-900 px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-purple-500/20"
+                          style={{ 
+                            background: '#06B6D4', color: '#0F172A', padding: '0.55rem 1rem', borderRadius: 12, fontWeight: 900, textDecoration: 'none', 
+                            display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', transition: 'all 0.2s', boxShadow: '0 8px 20px rgba(6,182,212,0.2)'
+                          }}
                         >
-                          <Printer size={14} /> طباعة مبايعة
+                          <Printer size={14} /> طباعة {p.walkInName ? 'مبايعة' : 'فاتورة'}
                         </Link>
-                      ) : (
-                        <Link 
-                          href={`/dashboard/purchase-invoice?purchaseId=${p._id}`}
-                          target="_blank"
-                          className="bg-cyan-500 hover:bg-cyan-600 text-slate-900 px-3 py-2 rounded-xl text-xs font-black inline-flex items-center gap-2 transition-all shadow-lg shadow-cyan-500/20"
+                        
+                        <button 
+                          onClick={() => setDeleteId(p._id)} 
+                          style={{ 
+                            background: '#1e1b4b', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.2)', padding: '0.55rem 1rem', borderRadius: 12, 
+                            cursor: 'pointer', fontWeight: 900, fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s' 
+                          }}
                         >
-                          <Printer size={14} /> طباعة فاتورة
-                        </Link>
-                      )}
+                          <Trash2 size={14} /> حذف
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -656,37 +683,44 @@ export default function PurchasesPage() {
           </div>
         )}
       </div>
-    </div>
-    
-    <AnimatePresence>
-      {completedPurchase && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8,12,20,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
-          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#F8FAFC', borderRadius: 28, border: '1px solid #06B6D4', width: '100%', maxWidth: 500, padding: '3rem', textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.1)' }}>
-            <div style={{ width: 80, height: 80, background: '#ECFEFF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-              <CheckCircle2 color="#06B6D4" size={48} />
-            </div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '1rem' }}>تم حفظ الفاتورة!</h2>
-            <p style={{ color: '#475569', marginBottom: '2rem', fontSize: '1.1rem' }}>تم توريد المخزون لفرع <span style={{ color: '#06B6D4', fontWeight: 800 }}>{completedPurchase.branchName}</span> بنجاح.</p>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-              <Link 
-                href={`/dashboard/purchase-invoice?purchaseId=${completedPurchase._id}&branchName=${encodeURIComponent(completedPurchase.branchName)}`}
-                target="_blank"
-                style={{ background: '#06B6D4', color: '#0F172A', padding: '1rem', borderRadius: 16, fontWeight: 900, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-              >
-                <Printer size={20} /> طباعة الفاتورة
-              </Link>
-              <button 
-                onClick={() => setCompletedPurchase(null)}
-                style={{ background: '#F8FAFC', color: '#0F172A', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 16, fontWeight: 900, cursor: 'pointer' }}
-              >
-                إغلاق
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+
+      <AnimatePresence>
+        {completedPurchase && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(8,12,20,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)' }}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#F8FAFC', borderRadius: 28, border: '1px solid #06B6D4', width: '100%', maxWidth: 500, padding: '3rem', textAlign: 'center', boxShadow: '0 30px 60px rgba(0,0,0,0.1)' }}>
+              <div style={{ width: 80, height: 80, background: '#ECFEFF', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <CheckCircle2 color="#06B6D4" size={48} />
+              </div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '1rem' }}>تم حفظ الفاتورة!</h2>
+              <p style={{ color: '#475569', marginBottom: '2rem', fontSize: '1.1rem' }}>تم توريد المخزون لفرع <span style={{ color: '#06B6D4', fontWeight: 800 }}>{completedPurchase.branchName}</span> بنجاح.</p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <Link 
+                  href={`/dashboard/purchase-invoice?purchaseId=${completedPurchase._id}&branchName=${encodeURIComponent(completedPurchase.branchName)}`}
+                  target="_blank"
+                  style={{ background: '#06B6D4', color: '#0F172A', padding: '1rem', borderRadius: 16, fontWeight: 900, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  <Printer size={20} /> طباعة الفاتورة
+                </Link>
+                <button 
+                  onClick={() => setCompletedPurchase(null)}
+                  style={{ background: '#F8FAFC', color: '#0F172A', border: '1px solid #E2E8F0', padding: '1rem', borderRadius: 16, fontWeight: 900, cursor: 'pointer' }}
+                >
+                  إغلاق
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف فاتورة المشتريات"
+        description="تحذير: سيتم حذف الفاتورة واسترجاع المخزون وتسوية الرصيد المالي للمورد. هذه العملية لا يمكن التراجع عنها."
+      />
     </div>
   );
 }

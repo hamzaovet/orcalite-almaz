@@ -30,7 +30,7 @@ export function buildWhatsAppMessage(data: InvoiceData): string {
     .join('\n')
 
   return encodeURIComponent(
-    `🖤 *فري زون استور — Apple Premium Reseller*\n` +
+    `🖤 *أوركا — Apple Premium Reseller*\n` +
     `─────────────────────\n` +
     `📄 *فاتورة رقم:* ${data.invoiceNumber}\n` +
     `📅 *التاريخ:* ${data.date} — ${data.time}\n` +
@@ -42,7 +42,7 @@ export function buildWhatsAppMessage(data: InvoiceData): string {
     `💰 *الإجمالي:* ${data.totalSalePrice.toLocaleString('ar-EG')} ج.م\n` +
     `💳 *الدفع:* ${data.paymentMethod}\n` +
     `─────────────────────\n` +
-    `✅ شكراً لثقتكم في فري زون استور 🙏\n` +
+    `✅ شكراً لثقتكم في أوركا 🙏\n` +
     `للاستفسار أو الضمان يرجى الاحتفاظ بهذه الرسالة.`
   )
 }
@@ -72,7 +72,7 @@ export function buildTransferWhatsAppMessage(data: ConsignmentData): string {
     .join('\n')
 
   const text = 
-    `📄 *إذن صرف عُهدة — فري زون استور*\n` +
+    `📄 *إذن صرف عُهدة — أوركا*\n` +
     `─────────────────────\n` +
     `🔢 *رقم الإذن:* ${data.orderNumber}\n` +
     `👤 *المستلم:* ${data.targetName}\n` +

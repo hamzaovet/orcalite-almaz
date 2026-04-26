@@ -22,7 +22,7 @@ export default function SettingsPage() {
   const [savingCurrencies, setSavingCurrencies] = useState(false)
 
   // System Settings
-  const [storeSettings, setStoreSettings] = useState({ whatsappNumber: '', exchangeRate: 1, exchangeRateUSD: 1, storeName: 'ORCA ERP', storeLogoUrl: '', businessType: 'B2B_WHALE', salesWhatsapp: '', maintenanceWhatsapp: '' })
+  const [storeSettings, setStoreSettings] = useState({ whatsappNumber: '', exchangeRate: 1, exchangeRateUSD: 1, storeName: 'ORCA ERP', storeLogoUrl: '', businessType: 'B2B_WHALE', salesWhatsapp: '', maintenanceWhatsapp: '', adminPassword: '' })
   const [currentUser, setCurrentUser] = useState<{role: string} | null>(null)
   const [accessDenied, setAccessDenied] = useState(false)
   const [savingSettings, setSavingSettings] = useState(false)
@@ -81,7 +81,8 @@ export default function SettingsPage() {
           storeLogoUrl: settsData.storeLogoUrl || '',
           businessType: settsData.businessType || 'B2B_WHALE',
           salesWhatsapp: settsData.salesWhatsapp || '',
-          maintenanceWhatsapp: settsData.maintenanceWhatsapp || ''
+          maintenanceWhatsapp: settsData.maintenanceWhatsapp || '',
+          adminPassword: settsData.adminPassword || ''
         })
       }
     })
@@ -273,7 +274,7 @@ export default function SettingsPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
             <div>
               <label style={lbl}>اسم المتجر (يظهر في الفواتير)</label>
-              <input value={storeSettings.storeName} onChange={(e) => setStoreSettings({...storeSettings, storeName: e.target.value})} style={inp} placeholder="مثال: فري زون" />
+              <input value={storeSettings.storeName} onChange={(e) => setStoreSettings({...storeSettings, storeName: e.target.value})} style={inp} placeholder="مثال: أوركا" />
             </div>
             <div>
               <label style={lbl}>رقم الواتساب للمتجر (للتصدير)</label>
@@ -341,6 +342,29 @@ export default function SettingsPage() {
                 💡 ملحوظة: إذا تركت هذه الحقول فارغة، سيتم تحويل كافة الطلبات تلقائياً إلى الرقم الأساسي للمتجر.
               </p>
             </div>
+
+            {/* Master Admin Password Section */}
+            {currentUser?.role === 'SuperAdmin' && (
+              <div style={{ gridColumn: '1 / -1', borderTop: '1px solid rgba(6,182,212,0.1)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  <Shield size={18} color="#EF4444" />
+                  <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#EF4444' }}>الرقم السري للعمليات الحرجة (Master Password)</h3>
+                </div>
+                <div>
+                  <label style={lbl}>كلمة مرور الحذف (يطلبها النظام عند حذف أي بيانات)</label>
+                  <input 
+                    type="password" 
+                    value={storeSettings.adminPassword} 
+                    onChange={(e) => setStoreSettings({...storeSettings, adminPassword: e.target.value})} 
+                    style={{ ...inp, border: '1px solid rgba(239,68,68,0.3)', letterSpacing: '0.2em' }} 
+                    placeholder="••••••••" 
+                  />
+                  <p style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: '#EF4444', fontWeight: 700 }}>
+                    ملاحظة: بدون تعيين كلمة المرور هذه، سيمنع النظام كافة عمليات الحذف بشكل نهائي.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           <button onClick={handleSaveSettings} disabled={savingSettings} style={{ background: '#3B82F6', color: '#0F172A', border: 'none', borderRadius: 12, padding: '0.8rem 2rem', fontWeight: 800, cursor: savingSettings ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
              {savingSettings ? <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> : 'حفظ الإعدادات'}
@@ -510,7 +534,7 @@ export default function SettingsPage() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.3rem 0.8rem', borderRadius: 50, background: u.role.trim()==='مدير' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', color: u.role.trim()==='مدير'?'#06B6D4': '#A855F7' }}>{u.role.trim()}</span>
-                  {u.username !== 'admin_freezone' && (
+                  {u.username !== 'admin_orca' && (
                     <button onClick={async() => {if(confirm('حذف المستخدم؟')){await fetch(`/api/users?id=${u.id}`,{method:'DELETE'});setUsers(users.filter(x=>x.id!==u.id))}}} style={{ background: 'none', border: 'none', color: 'rgba(239,68,68,0.4)', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color='#EF4444'} onMouseLeave={e => e.currentTarget.style.color='rgba(239,68,68,0.4)'}><Trash2 size={18} /></button>
                   )}
                 </div>

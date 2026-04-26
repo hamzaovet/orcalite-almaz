@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash2, X, Tags, Loader2, FolderOpen, Smartphone, Headphones, Settings, Watch, CreditCard, Tag, Laptop, Cpu, Printer, Mouse, Keyboard, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 interface Category {
   _id: string
@@ -27,6 +28,7 @@ export default function CategoriesPage() {
   const [isEditing, setIsEditing]   = useState(false)
   const [saving, setSaving]         = useState(false)
   const [form, setForm] = useState({ _id: '', name: '', slug: '', icon: 'Tag' })
+  const [deleteId, setDeleteId]     = useState<string | null>(null)
   const [autoSlug, setAutoSlug] = useState(true) // auto-derive slug from name while untouched
   const [message, setMessage]       = useState<{text: string, type: 'ok' | 'err'} | null>(null)
   const [businessType, setBusinessType] = useState('B2B_WHALE')
@@ -104,15 +106,23 @@ export default function CategoriesPage() {
     finally { setSaving(false) }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('هل أنت متأكد من حذف هذا القسم؟ سيتم قطع ارتباط المنتجات به.')) return
+  async function handleDelete(password: string) {
+    if (!deleteId) return
     try {
-      const res = await fetch(`/api/categories?id=${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/categories?id=${deleteId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
       if (res.ok) {
-        setCategories(prev => prev.filter(c => c._id !== id))
+        setCategories(prev => prev.filter(c => c._id !== deleteId))
         showMessage('تم حذف القسم', 'ok')
+      } else {
+        const data = await res.json()
+        throw new Error(data.message || data.error || 'فشل الحذف')
       }
-    } catch { showMessage('فشل الحذف', 'err') }
+    } catch (err: any) { showMessage(err.message, 'err') }
+    finally { setDeleteId(null) }
   }
 
   async function handleSeedDefaults() {
@@ -145,7 +155,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B' }}>
       
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -237,7 +247,7 @@ export default function CategoriesPage() {
                 {/* Discrete Actions */}
                 <div style={{ display: 'flex', gap: '0.4rem', opacity: 0.8 }}>
                   <button onClick={(e) => { e.stopPropagation(); openEdit(cat); }} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#06B6D4', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(6,182,212,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='#F8FAFC'}><Pencil size={18} /></button>
-                  <button onClick={(e) => { e.stopPropagation(); handleDelete(cat._id); }} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#EF4444', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(239,68,68,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='#F8FAFC'}><Trash2 size={18} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); setDeleteId(cat._id); }} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#EF4444', padding: '0.5rem', borderRadius: 10, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='rgba(239,68,68,0.1)'} onMouseLeave={(e)=>e.currentTarget.style.background='#F8FAFC'}><Trash2 size={18} /></button>
                 </div>
               </div>
               
@@ -339,6 +349,14 @@ export default function CategoriesPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="حذف القسم"
+        description="تحذير: سيتم حذف هذا القسم نهائياً، وسيتم قطع ارتباط المنتجات به."
+      />
     </div>
   )
 }

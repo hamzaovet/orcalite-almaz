@@ -5,12 +5,13 @@ import {
   Scan, Plus, X, Trash2, ShoppingCart, TrendingUp,
   Loader2, Banknote, CheckCircle2,
   Banknote as Cash, CreditCard, Building2, Zap, Smartphone,
-  Package, User, Phone, Calendar, Download, MessageCircle,
+  Package, User, Phone, Calendar, Download, MessageCircle, Printer, Receipt,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ImeiScanner } from '@/components/dashboard/ImeiScanner'
 import { InvoiceTemplate, type InvoiceData } from '@/components/dashboard/InvoiceTemplate'
 import { triggerNativePrint, openWhatsApp } from '@/components/dashboard/invoiceUtils'
+import { DeleteConfirmModal } from '@/components/dashboard/DeleteConfirmModal'
 
 /* ── Types ──────────────────────────────────────────────────── */
 type PaymentMethod = 'Cash' | 'Visa' | 'Valu' | 'InstaPay' | 'Vodafone Cash'
@@ -95,6 +96,7 @@ export default function SalesPage() {
   const [branchInventoryMap, setBranchInventoryMap] = useState<Record<string, number>>({})
   const [availableUnits, setAvailableUnits] = useState<any[]>([])
   const [inventoryLoading, setInventoryLoading] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -118,6 +120,25 @@ export default function SalesPage() {
     } catch { showToast('فشل تحميل البيانات', 'err') }
     finally { setLoading(false) }
   }, [])
+
+  async function handleDeleteSale(password: string) {
+    if (!deleteId) return
+    try {
+      const res = await fetch(`/api/sales/${deleteId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'فشل الحذف')
+      showToast('تم حذف الفاتورة واسترجاع المخزون بنجاح', 'ok')
+      setSales(prev => prev.filter(s => s._id !== deleteId))
+    } catch (err: any) {
+      showToast(err.message, 'err')
+    } finally {
+      setDeleteId(null)
+    }
+  }
 
   useEffect(() => { loadData() }, [loadData])
 
@@ -379,7 +400,7 @@ export default function SalesPage() {
   }
 
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', color: '#1E293B' }}>
+    <div style={{ maxWidth: 1400, margin: '0 auto', color: '#1E293B', padding: '0 1.5rem' }}>
       <div className="no-print">
 
       
@@ -582,12 +603,99 @@ export default function SalesPage() {
 
       {showScanner && <ImeiScanner onClose={() => setShowScanner(false)} onScanSuccess={handleScan} />}
 
+      {/* Recent Sales Log */}
+      <div style={{ marginTop: '3rem', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 24, padding: '2rem' }}>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 900, marginBottom: '1.5rem', color: '#06B6D4', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <Receipt size={20} /> سجل المبيعات الأخيرة
+        </h2>
+        {sales.length === 0 ? (
+          <p style={{ color: '#475569', textAlign: 'center', padding: '2rem' }}>لا توجد مبيعات مسجلة</p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right', fontSize: '0.9rem' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid #E2E8F0', background: '#F8FAFC' }}>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800, borderRadius: '0 12px 12px 0' }}>رقم الفاتورة</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>التاريخ</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>العميل</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>الإجمالي</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800 }}>الدفع</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#475569', fontWeight: 800, textAlign: 'center', borderRadius: '12px 0 0 12px' }}>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sales.slice(0, 20).map((sale: any) => (
+                  <tr key={sale._id} style={{ borderBottom: '1px solid #F1F5F9', verticalAlign: 'middle' }}>
+                    <td style={{ padding: '0.9rem 1rem' }}>
+                      <span style={{ fontWeight: 900, color: '#06B6D4', fontSize: '0.85rem' }}>{sale.invoiceNumber || '#'}</span>
+                    </td>
+                    <td style={{ padding: '0.9rem 1rem', color: '#475569', whiteSpace: 'nowrap' }}>
+                      {new Date(sale.date || sale.createdAt).toLocaleDateString('ar-EG')}
+                    </td>
+                    <td style={{ padding: '0.9rem 1rem', fontWeight: 800 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <User size={14} color="#94A3B8" />
+                        {sale.customer}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1.1rem 1rem', fontWeight: 900, color: '#0F172A', fontSize: '1rem' }}>
+                      {(sale.totalAmount || sale.totalSalePrice || 0).toLocaleString('ar-EG')} ج.م
+                    </td>
+                    <td style={{ padding: '0.9rem 1rem' }}>
+                      <span style={{
+                        fontSize: '0.75rem', fontWeight: 800,
+                        padding: '0.25rem 0.6rem', borderRadius: 8,
+                        background: sale.paymentMethod === 'Cash' ? 'rgba(34,197,94,0.1)' : 'rgba(6,182,212,0.1)',
+                        color: sale.paymentMethod === 'Cash' ? '#22C55E' : '#06B6D4'
+                      }}>
+                        {sale.paymentMethod === 'Cash' ? 'نقدي' : sale.paymentMethod === 'Visa' ? 'فيزا' : sale.paymentMethod === 'InstaPay' ? 'إنستاباي' : sale.paymentMethod || 'نقدي'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1.1rem 1rem', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => triggerNativePrint(sale.invoiceNumber)}
+                          style={{ 
+                            background: '#06B6D4', color: '#0F172A', border: 'none', padding: '0.55rem 1rem', borderRadius: 12, 
+                            fontWeight: 900, fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s', boxShadow: '0 8px 20px rgba(6,182,212,0.2)'
+                          }}
+                        >
+                          <Printer size={14} /> طباعة الفاتورة
+                        </button>
+                        
+                        <button 
+                          onClick={() => setDeleteId(sale._id)} 
+                          style={{ 
+                            background: '#1e1b4b', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.2)', padding: '0.55rem 1rem', borderRadius: 12, 
+                            cursor: 'pointer', fontWeight: 900, fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'all 0.2s' 
+                          }}
+                        >
+                          <Trash2 size={14} /> حذف
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
       {/* Hidden Invoice DOM for PDF Capture */}
       {completedSale && (
         <div className="print-only">
            <InvoiceTemplate data={completedSale} storeName={storeSettings.storeName} storeLogoUrl={storeSettings.storeLogoUrl} />
         </div>
       )}
+
+      <DeleteConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDeleteSale}
+        title="حذف فاتورة المبيعات"
+        description="تحذير: سيتم حذف الفاتورة واسترجاع المخزون وإلغاء حركة الخزينة. هذه العملية لا يمكن التراجع عنها."
+      />
 
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>

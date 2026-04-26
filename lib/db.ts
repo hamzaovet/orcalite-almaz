@@ -35,12 +35,12 @@ export async function connectDB(): Promise<typeof mongoose> {
         serverSelectionTimeoutMS: 8000, // Give Atlas a bit more time than local
       })
       .then((m) => {
-        console.log('✅ [Free Zone DB] Connected →', MONGODB_URI.replace(/:\/\/.*@/, '://***@'))
+        console.log('✅ [ORCA DB] Connected →', MONGODB_URI.replace(/:\/\/.*@/, '://***@'))
         return m
       })
       .catch((err: Error) => {
         cached.promise = null // Clear so the next request retries
-        console.error('❌ [Free Zone DB] Connection failed:', err.message)
+        console.error('❌ [ORCA DB] Connection failed:', err.message)
         throw err
       })
   }

@@ -5,6 +5,7 @@ import Product from '@/models/Product'
 import Transaction from '@/models/Transaction'
 import Supplier from '@/models/Supplier'
 import Purchase from '@/models/Purchase'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -153,6 +154,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   try {
     await connectDB()
     const { id } = params
+
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ error: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
+
     await RepairTicket.findByIdAndDelete(id)
     return NextResponse.json({ success: true })
   } catch (error) {

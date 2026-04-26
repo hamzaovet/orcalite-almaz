@@ -14,7 +14,7 @@ function processDir(dirPath) {
             let originalContent = content;
 
             // 1. Rename
-            content = content.replace(/فري زون/g, 'فري زون');
+            content = content.replace(/فري زون/g, 'أوركا');
 
             // 2. Colors - General
             content = content.replace(/#D4AF37/gi, '#0ea5e9');

@@ -4,6 +4,7 @@ import { User } from '@/models/User'
 import { hashPassword } from '@/lib/auth'
 import { StoreSettings } from '@/models/StoreSettings'
 import { SYSTEM_ROLES } from '@/lib/constants'
+import { verifyAdminPassword } from '@/lib/verifyAdmin'
 
 export async function GET(req: Request) {
   try {
@@ -160,6 +161,12 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'Missing user id' }, { status: 400 })
+
+    const body = await req.json().catch(() => ({}))
+    const { password } = body
+    if (!(await verifyAdminPassword(password))) {
+      return NextResponse.json({ error: 'كلمة مرور الإدارة غير صحيحة' }, { status: 401 })
+    }
 
     await connectDB()
     await User.findByIdAndDelete(id)
